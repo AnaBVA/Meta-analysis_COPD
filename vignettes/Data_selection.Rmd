@@ -1,0 +1,55 @@
+---
+title: "Data selection"
+author: Ana BVA
+date: "`r BiocStyle::doc_date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Aim
+
+To select datasets that measure gene expression in COPD patients. 
+
+# Introduction
+
+Selecting the experiments is a key point in a meta-analysis so it is important 
+to decide which experiments will be used in the analysis. Raw and normalized 
+data from gene expression analysis are stored in public repositories. [GEO](https://www.ncbi.nlm.nih.gov/geo/) from 
+NCBI and [ArrayExpress](https://www.ebi.ac.uk/arrayexpress/) 
+from EMBL-EBI are the most popular, the data is available for everyone and both 
+databases have web interface to search and download data.
+
+I have already search "COPD" in GEO but I want to use [GEOquery](https://bioconductor.org/packages/release/bioc/html/GEOquery.html) 
+and [GEOmetadb](https://www.bioconductor.org/packages/release/bioc/vignettes/GEOmetadb/inst/doc/GEOmetadb.html) 
+packages for R. It is meant to search and download experiments in R environment.
+
+The justification is that I want to see if I find the same datasets as using 
+the web interface. Because, using GEOquery has more advantages such as 
+downloading the data into R enviroment. 
+
+
+# Searching Data
+
+I am following [GEOmetadb vignette](https://www.bioconductor.org/packages/release/bioc/vignettes/GEOmetadb/inst/doc/GEOmetadb.html).
+
+
+```{r, libraries}
+library(GEOmetadb)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+library(colorout)
