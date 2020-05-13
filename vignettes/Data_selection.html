@@ -11,7 +11,7 @@
 
 <meta name="author" content="Ana BVA" />
 
-<meta name="date" content="2020-03-25" />
+<meta name="date" content="2020-05-08" />
 
 <title>Data selection</title>
 
@@ -1512,12 +1512,182 @@ div.tocify {
 
 <h1 class="title toc-ignore">Data selection</h1>
 <h4 class="author">Ana BVA</h4>
-<h4 class="date">25 March 2020</h4>
+<h4 class="date">8 May 2020</h4>
 
 </div>
 
 
+<pre class="r"><code>knitr::opts_knit$set(root.dir = '..')</code></pre>
+<div id="aim" class="section level1">
+<h1>Aim</h1>
+<p>To select datasets that measure gene expression in COPD patients.</p>
+</div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>Selecting the experiments is a key point in a meta-analysis so it is important to decide which experiments will be used in the analysis. Raw and normalized data from gene expression analysis are stored in public repositories. <a href="https://www.ncbi.nlm.nih.gov/geo/">GEO</a> from NCBI and <a href="https://www.ebi.ac.uk/arrayexpress/">ArrayExpress</a> from EMBL-EBI are the most popular, the data is available for everyone and both databases have web interface to search and download data.</p>
+<div id="search-of-papers-related-with-copd-and-transcriptomics-in-geo" class="section level2">
+<h2>Search of papers related with COPD and transcriptomics in GEO</h2>
+<p>Using <code>e-utilities</code> from <a href="https://www.ncbi.nlm.nih.gov/books/NBK179288/?report=classic">NCBI</a>, I searched articles related with ‘Chronic Obstructive Pulmonary Disease’ or ‘COPD’ and ‘microarrays’ or ‘RNA sequencing’.</p>
+<pre class="bash"><code># Search for articles in pubmed
+ esearch -db pubmed -query '((&quot;chronic obstructive pulmonary disease&quot; OR &quot;COPD&quot;) AND (&quot;microarrays&quot; OR (&quot;RNA sequencing&quot;))' |
+  efetch -format docsum |
+  xtract -pattern DocumentSummary -element Id PubDate Authors Title FullJournalName &gt; output_data/pubmed_articles.txt
+  
+# Get abstracts in pubmed
+ esearch -db pubmed -query '((&quot;chronic obstructive pulmonary disease&quot; OR &quot;COPD&quot;) AND (&quot;microarrays&quot; OR (&quot;RNA sequencing&quot;))' |
+  efetch -format abstract &gt; output_data/pubmed_abstract.txt</code></pre>
+<pre class="r"><code>pubmed &lt;- read.csv(&quot;output_data/pubmed_articles.txt&quot;, sep = &quot;\t&quot;, header = F)
+head(pubmed)</code></pre>
+<pre><code>##         V1          V2
+## 1 32327758   Sungnak W
+## 2 32277131  Gindele JA
+## 3 32272001    Evans KV
+## 4 32255375  Naessens T
+## 5 32241868 Blakeway LV
+## 6 32051346    Ouyang S
+##                                                                                                                                                          V3
+## 1                                                SARS-CoV-2 entry factors are highly expressed in nasal epithelial cells together with innate immune genes.
+## 2   Intermittent exposure to whole cigarette smoke alters the differentiation of primary small airway epithelial cells in the air-liquid interface culture.
+## 3                                      Alveolar wars: The rise of in vitro models to understand human lung alveolar maintenance, regeneration, and disease.
+## 4                                                                      Human Lung Conventional Dendritic Cells Orchestrate Lymphoid Neogenesis During COPD.
+## 5 Transcriptome RNA Sequencing Data Set of Gene Expression in Moraxella catarrhalis On- and Off-Phase Variants of the Type III DNA Methyltransferase ModM3.
+## 6                                                               Targeting IL-17A/glucocorticoid synergy to CSF3 expression in neutrophilic airway diseases.</code></pre>
+<div id="retrieve-gses" class="section level3">
+<h3>Retrieve GSEs</h3>
+<p>We also use <code>e-utilities</code> from <a href="https://www.ncbi.nlm.nih.gov/books/NBK179288/?report=classic">NCBI</a> to retrieve GSE ids that are related with COPD from human samples.</p>
+<pre class="bash"><code># Search for GSE in NCBI
+esearch -db gds -query '((&quot;chronic obstructive pulmonary disease&quot; OR &quot;COPD&quot;) AND (&quot;Expression profiling by high throughput sequencing&quot;[Filter] OR &quot;Expression profiling by array&quot;[Filter]) AND &quot;Homo sapiens&quot;[orgn] AND &quot;gse&quot;[Filter]' |
+  efetch -format xml &gt;  output_data/GSE_query.txt
 
+# Parse records into a table
+sed -e 's/,/ /g' output_data/GSE_query.txt | 
+awk 'BEGIN { FS=&quot;\n&quot;; RS=&quot;&quot;; OFS=&quot;,&quot; } { print $1, $2, $3, $4, $5, $6, $8, $7 }' |
+sed -e 's/,,/, /g' | 
+sed 's/^[0-9]*.//g' &gt; output_data/GSE_query_table.txt
+
+# List of GSEs
+grep -o 'Accession:.*' output_data/GSE_query_table.txt | 
+grep -o 'GSE[0-9]*' &gt; output_data/gse_list.txt
+
+# File with GSE ids and other information
+paste -d &quot;,&quot; output_data/gse_list.txt  output_data/GSE_query_table.txt &gt; output_data/GSE_query_table2.txt
+
+# number of records
+wc -l output_data/GSE_query_table2.txt
+</code></pre>
+<p>Table looks like this</p>
+<pre class="r"><code>gse &lt;- read.csv(&quot;output_data/GSE_query_table2.txt&quot;, sep = &quot;,&quot;, header = F)
+colnames(gse) &lt;- c(&quot;GSE&quot;,&quot;Title&quot;, &quot;Description&quot;, &quot;Organism&quot;,&quot;Type&quot;, &quot;Platform&quot;, &quot;FTP&quot;,&quot;Series_Accession&quot;, &quot;SRA&quot;)
+head(gse)</code></pre>
+<pre><code>##         GSE
+## 1 GSE142100
+## 2 GSE130928
+## 3 GSE133513
+## 4 GSE135188
+## 5 GSE124637
+## 6 GSE121600
+##                                                                                                                                                                Title
+## 1                                      Application of text mining to build AOP-based mucus hypersecretion genesets and validation with in vitro and clinical samples
+## 2                                             Alveolar macrophage immunometabolism and lung function impairment in smoking and chronic obstructive pulmonary disease
+## 3                                                                            Sputum and blood transcriptomics characterization of the PDE4 inhibitor CHF6001 in COPD
+## 4             Intermittent exposure to whole cigarette smoke alters the differentiation of primary small airway epithelial cells in the air-liquid interface culture
+## 5  The effect of intermittent versus continuous low dose aspirin on nasal epithelium gene expression in current smokers: a randomized  double-blinded clinical study
+## 6                                                        Single-cell RNA-seq reveals novel cell differentiation dynamics during human airway epithelium regeneration
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                Description
+## 1                                                                                                                              (Submitter supplied) Purpose: Build genesets using text mining and validate the geneset with data from public repository and a dataset generated in house using in vitro models and RNA-seq Methods: Mucus hypersecretion and mucociliary dysfucntion adverse outcome pathways (AOPs) genesets were build using the text mining method described by Rani et al.  2015. Validation was performed using RNA expression data from cigarette and e-cigarette aerosol treated cells  IL-13 treated airway cells  and COPD-lung biopsies. more...
+## 2                                                                                          (Submitter supplied) Background: Metabolic plasticity involving shifts between mitochondrial respiration and glycolysis is emerging as a crucial component of efficient innate immune cell responses. Alveolar macrophages (AMs)  the most abundant antigen-presenting cells in the lung  are dramatically increased in the lungs of patients with chronic obstructive pulmonary disease (COPD). However  COPD AMs exhibit dysfunctional responses to infection with lower phagocytic ability and impairment of mitochondrial reactive oxygen species (ROS) generation. more...
+## 3                     (Submitter supplied) The aim of the present study was to characterize the gene expression profile of the phosphodiesterase-4 inhibitor CHF6001 on top of inhaled triple therapy in sputum cells and whole blood of chronic bronchitis patients.  Samples for analyses were collected from a multicenter  three-period  three-way  placebo-controlled  double-blind  complete block crossover study. Eligible patients underwent three  32-day treatment periods during which they received CHF6001 800 or 1600 µg twice daily (total daily doses of 1600 or 3200 µg) or matching placebo  all via multi-dose dry-powder inhaler (NEXThaler). more...
+## 4                                                                                                                                                                                                        (Submitter supplied) Cigarette smoke (CS) is the leading cause to develop COPD. Therefore  we investigated the pathologic effects of whole CS on the differentiation of primary small airway epithelial cells (SAEC)  from three healthy donors and three COPD patients  cultured under ALI (air-liquid interface) conditions. The analysis of the epithelial physiology demonstrated that CS impaired barrier formation and reduced cilia beat activity. more...
+## 5                                                                                       (Submitter supplied) A chemopreventive effect of aspirin (ASA) on lung cancer risk is supported by epidemiologic and preclinical studies. We conducted a randomized  double-blind  placebo controlled study in current heavy smokers to compare modulating effects of intermittent versus continuous low dose ASA on gene signatures of smoking and lung cancer from nasal brushings. Fifty-four participants were randomized to intermittent ASA (ASA 81 mg daily for one week alternating with placebo daily for one week) or continuous ASA (81 mg daily) for 12 weeks. more...
+## 6 (Submitter supplied) The upper airway epithelium is mainly composed of 4 cell types: multiciliated  goblet  secretory and basal cells. It constitutes an efficient first line of defense of the respiratory tract against a large panel of inhaled substances. Upon injury  regeneration of this epithelium through proliferation and differentiation events can restore a proper mucociliary function. In chronic airway diseases  such as chronic obstructive pulmonary disease or asthma  the injured epithelium frequently displays defective repair leading to tissue remodeling  characterized by a loss of multiciliated cells and mucus hyper-secretion. more...
+##                                            Organism
+## 1                           Organism:\tHomo sapiens
+## 2                           Organism:\tHomo sapiens
+## 3                           Organism:\tHomo sapiens
+## 4                           Organism:\tHomo sapiens
+## 5                           Organism:\tHomo sapiens
+## 6 Organism:\tHomo sapiens; Sus scrofa; Mus musculus
+##                                                          Type
+## 1 Type:\t\tExpression profiling by high throughput sequencing
+## 2                      Type:\t\tExpression profiling by array
+## 3                      Type:\t\tExpression profiling by array
+## 4 Type:\t\tExpression profiling by high throughput sequencing
+## 5                      Type:\t\tExpression profiling by array
+## 6 Type:\t\tExpression profiling by high throughput sequencing
+##                                           Platform
+## 1                    Platform: GPL18573 72 Samples
+## 2                      Platform: GPL570 88 Samples
+## 3                     Platform: GPL570 495 Samples
+## 4                    Platform: GPL21290 36 Samples
+## 5                   Platform: GPL23526 109 Samples
+## 6 Platforms: GPL19057 GPL20983 GPL18573 22 Samples
+##                                                                                       FTP
+## 1      FTP download: GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE142nnn/GSE142100/
+## 2 FTP download: GEO (CEL  CSV) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE130nnn/GSE130928/
+## 3      FTP download: GEO (CEL) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE133nnn/GSE133513/
+## 4      FTP download: GEO (TXT) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE135nnn/GSE135188/
+## 5      FTP download: GEO (CEL) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE124nnn/GSE124637/
+## 6       FTP download: GEO (H5) ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE121nnn/GSE121600/
+##                                 Series_Accession
+## 1  Series\t\tAccession: GSE142100\tID: 200142100
+## 2  Series\t\tAccession: GSE130928\tID: 200130928
+## 3  Series\t\tAccession: GSE133513\tID: 200133513
+## 4  Series\t\tAccession: GSE135188\tID: 200135188
+## 5  Series\t\tAccession: GSE124637\tID: 200124637
+## 6  Series\t\tAccession: GSE121600\tID: 200121600
+##                                                                            SRA
+## 1 SRA Run Selector: https://www.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA595912
+## 2                                                                             
+## 3                                                                             
+## 4 SRA Run Selector: https://www.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA557685
+## 5                                                                             
+## 6 SRA Run Selector: https://www.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA498675</code></pre>
+<pre class="r"><code>library(stringr)
+
+# Blood related 
+gse$Blood &lt;- str_detect(tolower(str_c(gse$Title,gse$Description)), &quot;blood&quot;)
+
+# Tissue related
+gse$Tissue &lt;- str_detect(tolower(str_c(gse$Title,gse$Description)), &quot;tissue&quot;)
+
+# Airway Epithelium 
+gse$Epithelium &lt;- str_detect(tolower(str_c(gse$Title,gse$Description)), &quot;epithelium&quot;)</code></pre>
+<p>I have already search “COPD” in GEO but I want to use <a href="https://bioconductor.org/packages/release/bioc/html/GEOquery.html">GEOquery</a> and <a href="https://www.bioconductor.org/packages/release/bioc/vignettes/GEOmetadb/inst/doc/GEOmetadb.html">GEOmetadb</a> packages for R. It is meant to search and download experiments in R environment.</p>
+<p>The justification is that I want to see if I find the same datasets as using the web interface. Because, using GEOquery has more advantages such as downloading the data into R enviroment.</p>
+</div>
+</div>
+<div id="searching-data" class="section level2">
+<h2>Searching Data</h2>
+<p>I am following <a href="https://www.bioconductor.org/packages/release/bioc/vignettes/GEOmetadb/inst/doc/GEOmetadb.html">GEOmetadb vignette</a>.</p>
+<p>We call the library</p>
+<pre class="r"><code>library(GEOmetadb)</code></pre>
+<p>We connect with the database GEOmetadb</p>
+<pre class="r"><code>con &lt;- dbConnect(SQLite(),'GEOmetadb.sqlite')</code></pre>
+<p>We then search for all COPD experiments from human patients measured in lung and blood.</p>
+<pre class="r"><code>query &lt;- paste(&quot;SELECT DISTINCT gse.title,gse.gse&quot;,
+             &quot;FROM&quot;,
+             &quot;  gsm JOIN gse_gsm ON gsm.gsm=gse_gsm.gsm&quot;,
+             &quot;  JOIN gse ON gse_gsm.gse=gse.gse&quot;,
+             &quot;  JOIN gse_gpl ON gse_gpl.gse=gse.gse&quot;,
+             &quot;  JOIN gpl ON gse_gpl.gpl=gpl.gpl&quot;,
+             &quot;WHERE&quot;,
+             &quot;  gsm.molecule_ch1 like '%total RNA%' AND&quot;,
+             &quot;  gse.summary LIKE '%chronic obstructive pulmonary disease%' OR&quot;,
+             &quot;  gse.summary LIKE '%COPD%' AND&quot;,
+             &quot;  gpl.organism LIKE '%Homo sapiens%'&quot;,sep=&quot; &quot;)</code></pre>
+<pre reval="F"><code>
+rs &lt;- dbGetQuery(con,paste(query))
+dim(rs)
+rs[1:5,]
+
+# gsms duplicated
+# gsm &lt;- sapply(rs[,&quot;gse&quot;], geoConvert, sqlite_db_name = &quot;GEOmetadb.sqlite&quot;)
+</code></pre>
+<p>We disconnect from the database</p>
+<pre class="r"><code>dbDisconnect(con)</code></pre>
+<p>library(colorout)</p>
+</div>
+</div>
 
 
 
