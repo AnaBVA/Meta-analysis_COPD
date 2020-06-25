@@ -1,0 +1,99 @@
+32327758	Sungnak W	SARS-CoV-2 entry factors are highly expressed in nasal epithelial cells together with innate immune genes.
+32277131	Gindele JA	Intermittent exposure to whole cigarette smoke alters the differentiation of primary small airway epithelial cells in the air-liquid interface culture.
+32272001	Evans KV	Alveolar wars: The rise of in vitro models to understand human lung alveolar maintenance, regeneration, and disease.
+32255375	Naessens T	Human Lung Conventional Dendritic Cells Orchestrate Lymphoid Neogenesis During COPD.
+32241868	Blakeway LV	Transcriptome RNA Sequencing Data Set of Gene Expression in Moraxella catarrhalis On- and Off-Phase Variants of the Type III DNA Methyltransferase ModM3.
+32051346	Ouyang S	Targeting IL-17A/glucocorticoid synergy to CSF3 expression in neutrophilic airway diseases.
+31996486	Mallampalli RK	Cigarette smoke exposure enhances transforming acidic coiled-coil-containing protein 2 turnover and thereby promotes emphysema.
+31960631	Gorr MW	Transcriptomic profiles reveal differences between the right and left ventricle in normoxia and hypoxia.
+31953105	Qi C	Nasal DNA methylation profiling of asthma and rhinitis.
+31937552	Brandsma CA	Integrated proteogenomic approach identifying a protein signature of COPD and a new splice variant of SORBS1.
+31864210	Li Q	Bu-Shen-Fang-Chuan formula attenuates T-lymphocytes recruitment in the lung of rats with COPD through suppressing CXCL9/CXCL10/CXCL11-CXCR3 axis.
+31834999	Henkel M	FSTL-1 Attenuation Causes Spontaneous Smoke-Resistant Pulmonary Emphysema.
+31819170	De Smet EG	The role of miR-155 in cigarette smoke-induced pulmonary inflammation and COPD.
+31796837	Ong J	Marked TGF-β-regulated miRNA expression changes in both COPD and control lung fibroblasts.
+31762962	Sundar IK	Small RNA-sequence analysis of plasma-derived extracellular vesicle miRNAs in smokers and patients with chronic obstructive pulmonary disease as circulating biomarkers.
+31651369	Ji JJ	Discovering myeloid cell heterogeneity in the lung by means of next generation sequencing.
+31635387	Ong J	Current Smoking is Associated with Decreased Expression of miR-335-5p in Parenchymal Lung Fibroblasts.
+31506971	George L	Blood eosinophil count and airway epithelial transcriptome relationships in COPD versus asthma.
+31417560	Isles HM	The CXCL12/CXCR4 Signaling Axis Retains Neutrophils at Inflammatory Sites in Zebrafish.
+31299012	Tien CP	Ambient particulate matter attenuates Sirtuin1 and augments SREBP1-PIR axis to induce human pulmonary fibroblast inflammation: molecular mechanism of microenvironment associated with COPD.
+31269066	Saferali A	Analysis of genetically driven alternative splicing identifies FBXO38 as a novel COPD susceptibility gene.
+31140741	Zeng N	Cigarette smoke extract alters genome-wide profiles of circular RNAs and mRNAs in primary human small airway epithelial cells.
+31050548	Zheng M	Long Noncoding RNA COPDA1 Promotes Airway Smooth Muscle Cell Proliferation in Chronic Obstructive Pulmonary Disease.
+31043775	Wang F	Reproducibility of fluid-phase measurements in PBS-treated sputum supernatant of healthy and stable COPD subjects.
+31036559	Joshi R	Impact of Phosphodiesterase 4 Inhibition on the Operational Efficacy, Response Maxima, and Kinetics of Indacaterol-Induced Gene Expression Changes in BEAS-2B Airway Epithelial Cells: A Global Transcriptomic Analysis.
+30995076	Schiller HB	The Human Lung Cell Atlas: A High-Resolution Reference Map of the Human Lung in Health and Disease.
+30969812	Ng-Blichfeldt JP	TGF-β activation impairs fibroblast ability to support adult lung epithelial progenitor cell organoid formation.
+30940135	Morrow JD	RNA-sequencing across three matched tissues reveals shared and tissue-specific gene expression and pathway signatures of COPD.
+30842487	Ong J	Age-related gene and miRNA expression changes in airways of healthy individuals.
+30626320	Voic H	RNA sequencing identifies common pathways between cigarette smoke exposure and replicative senescence in human airway epithelia.
+30500342	Wang M	Laundry detergents and detergent residue after rinsing directly disrupt tight junction barrier integrity in human bronchial epithelial cells.
+30406125	Baines KJ	Azithromycin treatment modifies airway and blood gene expression networks in neutrophilic COPD.
+30355907	Qian Y	Comprehensive Analysis of miRNA-mRNA-lncRNA Networks in Non-Smoking and Smoking Patients with Chronic Obstructive Pulmonary Disease.
+30190272	Sauler M	The DNA repair transcriptome in severe COPD.
+30016964	Reynders K	RNA-sequencing in non-small cell lung cancer shows gene downregulation of therapeutic targets in tumor tissue compared to non-malignant lung tissue.
+29999500	Wang C	Expansion of hedgehog disrupts mesenchymal identity and induces emphysema phenotype.
+29939498	Miller DP	Transcriptome analysis of Porphyromonas gingivalis and Acinetobacter baumannii in polymicrobial communities.
+29932825	Billatos E	Impact of acute exposure to cigarette smoke on airway gene expression.
+29618675	Nikolić E	Prevalence of Escherichia coli Resistant to Beta-Lactam Antibiotics among Patients with Chronic Obstructive Pulmonary Disease and Urinary Tract Infection.
+29581847	Zhang H	Mandatory role of HMGA1 in human airway epithelial normal differentiation and post-injury regeneration.
+29402904	Haswell LE	In vitro RNA-seq-based toxicogenomics assessment shows reduced biological effect of tobacco heating products when compared to cigarette smoke.
+29355294	Zhang J	Long noncoding RNAs in respiratory diseases.
+29262264	Johnstone TB	PDE8 Is Expressed in Human Airway Smooth Muscle and Selectively Regulates cAMP Signaling by β2-Adrenergic Receptors and Adenylyl Cyclase 6.
+29114070	Wan L	SRSF6-regulated alternative splicing that promotes tumour progression offers a therapy target for colorectal cancer.
+28985737	Parker MM	RNA sequencing identifies novel non-coding RNA and exon-specific effects associated with cigarette smoking.
+28340574	Zhu HX	Myocyte enhancer factor 2D provides a cross-talk between chronic inflammation and lung cancer.
+28093071	Altenberger C	SPAG6 and L1TD1 are transcriptionally regulated by DNA methylation in non-small cell lung cancers.
+27749084	Marconett CN	Cross-Species Transcriptome Profiling Identifies New Alveolar Epithelial Type I Cell-Specific Genes.
+27597766	Zhang H	CRISPLD2 (LGL1) inhibits proinflammatory mediators in human fetal, adult, and COPD lung fibroblasts and epithelial cells.
+27409149	Conickx G	MicroRNA Profiling Reveals a Role for MicroRNA-218-5p in the Pathogenesis of Chronic Obstructive Pulmonary Disease.
+27268958	Elamin A	Quantitative proteomics analysis using 2D-PAGE to investigate the effects of cigarette smoke and aerosol of a prototypic modified risk tobacco product on the lung proteome in C57BL/6 mice.
+27117807	Crothers K	Widespread activation of immunity and pro-inflammatory programs in peripheral blood leukocytes of HIV-infected patients with impaired lung gas exchange.
+27076594	Hoffmann J	Microarray analysis in pulmonary hypertension.
+26855081	Pirrone M	Microbiome, biofilms, and pneumonia in the ICU.
+26752519	Cloonan SM	Mitochondrial iron chelation ameliorates cigarette smoke-induced bronchitis and emphysema in mice.
+26480348	Lackey L	Increased Transcript Complexity in Genes Associated with Chronic Obstructive Pulmonary Disease.
+28848849	Roberts MEP	CD4+ T-Cell Profiles and Peripheral Blood Ex-Vivo Responses to T-Cell Directed Stimulation Delineate COPD Phenotypes.
+25716971	Mroz RM	Anti-inflammatory effects of atorvastatin treatment in chronic obstructive pulmonary disease. A controlled pilot study.
+25567521	Rabinovich RA	Genome-wide mRNA expression profiling in vastus lateralis of COPD patients with low and normal fat free mass index and healthy controls.
+25010962	Booton R	Emerging role of MicroRNAs and long noncoding RNAs in respiratory disease.
+24918967	Hoffmann J	Distinct differences in gene expression patterns in pulmonary arteries of patients with chronic obstructive pulmonary disease and idiopathic pulmonary fibrosis with pulmonary hypertension.
+24830457	Faner R	Systemic inflammatory response to smoking in chronic obstructive pulmonary disease: evidence of a gender effect.
+24498427	Ryan DM	Smoking dysregulates the human airway basal cell transcriptome at COPD risk locus 19q13.2.
+24487392	Basma H	Reprogramming of COPD lung fibroblasts through formation of induced pluripotent stem cells.
+24479666	Savarimuthu Francis SM	MicroRNA-34c is associated with emphysema severity and modulates SERPINE1 expression.
+24477002	Sayin VI	Antioxidants accelerate lung cancer progression in mice.
+24465567	Hessel J	Intraflagellar transport gene expression associated with short cilia in smoking and COPD.
+24392884	Chen G	Foxa3 induces goblet cell metaplasia and inhibits innate antiviral immunity.
+23966112	Tarca AL	Strengths and limitations of microarray-based phenotype prediction: lessons learned from the IMPROVER Diagnostic Signature Challenge.
+23597004	Shaykhiev R	Smoking-induced CXCL14 expression in the human airway epithelium links chronic obstructive pulmonary disease to lung cancer.
+23590301	Bahr TM	Peripheral blood mononuclear cell gene expression in chronic obstructive pulmonary disease.
+23527303	Mazières J	Alternative processing of the U2 small nuclear RNA produces a 19-22nt fragment with relevance for the detection of non-small cell lung cancer in human serum.
+23416264	Cheah NP	In vitro effects of aldehydes present in tobacco smoke on gene expression in human lung alveolar epithelial cells.
+23229119	Zhang C	Effects of Xiaoqinglong decoction on gene expression profiles in a rat chronic obstructive pulmonary disease model.
+22855713	Wang R	Airway epithelial expression of TLR5 is downregulated in healthy smokers and smokers with chronic obstructive pulmonary disease.
+22685074	Mahdi R	Empirical Bayes conditional independence graphs for regulatory network recovery.
+22676183	Wang G	Genes associated with MUC5AC expression in small airway epithelium of human smokers and non-smokers.
+22621770	Koczulla AR	Krüppel-like zinc finger proteins in end-stage COPD lungs with and without severe alpha1-antitrypsin deficiency.
+22360706	Mata M	Piclamilast inhibits the pro-apoptotic and anti-proliferative responses of A549 cells exposed to H(2)O(2) via mechanisms involving AP-1 activation.
+21983132	Dimopoulos G	Viral epidemiology of acute exacerbations of chronic obstructive pulmonary disease.
+21884629	Bhattacharya S	Peripheral blood gene expression profiles in COPD subjects.
+21836155	Pagdin T	MicroRNAs in lung diseases.
+21573156	Grumelli S	CD46 protects against chronic obstructive pulmonary disease.
+21543797	Gower AC	Transcriptomic studies of the airway field of injury associated with smoking-related lung disease.
+21490961	Wang R	Down-regulation of the canonical Wnt β-catenin pathway in the airway epithelium of healthy smokers and smokers with COPD.
+20887155	Edmiston JS	Gene expression profiling of peripheral blood leukocytes identifies potential novel biomarkers of chronic obstructive pulmonary disease in current and former smokers.
+19800047	DeMeo DL	Integration of genomic and genetic approaches implicates IREB2 as a COPD susceptibility gene.
+19614607	Bhattacharya S	Array of hope: expression profiling identifies disease biomarkers and mechanism.
+19192965	Blicharz TM	Fiber-optic microsphere-based antibody array for the analysis of inflammatory cytokines in saliva.
+18990963	Chen ZH	Identifying targets for COPD treatment through gene expression analyses.
+18832735	Carolan BJ	Decreased expression of intelectin 1 in the human airway epithelium of smokers compared to nonsmokers.
+18453360	Hersh CP	National Emphysema Treatment Trial state of the art: genetics of emphysema.
+17435144	Walt DR	Microsensor arrays for saliva diagnostics.
+16520944	Heguy A	Gene expression profiling of human alveolar macrophages of phenotypically normal smokers and nonsmokers reveals a previously unrecognized subset of genes modulated by cigarette smoking.
+16504044	Müller KC	Lung fibroblasts from patients with emphysema show markers of senescence in vitro.
+16113446	Smith JB	Targeted identification of glucocorticoid-attenuated response genes: in vitro and in vivo models.
+15374838	Spira A	Gene expression profiling of human lung tissue from smokers with severe emphysema.
+15220136	Fuke S	Chemokines in bronchiolar epithelium in the development of chronic obstructive pulmonary disease.
+14516134	Schulz C	Upregulation of MCAM in primary bronchial epithelial cells from patients with COPD.
