@@ -1,0 +1,119 @@
+---
+title: "Pre-processing and differential gene expression analysis of RAW data"
+author: Ana BVA
+date: "`r BiocStyle::doc_date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+## Introduction
+
+<div class="alert alert-info">
+  <strong>Aim:</strong> To pre-process raw data from *GEO* using RMA and to 
+  perform a differential gene expression analysis comparing COPD vs CONTROL group
+</div>
+
+
+### COPD
+
+Chronic Obstructive Pulmonary Disease (COPD) is characterized by emphysema and 
+chronic bronchitis, it's diagnosed using spirometry and clinical information
+which lead to a heterogeneous COPD patients. The ranking of non commutable 
+diseases from the WHO estimates that COPD is in the top of mortality causes and 
+tobacco is the main risk factor but different genetic variants have been
+associated with this disease. 
+
+Different researchers have analyzed COPD transcriptomics using high-throughput data
+such as microarrays and RNA-seq. We belive it would be relevant to unravel a 
+robust gene expression signature for COPD patients regardless if it is from different
+experiments or laboratories. 
+
+### Background 
+
+This script is part of an analysis performed with PulmonDB data that looks to 
+determine a common deferentially expressed genes. The analysis was divided into 
+different vignettes computing different steps. In this script out objective is
+to do a meta-analysis with raw data downloaded from [GEO](https://www.ncbi.nlm.nih.gov/geo/). The results will be used as a reference 
+and to compare them with a meta-analysis computed with PulmonDB sample contrasts.
+
+We want to pre-process and re-analyze transcriptomic experiments from [GEO](https://www.ncbi.nlm.nih.gov/geo/) that have:
+
+- Lung tissue samples
+
+- COPD vs CONTROL group
+
+
+## Input
+
+This script needs the following files:
+
+<div class="alert alert-warning">
+  <strong>Data 1:</strong> Matrix of normalized experiments  
+  <strong>Data 2:</strong> Meta data 
+</div>
+
+
+### Setup
+
+The script can be found in: `r getwd() `
+
+```{r setup}
+setwd("..")
+PATH = getwd()
+DATA_DIR = file.path(PATH,"data")
+OUTPUT_DIR = file.path(PATH,"output_data")
+FIG_DIR = file.path(PATH,"fig")
+
+knitr::opts_knit$set(root.dir = PATH)
+```
+
+And this analysis is run in: `r getwd() `
+
+### Libraries
+
+```{r libraries, message=FALSE, warning=FALSE}
+library(knitr) 
+```
+
+### Experiments
+
+We selected 7 experiments that are in PulmonDB and are lung samples from COPD patients 
+and that also have a control group to compare. These experiments are described 
+in the following table:
+
+
+```{r experiments}
+gse <- read.csv(file.path(DATA_DIR,"GSE_table.csv"), row.names = 1)
+kable(gse, caption = "GSE information")
+```
+
+
+## Analysis
+
+### STEP 1
+
+### STEP 2
+
+## Output
+
+This script produces the following data, and can be found in `r getwd() ` 
+
+<div class="alert alert-success">
+  <strong>Figure 1:</strong> Boxplot of samples  
+  <strong>Figure 2:</strong> Heatmap of COPD patients 
+</div>
+
+## Session Info
+
+```{r sessionInfo}
+sessionInfo()
+```
+
+
+
+
+
