@@ -129,6 +129,10 @@ the data using RMA but we will download counts from [ReCount2](https://jhubiosta
 
 ### **rawCEL_normCEL**: Pre-process raw data
 
+We first read and pre-process raw *.CEL* files. Each experiment has it own 
+folder with raw data per sample. Then we normalized using RMA algorithm and 
+finally, we save it in a *.CSV* file. 
+
 In this function you need:
 
 <div class="alert alert-warning">
@@ -136,10 +140,6 @@ In this function you need:
   <strong>Output:</strong> Samples normalized, boxplots and histograms from raw and normalized data 
 </div>
 
-
-We first read and pre-process raw *.CEL* files. Each experiment has it own 
-folder with raw data per sample. Then we normalized using RMA algorithm and 
-finally, we save it in a *.CSV* file. 
 
 
 ```{r rawCEL_normCEL}
@@ -175,15 +175,16 @@ rawCEL_normCEL <- function(gse){
 
 ### **get_GEO**: get annotation using GEOquery package
 
+This function download the `ExpressionSet` object from `GEOquery` that has 
+the sample annotations, then we replace the expression values with our calculated
+pre-processed data. 
+
 <div class="alert alert-warning">
-  <strong>Input:</strong> GSE ID, *norm* object with pre-processed values
+  <strong>Input:</strong> GSE ID, *norm* object with pre-processed values   
   <strong>Output:</strong> ExpressionSet object with GEOquery annotation and 
   pre-processed values
 </div>
 
-This function download the `ExpressionSet` object from `GEOquery` that has 
-the sample annotations, then we replace the expression values with our calculated
-pre-processed data. 
 
 ```{r get_GEO}
 get_GEO <- function(gse,norm){
@@ -207,19 +208,20 @@ get_GEO <- function(gse,norm){
 
 
 
-### **DEL**: Differential expression analysis
-
-<div class="alert alert-warning">
-  <strong>Input:</strong> GSE ID, optional: *colCOPD* is the column name in which 
-  the information of disease status can be found, *coeff* showed results of 
-  contrast #
-  <strong>Output:</strong> Table of differential expression results with all
-  genes 
-</div>
+### **DE**: Differential expression analysis
 
 Using this funtion, we get a table with differential expression gene results using
 `limma` package for fitting a linear model to get genes differentially expressed
 between a "Control" and a "COPD" group. 
+
+<div class="alert alert-warning">
+  <strong>Input:</strong> GSE ID, optional: *colCOPD* is the column name in which 
+  the information of disease status can be found, *coeff* will show results of 
+  contrast with coeffitient found in possiton 2   
+  <strong>Output:</strong> Table of differential expression results with all
+  genes 
+</div>
+
 
 ```{r DE}
 DE <- function(ExpressionSet,colCOPD="Disease",coeff= 2){
@@ -241,6 +243,10 @@ DE <- function(ExpressionSet,colCOPD="Disease",coeff= 2){
 ## Analysis per experiment 
 
 ### `r rownames(gse_table)[1] `
+
+This experiment evaluates gene expression profiles of emphysema using “usual” emphysema and Alpha-1 Antitrypsin Deficiency-related emphysema (AAD). As a control group, authors used normal lung tissue from “organs donated for transplant, but unused due to age or size mismatch”, non of those individuals were smokers or reported clinical airflow limitation.
+
+This study showed that inflammation, immune responses, and proteolysis are emphysema characteristics. They also found similarities and differences between AAD and “usual” emphysema.
 
 #### Pre-process raw data
 
@@ -266,13 +272,14 @@ geo1 <- get_GEO(gse1,norm1)
 
 #### Select column with COPD description
 
-Each experiment has its own annotation and we need to look for a column 
+Each experiment has its own annotation and we needed to look for a column 
 describing which sample is a "Control" and which one is 
 "COPD". 
 
+Here, the authors measured 15 lung samples, 5 controls, 5 “usual” emphysema and 5 AAD emphysema. The raw data is in cel files, the platform used is [Hu6800] Affymetrix. The study was perfomed in Colorado, USA.
+
 ```{r}
 head(pData(geo1))
-table(pData(geo1)$description)
 ```
 
 Names will be different but it is **important** to check that "Control" group
@@ -281,6 +288,7 @@ is the first level. If need it re-level groups.
 ```{r class.source="bg-danger"}
 pData(geo1)["Disease"] <- factor(pData(geo1)[,"description"],levels = c("Normal lung","'usual' emphysemic lung","Alpha-1 Antitrypsin Deficiency-related emphysemic lung"))
 
+table(pData(geo1)$Disease)
 ```
 
 #### Differential expression analysis
@@ -302,13 +310,86 @@ write_csv(de1,
 ```
 
 
+### `r rownames(gse_table)[2] `
+
+Emphysema gene expression was measured using sever, mildly and non emphysema lung tissue. The authors separate samples in two groups, 18 sever and 12 mildly/non emphysema because the limited sample size (7 mildly, 5 non emphysema). From control group, 9 tissues were obtained from smokers with nodules suspicious for lung cancer.
+
+The results of this study shows oxidative stress, extracellular matrix synthesis, and inflammation pathways overexpressed in severe emphysema, whereas endothelium-related was decreased.
+
+#### Pre-process raw data
+
+We pre-processed raw data using the function `rawCEL_normCEL`, plots will be 
+shown as additional output.
+
+```{r}
+gse2<- rownames(gse_table)[2] 
+norm2 <- rawCEL_normCEL(gse2)
+norm2
+```
+
+#### Get annotation 
+
+We used `GEOquery` package to obtain sample annotations and our previous 
+calculated pre-processed values to create an `ExpressionSet` object.
+
+```{r}
+# get annotation using GEOquery package
+geo2 <- get_GEO(gse2,norm2)
+
+```
+
+#### Select column with COPD description
+
+Each experiment has its own annotation and we need to look for a column 
+describing which sample is a "Control" and which one is 
+"COPD". 
+
+The authors didn’t annotate samples individually, the meta information is not available. We assumed that N refers to controls and L to sever emphysema, unfortunately, we can’t separate mildly and non emphysema because of the lack of infomation.
+
+Raw data is in cel files, the platform used is [HG-U133A] Affymetrix. The study was perfomed in Boston, USA (Boston University Medical Center).
+
+```{r}
+head(pData(geo2))
+```
+
+Names will be different but it is **important** to check that "Control" group
+is the first level. If need it re-level groups.
+
+```{r class.source="bg-danger"}
+pData(geo2)["Disease"] <- str_count(as.character(pData(qGSE[[2]][[1]])[,"title"]),"L")
+table(pData(geo2)$Disease)
+
+```
+
+#### Differential expression analysis
+
+Using `DE()` function (described above), we performed a lineal regression model 
+to calculate the logarithm fold change of all genes between a "Control" and a
+"COPD" group. We also rename colnames adding the GSE ID at the end and finally, 
+we save the output in a `.CSV` file. 
+
+```{r}
+de2 <- DE(geo2)
+
+colnames(de2) <- str_c(colnames(de2),"_",gse2)
+colnames(de2)
+
+write_csv(de1,
+          path=str_c(OUTPUT_DIR,"/TableGenes_",gse2,"_",TODAY,".csv")
+          )
+```
+
+
+
+
 ## Output
 
 This script produces the following data, and can be found in `r getwd() ` 
 
 <div class="alert alert-success">
-  <strong>Figure 1:</strong> Boxplot of samples  
-  <strong>Figure 2:</strong> Heatmap of COPD patients 
+  <strong>Tables with DE results:</strong> Tables with log fold change and p-values 
+  calculated   
+  <strong>Table of merged results:</strong> Table with all DE results 
 </div>
 
 ## Session Info
