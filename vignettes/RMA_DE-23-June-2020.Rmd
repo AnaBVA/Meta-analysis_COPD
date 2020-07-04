@@ -457,6 +457,76 @@ write_csv(de3,
 
 
 
+## `r rownames(gse_table)[4] `
+
+The aim of this experiment was to identify genes deferential regulated between Normal and COPD lungs. They used two control group, one smokers and another one non smokers.
+
+The experiment doesn’t have a related article but these two (https://www.sciencedirect.com/science/article/pii/S1094553910001240?via%3Dihub#fig5 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4022517/) describe a very similar design and have one of the contact contributors from the GEO experiment.
+
+There are 9 non smokers, 11 smokers and 18 COPD lung tissue, but no more information is available or traceable about the samples.
+
+### Pre-process raw data
+
+We pre-processed raw data using the function `rawCEL_normCEL`, plots will be 
+shown as additional output.
+
+```{r 4}
+gse4<- rownames(gse_table)[4] 
+norm4 <- rawCEL_normCEL(gse4)
+norm4
+```
+
+
+### Get annotation 
+
+We used `GEOquery` package to obtain sample annotations and our previous 
+calculated pre-processed values to create an `ExpressionSet` object.
+
+```{r}
+# get annotation using GEOquery package
+geo4 <- get_GEO(gse4,norm4)
+
+```
+
+### Select column with COPD description
+
+Each experiment has its own annotation and we needed to look for a column 
+describing which sample is a "Control" and which one is 
+"COPD". 
+
+```{r}
+head(pData(geo4))
+```
+
+Names will be different but it is **important** to check that "Control" group
+is the first level. If need it re-level groups.
+
+```{r class.source="bg-danger",class.output="bg-danger" }
+pData(geo4)["Disease"] <- factor(pData(geo4)[,"phenotype:ch1"])
+
+table(pData(geo4)$Disease)
+```
+
+### Differential expression analysis
+
+Using `DE()` function (described above), we performed a lineal regression model 
+to calculate the logarithm fold change of all genes between a "Control" and a
+"COPD" group. We also rename colnames adding the GSE ID at the end and finally, 
+we save the output in a `.CSV` file. 
+
+```{r}
+de4 <- DE(geo4)
+
+colnames(de4) <- str_c(colnames(de4),"_",gse4)
+colnames(de4)
+
+write_csv(de4,
+          path=str_c(OUTPUT_DIR,"/TableGenes_",gse4,"_",TODAY,".csv")
+          )
+```
+
+
+
 ## Output
 
 This script produces the following data, and can be found in `r getwd() ` 
