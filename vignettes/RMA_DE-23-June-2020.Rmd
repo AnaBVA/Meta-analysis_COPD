@@ -187,11 +187,15 @@ pre-processed data.
 
 
 ```{r get_GEO}
-get_GEO <- function(gse,norm){
+get_GEO <- function(gse,i=1,norm){
   qx <- getGEO(gse)
   message("Data downloaded from GEOquery:")
   print(qx)
-  qx <- qx[[1]]
+  if (length(qx) == 1) {
+    qx <- qx[[1]]
+  } else{
+    qx <- qx[i][[1]]
+  }
   message("Colnames of GEOquery object:")
   print(colnames(qx)[1:5])
   message("Colnames of calculated pre-processed data:")
@@ -410,7 +414,7 @@ calculated pre-processed values to create an `ExpressionSet` object.
 
 ```{r}
 # get annotation using GEOquery package
-geo3 <- get_GEO(gse3,norm3)
+geo3 <- get_GEO(gse3,i=2,norm3)
 
 ```
 
