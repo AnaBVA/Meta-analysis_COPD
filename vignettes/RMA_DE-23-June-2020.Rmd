@@ -151,9 +151,9 @@ rawCEL_normCEL <- function(gse){
   #### Figures of raw data
   #pdf(str_c("raw_",gse,"_boxplot",TODAY,".pdf"))
   ## boxplot of raw data
-  boxplot(rawData)
+  boxplot(rawData,target="core")
   ## hist of raw data
-  hist(rawData)
+  hist(rawData,target="core")
   #dev.off()
   ## RMA normalization
   normData <- rma(rawData)
@@ -259,6 +259,7 @@ gse1<- rownames(gse_table)[1]
 norm1 <- rawCEL_normCEL(gse1)
 norm1
 ```
+
 
 ### Get annotation 
 
