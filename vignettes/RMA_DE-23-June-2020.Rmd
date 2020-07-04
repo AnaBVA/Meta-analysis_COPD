@@ -321,7 +321,7 @@ The results of this study shows oxidative stress, extracellular matrix synthesis
 We pre-processed raw data using the function `rawCEL_normCEL`, plots will be 
 shown as additional output.
 
-```{r}
+```{r }
 gse2<- rownames(gse_table)[2] 
 norm2 <- rawCEL_normCEL(gse2)
 norm2
@@ -356,7 +356,7 @@ Names will be different but it is **important** to check that "Control" group
 is the first level. If need it re-level groups.
 
 ```{r class.source="bg-danger"}
-pData(geo2)["Disease"] <- str_count(as.character(pData(qGSE[[2]][[1]])[,"title"]),"L")
+pData(geo2)["Disease"] <- str_count(as.character(pData(geo2)[,"title"]),"L")
 table(pData(geo2)$Disease)
 
 ```
@@ -374,7 +374,7 @@ de2 <- DE(geo2)
 colnames(de2) <- str_c(colnames(de2),"_",gse2)
 colnames(de2)
 
-write_csv(de1,
+write_csv(de2,
           path=str_c(OUTPUT_DIR,"/TableGenes_",gse2,"_",TODAY,".csv")
           )
 ```
