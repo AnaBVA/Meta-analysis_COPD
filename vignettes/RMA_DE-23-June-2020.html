@@ -11,7 +11,7 @@
 
 <meta name="author" content="Ana BVA" />
 
-<meta name="date" content="2020-06-24" />
+<meta name="date" content="2020-07-04" />
 
 <title>Pre-processing and differential gene expression analysis of RAW data</title>
 
@@ -1512,7 +1512,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Pre-processing and differential gene expression analysis of RAW data</h1>
 <h4 class="author">Ana BVA</h4>
-<h4 class="date">24 June 2020</h4>
+<h4 class="date">4 July 2020</h4>
 
 </div>
 
@@ -1540,31 +1540,47 @@ div.tocify {
 <div id="input" class="section level2">
 <h2>Input</h2>
 <p>This script needs the following files:</p>
-<div class="alert alert-warning">
+<div class="alert alert-success">
 <p><strong>Data 1:</strong> Matrix of normalized experiments<br />
 <strong>Data 2:</strong> Meta data</p>
 </div>
 <div id="setup" class="section level3">
 <h3>Setup</h3>
+<style type="text/css">
+pre, code {white-space:pre !important; overflow-x:auto}
+</style>
+<p>All the data has already been downloaded in the cluster <em>10.200.0.42</em>, for accessing:</p>
+<pre class="bash"><code>ssh ana@10.200.0.42
+
+cd /home/ana/R/Meta-analysis_COPD</code></pre>
+<p>For running the script, type:</p>
+<pre class="bash"><code>R -e &quot;rmarkdown::render('vignettes/RMA_DE-23-June-2020.Rmd')&quot;</code></pre>
 <p>The script can be found in: /Users/user/Documents/Doctorado/Analysis/Meta-analysis_COPD/vignettes</p>
-<pre class="r"><code>setwd(&quot;..&quot;)
+<pre class="r bg-info"><code>setwd(&quot;..&quot;)
 PATH = getwd()
 DATA_DIR = file.path(PATH,&quot;data&quot;)
 OUTPUT_DIR = file.path(PATH,&quot;output_data&quot;)
 FIG_DIR = file.path(PATH,&quot;fig&quot;)
+TODAY = Sys.Date()
 
-knitr::opts_knit$set(root.dir = PATH)</code></pre>
-<p>And this analysis is run in: /Users/user/Documents/Doctorado/Analysis/Meta-analysis_COPD</p>
+knitr::opts_knit$set(root.dir = PATH)
+knitr::opts_chunk$set(echo = TRUE)</code></pre>
+<p>And the analysis is run in: /Users/user/Documents/Doctorado/Analysis/Meta-analysis_COPD</p>
 </div>
 <div id="libraries" class="section level3">
 <h3>Libraries</h3>
-<pre class="r"><code>library(knitr) </code></pre>
+<pre class="r"><code>library(knitr) 
+library(oligo)
+library(tidyverse)
+library(limma)
+library(SummarizedExperiment)
+library(GEOquery)</code></pre>
 </div>
 <div id="experiments" class="section level3">
 <h3>Experiments</h3>
 <p>We selected 7 experiments that are in PulmonDB and are lung samples from COPD patients and that also have a control group to compare. These experiments are described in the following table:</p>
-<pre class="r"><code>gse &lt;- read.csv(file.path(DATA_DIR,&quot;GSE_table.csv&quot;), row.names = 1)
-kable(gse, caption = &quot;GSE information&quot;)</code></pre>
+<pre class="r"><code>gse_table &lt;- read.csv(file.path(DATA_DIR,&quot;GSE_table.csv&quot;), row.names = 1)
+kable(gse_table, caption = &quot;GSE information&quot;)</code></pre>
 <table>
 <caption>GSE information</caption>
 <thead>
@@ -1636,15 +1652,120 @@ kable(gse, caption = &quot;GSE information&quot;)</code></pre>
 </tr>
 </tbody>
 </table>
+<p>The experiment <strong>GSE57148</strong> is a RNA-seq experiment, and we do not need to normalize the data using RMA but we will download counts from <a href="https://jhubiostatistics.shinyapps.io/recount/">ReCount2</a>.</p>
 </div>
 </div>
 <div id="analysis" class="section level2">
 <h2>Analysis</h2>
-<div id="step-1" class="section level3">
-<h3>STEP 1</h3>
+<div id="local-functions" class="section level3">
+<h3>Local functions</h3>
+<div id="rawcel_normcel-pre-process-raw-data" class="section level4">
+<h4><strong>rawCEL_normCEL</strong>: Pre-process raw data</h4>
+<p>In this function you need:</p>
+<div class="alert alert-warning">
+<p><strong>Input:</strong> GSE ID<br />
+<strong>Output:</strong> Samples normalized, boxplots and histograms from raw and normalized data</p>
 </div>
-<div id="step-2" class="section level3">
-<h3>STEP 2</h3>
+<p>We first read and pre-process raw <em>.CEL</em> files. Each experiment has it own folder with raw data per sample. Then we normalized using RMA algorithm and finally, we save it in a <em>.CSV</em> file.</p>
+<pre class="r"><code>rawCEL_normCEL &lt;- function(gse){
+  # select CEL files
+  celfiles &lt;- list.celfiles(file.path(DATA_DIR,&quot;celfiles&quot;,gse), full.names=TRUE,listGzipped=TRUE)
+  # read CEL files in R
+  rawData &lt;- read.celfiles(celfiles)
+  #### Figures of raw data
+  #pdf(str_c(&quot;raw_&quot;,gse,&quot;_boxplot&quot;,TODAY,&quot;.pdf&quot;))
+  ## boxplot of raw data
+  boxplot(rawData)
+  ## hist of raw data
+  hist(rawData)
+  #dev.off()
+  ## RMA normalization
+  normData &lt;- rma(rawData)
+  #### Figures of Normalized data
+  #pdf(str_c(&quot;norm_&quot;,gse,&quot;_boxplot&quot;,TODAY,&quot;.pdf&quot;))
+  ## boxplot of norm data
+  boxplot(normData)
+  ## hist of norm data
+  hist(normData)
+  # dev.off()
+  #write.csv(exprs(normData),str_c(OUTPUT_DIR,&quot;/&quot;,gse,&quot;_normData&quot;,TODAY,&quot;.txt&quot;),quote=F)
+  return(normData)
+}
+
+#sapply(tissue,rawCEL_normCEL)</code></pre>
+</div>
+<div id="del-differential-expression-analysis" class="section level4">
+<h4><strong>DEL</strong>: Differential expression analysis</h4>
+<div class="alert alert-warning">
+<p><strong>Input:</strong> GSE ID, optional: <em>colCOPD</em> is the column name in which the information of disease status can be found, <em>coeff</em> showed results of contrast # <strong>Output:</strong> Table of differential expression results with all genes</p>
+</div>
+<pre class="r"><code>DE &lt;- function(ExpressionSet,colCOPD=&quot;Disease&quot;,coeff= 2){
+     # it creates the design matrix and performs limma
+     fit &lt;- lmFit(ExpressionSet, model.matrix(as.formula(paste(&quot;~ 1 +&quot;, colCOPD)),
+                                              data = pData(ExpressionSet)))
+     # eBayes in lmFit model
+     ebf &lt;- eBayes(fit)
+     print(colnames(coef(fit)))
+     # It gets the genes with the p-values
+     res &lt;- topTable(ebf, number = Inf, p.value = 1, coef = coeff,confint=T)
+     # It formats in a tibble
+     res &lt;- as_tibble(res,rownames=&quot;rownames&quot;)
+}</code></pre>
+</div>
+</div>
+<div id="analysis-per-experiment" class="section level3">
+<h3>Analysis per experiment</h3>
+<div id="gse1122" class="section level4">
+<h4>GSE1122</h4>
+<pre class="r"><code>gse1&lt;- rownames(gse_table)[1] 
+norm1 &lt;- rawCEL_normCEL(gse1)
+# get annotation using GEOquery package
+qx1 &lt;- getGEO(gse1)
+qx1 &lt;- qx1[[1]]
+qx1
+exprs(qx1)[1:3,1:3]
+exprs(norm1)[1:3,1:3]
+# Rename sample columns (Change GSM18403.CEL.gz to GSM18403)
+# sort(colnames(norm1))
+colnames(norm1) = colnames(qx1)
+exprs(norm1)[1:3,1:3]
+exprs(qx1) &lt;- exprs(norm1)
+
+head(pData(qx1))
+table(pData(qx1)$description)
+pData(qx1)[&quot;Disease&quot;] &lt;- factor(pData(qx1)[,&quot;description&quot;],levels = c(&quot;Normal lung&quot;,&quot;'usual' emphysemic lung&quot;,&quot;Alpha-1 Antitrypsin Deficiency-related emphysemic lung&quot;))
+
+de1 &lt;- DE(qx1)
+
+colnames(de1) &lt;- str_c(colnames(de1),&quot;_&quot;,gse1)
+colnames(de1)
+
+write_csv(de1,
+          path=str_c(OUTPUT_DIR,&quot;/TableGenes_&quot;,gse1,&quot;_&quot;,TODAY,&quot;.csv&quot;)
+          )</code></pre>
+<pre class="r"><code>qx &lt;- getGEO(&quot;GSE1122&quot;)
+qx &lt;- qx[[1]]
+exprs(qx)[1:3,1:3]</code></pre>
+<pre class="r"><code># Rename sample columns (Change GSM18403.CEL.gz to GSM18403)
+colnames(cel) = colnames(qx)
+exprs(qx) &lt;- exprs(cel)</code></pre>
+<pre class="r"><code># Find the column 
+head(pData(qx))
+table(pData(qx1)$description)
+# Categories 
+levels(pData(qx)$description)</code></pre>
+<pre class="r"><code>pData(qx)[&quot;Disease&quot;] &lt;- factor(pData(qx)[,&quot;description&quot;],levels = c(&quot;Normal lung&quot;,&quot;'usual' emphysemic lung&quot;,&quot;Alpha-1 Antitrypsin Deficiency-related emphysemic lung&quot;))
+
+
+met &lt;-  pData(qx1)]
+
+met$Disease &lt;- NA
+met$Disease[which(pData(qx1)$description == &quot;Normal lung&quot;)] &lt;- &quot;Control&quot;
+met$Disease[which(pData(qx1)$description != &quot;Normal lung&quot;)] &lt;- &quot;COPD&quot;
+
+levels(pData(qx)$Disease)
+TopGenes &lt;- DE(qx)</code></pre>
+</div>
 </div>
 </div>
 <div id="output" class="section level2">
@@ -1658,7 +1779,7 @@ kable(gse, caption = &quot;GSE information&quot;)</code></pre>
 <div id="session-info" class="section level2">
 <h2>Session Info</h2>
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>## R version 3.6.0 (2019-04-26)
+<pre style="max-height: 500px;"><code>## R version 3.6.0 (2019-04-26)
 ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
 ## Running under: macOS  10.15.5
 ## 
@@ -1670,18 +1791,49 @@ kable(gse, caption = &quot;GSE information&quot;)</code></pre>
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] stats4    parallel  stats     graphics  grDevices utils     datasets 
+## [8] methods   base     
 ## 
 ## other attached packages:
-## [1] knitr_1.28
+##  [1] GEOquery_2.54.1             SummarizedExperiment_1.16.1
+##  [3] DelayedArray_0.12.3         BiocParallel_1.20.1        
+##  [5] matrixStats_0.56.0          GenomicRanges_1.38.0       
+##  [7] GenomeInfoDb_1.22.1         limma_3.42.2               
+##  [9] forcats_0.5.0               stringr_1.4.0              
+## [11] dplyr_1.0.0                 purrr_0.3.4                
+## [13] readr_1.3.1                 tidyr_1.1.0                
+## [15] tibble_3.0.1                ggplot2_3.3.1              
+## [17] tidyverse_1.3.0             oligo_1.50.0               
+## [19] Biostrings_2.54.0           XVector_0.26.0             
+## [21] IRanges_2.20.2              S4Vectors_0.24.4           
+## [23] Biobase_2.46.0              oligoClasses_1.48.0        
+## [25] BiocGenerics_0.32.0         knitr_1.28                 
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] BiocManager_1.30.10 compiler_3.6.0      BiocStyle_2.14.4   
-##  [4] magrittr_1.5        tools_3.6.0         htmltools_0.4.0    
-##  [7] yaml_2.2.1          Rcpp_1.0.4.6        stringi_1.4.6      
-## [10] rmarkdown_2.2       highr_0.8           stringr_1.4.0      
-## [13] xfun_0.14           digest_0.6.25       rlang_0.4.6        
-## [16] evaluate_0.14</code></pre>
+##  [1] nlme_3.1-148           bitops_1.0-6           fs_1.4.1              
+##  [4] lubridate_1.7.8        bit64_0.9-7            httr_1.4.1            
+##  [7] tools_3.6.0            backports_1.1.7        R6_2.4.1              
+## [10] affyio_1.56.0          DBI_1.1.0              colorspace_1.4-1      
+## [13] withr_2.2.0            tidyselect_1.1.0       bit_1.1-15.2          
+## [16] compiler_3.6.0         preprocessCore_1.48.0  cli_2.0.2             
+## [19] rvest_0.3.5            xml2_1.3.2             scales_1.1.1          
+## [22] digest_0.6.25          rmarkdown_2.2          pkgconfig_2.0.3       
+## [25] htmltools_0.4.0        highr_0.8              dbplyr_1.4.4          
+## [28] rlang_0.4.6            readxl_1.3.1           rstudioapi_0.11       
+## [31] RSQLite_2.2.0          generics_0.0.2         jsonlite_1.6.1        
+## [34] RCurl_1.98-1.2         magrittr_1.5           GenomeInfoDbData_1.2.2
+## [37] Matrix_1.2-18          fansi_0.4.1            Rcpp_1.0.4.6          
+## [40] munsell_0.5.0          lifecycle_0.2.0        stringi_1.4.6         
+## [43] yaml_2.2.1             zlibbioc_1.32.0        grid_3.6.0            
+## [46] affxparser_1.58.0      blob_1.2.1             crayon_1.3.4          
+## [49] lattice_0.20-41        haven_2.3.1            splines_3.6.0         
+## [52] hms_0.5.3              pillar_1.4.4           codetools_0.2-16      
+## [55] reprex_0.3.0           glue_1.4.1             evaluate_0.14         
+## [58] BiocManager_1.30.10    modelr_0.1.8           vctrs_0.3.1           
+## [61] foreach_1.5.0          cellranger_1.1.0       gtable_0.3.0          
+## [64] assertthat_0.2.1       xfun_0.14              broom_0.5.6           
+## [67] ff_2.2-14.2            iterators_1.0.12       memoise_1.1.0         
+## [70] ellipsis_0.3.1         BiocStyle_2.14.4</code></pre>
 </div>
 
 
