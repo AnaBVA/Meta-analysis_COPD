@@ -6,6 +6,7 @@ output:
   html_document:
     toc: true
     toc_float: true
+    code_folding: hide
 editor_options: 
   chunk_output_type: console
 ---
@@ -124,11 +125,9 @@ The experiment **GSE57148** is a RNA-seq experiment, and we do not need to norma
 the data using RMA but we will download counts from [ReCount2](https://jhubiostatistics.shinyapps.io/recount/).
 
 
-## Analysis
+## Local functions
 
-### Local functions
-
-#### **rawCEL_normCEL**: Pre-process raw data
+### **rawCEL_normCEL**: Pre-process raw data
 
 In this function you need:
 
@@ -174,7 +173,7 @@ rawCEL_normCEL <- function(gse){
 ```
 
 
-#### **get_GEO**: get annotation using GEOquery package
+### **get_GEO**: get annotation using GEOquery package
 
 <div class="alert alert-warning">
   <strong>Input:</strong> GSE ID, *norm* object with pre-processed values
@@ -208,7 +207,7 @@ get_GEO <- function(gse,norm){
 
 
 
-#### **DEL**: Differential expression analysis
+### **DEL**: Differential expression analysis
 
 <div class="alert alert-warning">
   <strong>Input:</strong> GSE ID, optional: *colCOPD* is the column name in which 
@@ -239,12 +238,11 @@ DE <- function(ExpressionSet,colCOPD="Disease",coeff= 2){
 ```
 
 
+## Analysis per experiment 
 
-### Analysis per experiment 
+### `r rownames(gse_table)[1] `
 
-#### `r rownames(gse_table)[1] `
-
-##### Pre-process raw data
+#### Pre-process raw data
 
 We pre-processed raw data using the function `rawCEL_normCEL`, plots will be 
 shown as additional output.
@@ -255,7 +253,7 @@ norm1 <- rawCEL_normCEL(gse1)
 norm1
 ```
 
-##### Get annotation 
+#### Get annotation 
 
 We used `GEOquery` package to obtain sample annotations and our previous 
 calculated pre-processed values to create an `ExpressionSet` object.
@@ -266,7 +264,7 @@ geo1 <- get_GEO(gse1,norm1)
 
 ```
 
-##### Select column with COPD description
+#### Select column with COPD description
 
 Each experiment has its own annotation and we need to look for a column 
 describing which sample is a "Control" and which one is 
@@ -280,12 +278,12 @@ table(pData(geo1)$description)
 Names will be different but it is **important** to check that "Control" group
 is the first level. If need it re-level groups.
 
-```{r}
+```{r class.source="bg-danger"}
 pData(geo1)["Disease"] <- factor(pData(geo1)[,"description"],levels = c("Normal lung","'usual' emphysemic lung","Alpha-1 Antitrypsin Deficiency-related emphysemic lung"))
 
 ```
 
-##### Differential expression analysis
+#### Differential expression analysis
 
 Using `DE()` function (described above), we performed a lineal regression model 
 to calculate the logarithm fold change of all genes between a "Control" and a
