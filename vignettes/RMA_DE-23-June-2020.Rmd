@@ -51,7 +51,7 @@ We want to pre-process and re-analyze transcriptomic experiments from [GEO](http
 
 This script needs the following files:
 
-<div class="alert alert-warning">
+<div class="alert alert-success">
   <strong>Data 1:</strong> Matrix of normalized experiments  
   <strong>Data 2:</strong> Meta data 
 </div>
@@ -59,24 +59,53 @@ This script needs the following files:
 
 ### Setup
 
+```{css, echo=FALSE}
+pre, code {white-space:pre !important; overflow-x:auto}
+```
+
+All the data has already been downloaded in the cluster *10.200.0.42*, for 
+accessing:
+
+```{bash, eval=F}
+ssh ana@10.200.0.42
+
+cd /home/ana/R/Meta-analysis_COPD
+```
+
+
+For running the script, type:
+
+```{bash, eval= F}
+R -e "rmarkdown::render('vignettes/RMA_DE-23-June-2020.Rmd')"
+```
+
+
 The script can be found in: `r getwd() `
 
-```{r setup}
+
+```{r setup, class.source="bg-info"}
 setwd("..")
 PATH = getwd()
 DATA_DIR = file.path(PATH,"data")
 OUTPUT_DIR = file.path(PATH,"output_data")
 FIG_DIR = file.path(PATH,"fig")
+TODAY = Sys.Date()
 
 knitr::opts_knit$set(root.dir = PATH)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
-And this analysis is run in: `r getwd() `
+And the analysis is run in: `r getwd() `
 
 ### Libraries
 
 ```{r libraries, message=FALSE, warning=FALSE}
 library(knitr) 
+library(oligo)
+library(tidyverse)
+library(limma)
+library(SummarizedExperiment)
+library(GEOquery)
 ```
 
 ### Experiments
@@ -87,16 +116,193 @@ in the following table:
 
 
 ```{r experiments}
-gse <- read.csv(file.path(DATA_DIR,"GSE_table.csv"), row.names = 1)
-kable(gse, caption = "GSE information")
+gse_table <- read.csv(file.path(DATA_DIR,"GSE_table.csv"), row.names = 1)
+kable(gse_table, caption = "GSE information")
 ```
+
+The experiment **GSE57148** is a RNA-seq experiment, and we do not need to normalize
+the data using RMA but we will download counts from [ReCount2](https://jhubiostatistics.shinyapps.io/recount/).
 
 
 ## Analysis
 
-### STEP 1
+### Local functions
 
-### STEP 2
+#### **rawCEL_normCEL**: Pre-process raw data
+
+In this function you need:
+
+<div class="alert alert-warning">
+  <strong>Input:</strong> GSE ID   
+  <strong>Output:</strong> Samples normalized, boxplots and histograms from raw and normalized data 
+</div>
+
+
+We first read and pre-process raw *.CEL* files. Each experiment has it own 
+folder with raw data per sample. Then we normalized using RMA algorithm and 
+finally, we save it in a *.CSV* file. 
+
+
+```{r rawCEL_normCEL}
+rawCEL_normCEL <- function(gse){
+  # select CEL files
+  celfiles <- list.celfiles(file.path(DATA_DIR,"celfiles",gse), full.names=TRUE,listGzipped=TRUE)
+  # read CEL files in R
+  rawData <- read.celfiles(celfiles)
+  #### Figures of raw data
+  #pdf(str_c("raw_",gse,"_boxplot",TODAY,".pdf"))
+  ## boxplot of raw data
+  boxplot(rawData)
+  ## hist of raw data
+  hist(rawData)
+  #dev.off()
+  ## RMA normalization
+  normData <- rma(rawData)
+  #### Figures of Normalized data
+  #pdf(str_c("norm_",gse,"_boxplot",TODAY,".pdf"))
+  ## boxplot of norm data
+  boxplot(normData)
+  ## hist of norm data
+  hist(normData)
+  # dev.off()
+  #write.csv(exprs(normData),str_c(OUTPUT_DIR,"/",gse,"_normData",TODAY,".txt"),quote=F)
+  return(normData)
+}
+
+#sapply(tissue,rawCEL_normCEL)
+
+```
+
+
+#### **get_GEO**: get annotation using GEOquery package
+
+<div class="alert alert-warning">
+  <strong>Input:</strong> GSE ID, *norm* object with pre-processed values
+  <strong>Output:</strong> ExpressionSet object with GEOquery annotation and 
+  pre-processed values
+</div>
+
+This function download the `ExpressionSet` object from `GEOquery` that has 
+the sample annotations, then we replace the expression values with our calculated
+pre-processed data. 
+
+```{r get_GEO}
+get_GEO <- function(gse,norm){
+  qx <- getGEO(gse)
+  message("Data downloaded from GEOquery:")
+  print(qx)
+  qx <- qx[[1]]
+  message("Colnames of GEOquery object:")
+  print(colnames(qx)[1:5])
+  message("Colnames of calculated pre-processed data:")
+  print(colnames(norm)[1:5])
+  # Rename sample columns (Change GSM18403.CEL.gz to GSM18403)
+  # sort(colnames(norm1))
+  colnames(norm) = colnames(qx)
+  exprs(norm)[1:3,1:3]
+  exprs(qx) <- exprs(norm)
+  return(qx)
+}
+
+```
+
+
+
+#### **DEL**: Differential expression analysis
+
+<div class="alert alert-warning">
+  <strong>Input:</strong> GSE ID, optional: *colCOPD* is the column name in which 
+  the information of disease status can be found, *coeff* showed results of 
+  contrast #
+  <strong>Output:</strong> Table of differential expression results with all
+  genes 
+</div>
+
+Using this funtion, we get a table with differential expression gene results using
+`limma` package for fitting a linear model to get genes differentially expressed
+between a "Control" and a "COPD" group. 
+
+```{r DE}
+DE <- function(ExpressionSet,colCOPD="Disease",coeff= 2){
+     # it creates the design matrix and performs limma
+     fit <- lmFit(ExpressionSet, model.matrix(as.formula(paste("~ 1 +", colCOPD)),
+                                              data = pData(ExpressionSet)))
+     # eBayes in lmFit model
+     ebf <- eBayes(fit)
+     print(colnames(coef(fit)))
+     # It gets the genes with the p-values
+     res <- topTable(ebf, number = Inf, p.value = 1, coef = coeff,confint=T)
+     # It formats in a tibble
+     res <- as_tibble(res,rownames="rownames")
+}
+
+```
+
+
+
+### Analysis per experiment 
+
+#### `r rownames(gse_table)[1] `
+
+##### Pre-process raw data
+
+We pre-processed raw data using the function `rawCEL_normCEL`, plots will be 
+shown as additional output.
+
+```{r}
+gse1<- rownames(gse_table)[1] 
+norm1 <- rawCEL_normCEL(gse1)
+norm1
+```
+
+##### Get annotation 
+
+We used `GEOquery` package to obtain sample annotations and our previous 
+calculated pre-processed values to create an `ExpressionSet` object.
+
+```{r}
+# get annotation using GEOquery package
+geo1 <- get_GEO(gse1,norm1)
+
+```
+
+##### Select column with COPD description
+
+Each experiment has its own annotation and we need to look for a column 
+describing which sample is a "Control" and which one is 
+"COPD". 
+
+```{r}
+head(pData(geo1))
+table(pData(geo1)$description)
+```
+
+Names will be different but it is **important** to check that "Control" group
+is the first level. If need it re-level groups.
+
+```{r}
+pData(geo1)["Disease"] <- factor(pData(geo1)[,"description"],levels = c("Normal lung","'usual' emphysemic lung","Alpha-1 Antitrypsin Deficiency-related emphysemic lung"))
+
+```
+
+##### Differential expression analysis
+
+Using `DE()` function (described above), we performed a lineal regression model 
+to calculate the logarithm fold change of all genes between a "Control" and a
+"COPD" group. We also rename colnames adding the GSE ID at the end and finally, 
+we save the output in a `.CSV` file. 
+
+```{r}
+de1 <- DE(geo1)
+
+colnames(de1) <- str_c(colnames(de1),"_",gse1)
+colnames(de1)
+
+write_csv(de1,
+          path=str_c(OUTPUT_DIR,"/TableGenes_",gse1,"_",TODAY,".csv")
+          )
+```
+
 
 ## Output
 
@@ -109,7 +315,7 @@ This script produces the following data, and can be found in `r getwd() `
 
 ## Session Info
 
-```{r sessionInfo}
+```{r sessionInfo, attr.output='style="max-height: 500px;"'}
 sessionInfo()
 ```
 
