@@ -236,6 +236,7 @@ DE <- function(ExpressionSet,colCOPD="Disease",coeff= 2){
      ebf <- eBayes(fit)
      print(colnames(coef(fit)))
      # It gets the genes with the p-values
+     volcanoplot(ebf,coef = coeff,highlight=20, pch=20)
      res <- topTable(ebf, number = Inf, p.value = 1, coef = coeff,confint=T)
      # It formats in a tibble
      res <- as_tibble(res,rownames="rownames")
