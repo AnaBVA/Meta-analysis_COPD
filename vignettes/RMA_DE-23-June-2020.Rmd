@@ -77,7 +77,7 @@ cd /home/ana/R/Meta-analysis_COPD
 For running the script, type:
 
 ```{bash, eval= F}
-R -e "rmarkdown::render('vignettes/RMA_DE-23-June-2020.Rmd')"
+nohup R -e "rmarkdown::render('vignettes/RMA_DE-23-June-2020.Rmd')" &
 ```
 
 
@@ -100,13 +100,28 @@ And the analysis is run in: `r getwd() `
 
 ### Libraries
 
+```{r libraries-install}
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+      install.packages("BiocManager")
+  }
+
+packages <- c("knitr",
+          "oligo",
+          "tidyverse",
+          "limma",
+          "SummarizedExperiment",
+          "GEOquery",
+          "recount")
+
+for(l in packages){
+  if (!requireNamespace(l, quietly = TRUE)) {
+    BiocManager::install(l)}
+}
+```
+
+
 ```{r libraries, message=FALSE, warning=FALSE}
-library(knitr) 
-library(oligo)
-library(tidyverse)
-library(limma)
-library(SummarizedExperiment)
-library(GEOquery)
+lapply(packages, library, character.only = TRUE)
 ```
 
 ### Experiments
@@ -526,6 +541,147 @@ write_csv(de4,
           )
 ```
 
+
+
+## `r rownames(gse_table)[6] `
+
+The authors measured lung tissue expression from 98 COPD patients and 91 controls with normal spirometry. They are all patients with cancer nodes, smokers and male.
+
+This experiment is RNAseq, the data will be download from Recount2. I’m following Recount2 vignette
+
+### Recount2 data
+
+We pre-processed raw data using the function `rawCEL_normCEL`, plots will be 
+shown as additional output.
+
+```{r 4}
+ ## Download data from Recount2
+ url <- download_study('SRP041538',outdir = DATA_DIR)
+ load(file.path('SRP041538', 'rse_gene.Rdata'))
+ rse_gene
+ 
+ ## Scale counts by taking into account the total coverage per sample
+ rse <- scale_counts(rse_gene)
+ rse
+ 
+ ## Extract the sample characteristics
+ geochar <- lapply(split(colData(rse_gene), seq_len(nrow(colData(rse_gene)))),  geo_characteristics)
+ 
+ geochar <- do.call(rbind, lapply(geochar, function(x) {
+     if('cells' %in% colnames(x)) {
+         colnames(x)[colnames(x) == 'cells'] <- 'cell.line'
+         return(x)
+     } else {
+         return(x)
+     }
+ }))
+ 
+ head(geochar)
+ 
+ ## Add sample information for DE analysis
+ colData(rse)$group <-factor(geochar$disease.state, levels = c("Normal","COPD"))
+ #write.csv(assay(rse),str_c("data/normData/","GSE57148","_normData.txt"),quote=F)
+ 
+ ## Specify design and switch to DESeq2 format
+ dds <- DESeqDataSet(rse, ~ group)
+ 
+ ## Perform DE analysis
+ dds <- DESeq(dds)
+ 
+ res <- results(dds)
+ res
+ 
+ ## Extract Gencode gene ids
+ gencode <- gsub('\\..*', '', names(recount_genes))
+ 
+## Find the gene information we are interested in
+gene_info <- AnnotationDbi::select(org.Hs.eg.db, gencode, c('SYMBOL', 'ENSEMBL'), 'ENSEMBL')
+
+r <- as_tibble(res, rownames="rownames")
+r$rownames <- gsub("\\..*","",r$rownames)
+r <- full_join(r,gene_info, by=c("rownames"="ENSEMBL")) 
+
+write.csv(r,"../ana42/topTable_GSE57148.csv", quote = F, row.names = F)
+```
+
+
+### Differential expression analysis
+
+
+
+```{r}
+
+```
+
+
+
+## `r rownames(gse_table)[7] `
+
+The experiment aims to find biomarkers to help in an early diagnotic. The authors used lung tissue, they had 18 smokers with nodules suspicious for lung cancer as a controls, and definded 15 COPD patients and 23 individuals that are in the middle. The criteria was COPD: COPD = FEV1<70%, FEV1/FVC<0.7 and for controls: FEV1 > 80% predicted and FEV1/FVC > 0.7.
+
+The authors measured data using [HG-U133_Plus_2] Affymetrix Human Genome U133 Plus 2.0 Array.
+
+In GEOquery annotation, we found 19 Controls, 16 COPD and 23 Unclassifed.
+
+### Pre-process raw data
+
+We pre-processed raw data using the function `rawCEL_normCEL`, plots will be 
+shown as additional output.
+
+```{r 1}
+gse7<- rownames(gse_table)[7] 
+norm7 <- rawCEL_normCEL(gse7)
+norm7
+```
+
+
+### Get annotation 
+
+We used `GEOquery` package to obtain sample annotations and our previous 
+calculated pre-processed values to create an `ExpressionSet` object.
+
+```{r}
+# get annotation using GEOquery package
+geo7 <- get_GEO(gse7,norm7)
+
+```
+
+### Select column with COPD description
+
+Each experiment has its own annotation and we needed to look for a column 
+describing which sample is a "Control" and which one is 
+"COPD". 
+
+```{r}
+head(pData(geo7))
+```
+
+Names will be different but it is **important** to check that "Control" group
+is the first level. If need it re-level groups.
+
+```{r class.source="bg-danger",class.output="bg-danger" }
+pData(geo7)["Disease"] <- factor(str_remove_all(pData(geo7)[,"title"], "[0-9]"))
+
+table(pData(geo7)$Disease)
+```
+
+### Differential expression analysis
+
+Using `DE()` function (described above), we performed a lineal regression model 
+to calculate the logarithm fold change of all genes between a "Control" and a
+"COPD" group. We also rename colnames adding the GSE ID at the end and finally, 
+we save the output in a `.CSV` file. 
+
+```{r}
+de7 <- DE(geo7,coeff = 3)
+
+colnames(de7) <- str_c(colnames(de7),"_",gse7)
+colnames(de7)
+
+write_csv(de7,
+          path=str_c(OUTPUT_DIR,"/TableGenes_",gse7,"_",TODAY,".csv")
+          )
+```
 
 
 ## Output
