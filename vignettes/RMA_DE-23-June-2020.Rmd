@@ -100,7 +100,7 @@ And the analysis is run in: `r getwd() `
 
 ### Libraries
 
-```{r libraries-install}
+```{r libraries-install,message=FALSE, warning=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
       install.packages("BiocManager")
   }
@@ -551,38 +551,58 @@ This experiment is RNAseq, the data will be download from Recount2. I’m follow
 
 ### Recount2 data
 
-We pre-processed raw data using the function `rawCEL_normCEL`, plots will be 
-shown as additional output.
+We downloaded counts from Recount2 
 
-```{r 4}
- ## Download data from Recount2
- url <- download_study('SRP041538',outdir = DATA_DIR)
- load(file.path('SRP041538', 'rse_gene.Rdata'))
- rse_gene
+```{r 6}
+gse6<- rownames(gse_table)[6] 
+
+## Download data from Recount2
+url <- download_study('SRP041538',outdir = DATA_DIR)
+load(file.path('SRP041538', 'rse_gene.Rdata'))
+rse_gene
+
+## Scale counts by taking into account the total coverage per sample
+rse <- scale_counts(rse_gene)
+rse
+```
+
+### Get annotation 
+
+Also sample annotation is taken from Recount following its [vignette](https://bioconductor.org/packages/release/bioc/vignettes/recount/inst/doc/recount-quickstart.html#1_basics).
+
+```{r 4 annotation} 
+## Sample annotation
+geochar <- lapply(split(colData(rse_gene), seq_len(nrow(colData(rse_gene)))),geo_characteristics)
+
+geochar <- do.call(rbind, lapply(geochar, function(x) {
+    if('cells' %in% colnames(x)) {
+        colnames(x)[colnames(x) == 'cells'] <- 'cell.line'
+        return(x)
+    } else {
+        return(x)
+    }
+}))
+
+head(geochar)
+```
  
- ## Scale counts by taking into account the total coverage per sample
- rse <- scale_counts(rse_gene)
- rse
- 
- ## Extract the sample characteristics
- geochar <- lapply(split(colData(rse_gene), seq_len(nrow(colData(rse_gene)))),  geo_characteristics)
- 
- geochar <- do.call(rbind, lapply(geochar, function(x) {
-     if('cells' %in% colnames(x)) {
-         colnames(x)[colnames(x) == 'cells'] <- 'cell.line'
-         return(x)
-     } else {
-         return(x)
-     }
- }))
- 
- head(geochar)
- 
- ## Add sample information for DE analysis
- colData(rse)$group <-factor(geochar$disease.state, levels = c("Normal","COPD"))
- #write.csv(assay(rse),str_c("data/normData/","GSE57148","_normData.txt"),quote=F)
- 
- ## Specify design and switch to DESeq2 format
+
+### Select column with COPD description
+
+Then, we select `disease.state` information for calculating a differential expression analysis. 
+
+```{r}
+## Add sample information for DE analysis
+colData(rse)$group <-factor(geochar$disease.state, levels = c("Normal","COPD"))
+#write.csv(assay(rse),str_c("data/normData/","GSE57148","_normData.txt"),quote=F)
+```
+
+### Differential expression analysis 
+
+Using `DESeq2`package we calculated DEG.  
+
+```{r}
+## Specify design and switch to DESeq2 format
  dds <- DESeqDataSet(rse, ~ group)
  
  ## Perform DE analysis
@@ -601,16 +621,8 @@ r <- as_tibble(res, rownames="rownames")
 r$rownames <- gsub("\\..*","",r$rownames)
 r <- full_join(r,gene_info, by=c("rownames"="ENSEMBL")) 
 
-write.csv(r,"../ana42/topTable_GSE57148.csv", quote = F, row.names = F)
-```
-
-
-### Differential expression analysis
-
-
-
-```{r}
-
+write.csv(r,
+          path=str_c(OUTPUT_DIR,"/TableGenes_",gse6,"_",TODAY,".csv"))
 ```
 
 
