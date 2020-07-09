@@ -598,6 +598,17 @@ head(t1)
 
 ```
 
+
+But we will need to download gene annotation from `GEOquery`
+
+
+```{r}
+gpl <- getGEO("GPL14550")
+gpl <- Table(gpl)
+head(gpl)
+```
+
+
 ### Pre-process raw data
 
 We first read files into R enviroment
@@ -614,7 +625,7 @@ dat1 = read.maimages(t1$file, path=file.path(DATA_DIR,"celfiles",gse5), source="
 Then we plot raw data (in this case, I'm not evaluating this chunk because it is 
 killing the renderization)
 
-```{r rawdata plots}
+```{r rawdata plots, eval=F}
 boxplot(dat1$E)
 hist(dat1$E)
 ```
@@ -671,6 +682,15 @@ coeff ="t1$disease.state.ch1Chronic Obstructive Lung Disease"
 res <- topTable(ebf, number = Inf, p.value = 1, coef = coeff,confint=T)
 
 volcanoplot(ebf,coef = coeff,highlight=20, pch=20)
+```
+
+Renaming columns and writing the table.
+
+```{r}
+res <- merge(res,gpl,by.x=0,by.y="ID")
+
+colnames(res) <- str_c(colnames(res),"_",gse5)
+colnames(res)
 
 write_csv(res,
           path=str_c(OUTPUT_DIR,"/TableGenes_",gse5,"_",TODAY,".csv")
@@ -743,6 +763,12 @@ Using `DESeq2`package we calculated DEG.
  dds <- DESeq(dds)
  
  res <- results(dds)
+ 
+ # Calculates de CI
+ res$error <- qnorm(0.975)*res$lfcSE
+ res$CI.L <- res$log2FoldChange-res$error
+ res$CI.R <- res$log2FoldChange+res$error
+ 
  res
  
  ## Extract Gencode gene ids
@@ -754,6 +780,10 @@ gene_info <- AnnotationDbi::select(org.Hs.eg.db, gencode, c('SYMBOL', 'ENSEMBL')
 r <- as_tibble(res, rownames="rownames")
 r$rownames <- gsub("\\..*","",r$rownames)
 r <- full_join(r,gene_info, by=c("rownames"="ENSEMBL")) 
+
+colnames(r) <- str_c(colnames(r),"_",gse6)
+colnames(r)
+
 
 write_csv(r,
           path=str_c(OUTPUT_DIR,"/TableGenes_",gse6,"_",TODAY,".csv"))
