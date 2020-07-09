@@ -53,8 +53,8 @@ We want to pre-process and re-analyze transcriptomic experiments from [GEO](http
 This script needs the following files:
 
 <div class="alert alert-success">
-  <strong>Data 1:</strong> Matrix of normalized experiments  
-  <strong>Data 2:</strong> Meta data 
+  <strong>Data 1:</strong> Table of GSE experiments   
+  <strong>Data 2:</strong> Raw data (.CEL, .TXT)
 </div>
 
 
@@ -595,7 +595,7 @@ head(t1)
 
 ### Pre-process raw data
 
-```{r}
+```{r 5 reading files}
 
 dat1 = read.maimages(t1$file, path=file.path(DATA_DIR,"celfiles",gse5), source="agilent.median", green.only=T,
     columns=list(G="gMedianSignal", Gb="gBGMedianSignal"),
@@ -605,6 +605,9 @@ dat1 = read.maimages(t1$file, path=file.path(DATA_DIR,"celfiles",gse5), source="
 boxplot(dat1$E)
 hist(dat1$E)
 
+```
+
+```{r 5 normalizing}
 dat1 <- backgroundCorrect(dat1, method="normexp", offset=1)
 dat1$E <- normalizeBetweenArrays(dat1$E, method="quantile")
 dat1$E <- log2(dat1$E)
@@ -641,7 +644,7 @@ to calculate the logarithm fold change of all genes between a "Control" and a
 "COPD" group. We also rename colnames adding the GSE ID at the end and finally, 
 we save the output in a `.CSV` file. 
 
-```{r}
+```{r 5 DE}
 fit <- lmFit(E.avg$A,  model.matrix(~1 + t1$disease.state.ch1))
 # eBayes in lmFit model
 ebf <- eBayes(fit)
