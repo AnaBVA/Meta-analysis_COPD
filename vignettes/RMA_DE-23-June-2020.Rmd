@@ -98,10 +98,10 @@ knitr::knit_hooks$set(timeit = local({
     if (before) {
       now <<- Sys.time()
     } else {
-      res = difftime(Sys.time(), now)
+      runtime = difftime(Sys.time(), now)
       now <<- NULL
       # use options$label if you want the chunk label as well
-      paste('Time for this code chunk:', as.character(res))
+      paste('Time for this code chunk:', as.character(runtime))
     }
   }})
 )
