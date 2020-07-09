@@ -28,19 +28,6 @@ Each platform has different gene ids that are not comparable so we will use
 gene symbol annotation (i.e. MMP8, AHR) as reference to join all results.
 
 
-### Experiments
-
-We selected 7 experiments that are in PulmonDB and are lung samples from COPD patients 
-and that also have a control group to compare. These experiments are described 
-in the following table:
-
-
-```{r experiments}
-gse_table <- read.csv(file.path(DATA_DIR,"GSE_table.csv"), row.names = 1)
-kable(gse_table, caption = "GSE information")
-```
-
-
 ## Input
 
 This script needs the following files:
@@ -89,6 +76,18 @@ And this analysis is run in: `r getwd() `
 
 ```{r libraries, message=FALSE, warning=FALSE}
 library(tidyverse)
+```
+
+### Experiments
+
+We selected 7 experiments that are in PulmonDB and are lung samples from COPD patients 
+and that also have a control group to compare. These experiments are described 
+in the following table:
+
+
+```{r experiments}
+gse_table <- read.csv(file.path(DATA_DIR,"GSE_table.csv"), row.names = 1)
+kable(gse_table, caption = "GSE information")
 ```
 
 
