@@ -595,6 +595,8 @@ head(t1)
 
 ### Pre-process raw data
 
+We first read files into R enviroment
+
 ```{r 5 reading files, message=FALSE}
 
 dat1 = read.maimages(t1$file, path=file.path(DATA_DIR,"celfiles",gse5), source="agilent.median", green.only=T,
@@ -604,11 +606,15 @@ dat1 = read.maimages(t1$file, path=file.path(DATA_DIR,"celfiles",gse5), source="
 
 ```
 
-```{r rawdata plots}
-boxplot(dat1$E)
-#hist(dat1$E)
+Then we plot raw data (in this case, I'm not evaluating this chunk because it is 
+killing the renderization)
 
+```{r rawdata plots, eval=F}
+boxplot(dat1$E)
+hist(dat1$E)
 ```
+
+Normalizing data using `Quantile` and calculating log2 values.
 
 ```{r 5 normalizing, message=FALSE}
 dat1 <- backgroundCorrect(dat1, method="normexp", offset=1)
@@ -620,12 +626,9 @@ E.avg <- avereps(E, ID=E$genes$ProbeName)
 
 ```
 
-```{r norm plots}
-
+```{r norm plots, eval=F}
 boxplot(dat1$E)
 #hist(dat1$E)
-
-
 ```
 
 
