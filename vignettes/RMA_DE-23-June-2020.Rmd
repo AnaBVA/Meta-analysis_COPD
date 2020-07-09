@@ -595,19 +595,22 @@ head(t1)
 
 ### Pre-process raw data
 
-```{r 5 reading files}
+```{r 5 reading files, message=FALSE}
 
 dat1 = read.maimages(t1$file, path=file.path(DATA_DIR,"celfiles",gse5), source="agilent.median", green.only=T,
     columns=list(G="gMedianSignal", Gb="gBGMedianSignal"),
     annotation=c("Row", "Col", "ProbeName", "SystematicName")
 )
 
+```
+
+```{r rawdata plots}
 boxplot(dat1$E)
-hist(dat1$E)
+#hist(dat1$E)
 
 ```
 
-```{r 5 normalizing}
+```{r 5 normalizing, message=FALSE}
 dat1 <- backgroundCorrect(dat1, method="normexp", offset=1)
 dat1$E <- normalizeBetweenArrays(dat1$E, method="quantile")
 dat1$E <- log2(dat1$E)
@@ -615,8 +618,12 @@ dat1$E <- log2(dat1$E)
 E = new("MAList", list(targets=dat1$targets, genes=dat1$genes, source=dat1$source, M=dat1$E, A=dat1$E))
 E.avg <- avereps(E, ID=E$genes$ProbeName)
 
+```
+
+```{r norm plots}
+
 boxplot(dat1$E)
-hist(dat1$E)
+#hist(dat1$E)
 
 
 ```
