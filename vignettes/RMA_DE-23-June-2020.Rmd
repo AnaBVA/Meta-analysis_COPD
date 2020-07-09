@@ -92,8 +92,22 @@ OUTPUT_DIR = file.path(PATH,"output_data")
 FIG_DIR = file.path(PATH,"fig")
 TODAY = Sys.Date()
 
+knitr::knit_hooks$set(timeit = local({
+  now = NULL
+  function(before, options) {
+    if (before) {
+      now <<- Sys.time()
+    } else {
+      res = difftime(Sys.time(), now)
+      now <<- NULL
+      # use options$label if you want the chunk label as well
+      paste('Time for this code chunk:', as.character(res))
+    }
+  }})
+)
+
 knitr::opts_knit$set(root.dir = PATH)
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,timeit=TRUE)
 ```
 
 And the analysis is run in: `r getwd() `
@@ -111,6 +125,7 @@ packages <- c("knitr",
           "limma",
           "SummarizedExperiment",
           "GEOquery",
+          "DESeq2",
           "recount")
 
 for(l in packages){
@@ -131,7 +146,7 @@ and that also have a control group to compare. These experiments are described
 in the following table:
 
 
-```{r experiments}
+```{r experiments, timeit = TRUE}
 gse_table <- read.csv(file.path(DATA_DIR,"GSE_table.csv"), row.names = 1)
 kable(gse_table, caption = "GSE information")
 ```
@@ -543,6 +558,114 @@ write_csv(de4,
 
 
 
+## `r rownames(gse_table)[5] `
+
+
+This experiment has the data from [Lung Tissue Research Consortium (LTRC)] (https://ltrcpublic.com/). The data is lung tissue from 582 total subjects, 254 have interstitial lung disease, 220 have COPD, and 108 are controls but they are split it in two because the authors used two different Agilent platforms Agilent-014850 Whole Human Genome Microarray and Agilent-028004 SurePrint G3 Human.
+
+The experiment is divided in two, 429 samples in one platform and 153 in another. They dont’ have a summary table of smoking status so we can find the information using the meta data from GEO.
+
+### Raw data
+
+Agilent raw data was provided in .txt files, and was pre processed using limma package. The following script describes the pre processing and gene expression analysis for Agilent data.
+
+
+
+```{r 5}
+
+gse5<- rownames(gse_table)[5] 
+
+txt <- list.files(file.path(DATA_DIR,"celfiles",gse5))
+txt <- data.frame(file=txt,X=gsub("_.*","",txt))
+```
+
+### Get annotation 
+
+The annotation can be found in `targets.csv` file 
+
+```{r 5}
+targets<- read.csv(file.path(DATA_DIR,"celfiles",gse5,"targets.csv"))
+targets <- merge(targets,txt, by = "X")
+head(targets)
+
+t1 <- targets[targets$platform_id == "GPL14550",]
+head(t1)
+
+```
+
+### Pre-process raw data
+
+```{r 5}
+
+dat1 = read.maimages(t1$file, path=file.path(DATA_DIR,"celfiles",gse5), source="agilent.median", green.only=T,
+    columns=list(G="gMedianSignal", Gb="gBGMedianSignal"),
+    annotation=c("Row", "Col", "ProbeName", "SystematicName")
+)
+
+boxplot(dat1$E)
+hist(dat1$E)
+
+dat1 <- backgroundCorrect(dat1, method="normexp", offset=1)
+dat1$E <- normalizeBetweenArrays(dat1$E, method="quantile")
+dat1$E <- log2(dat1$E)
+
+E = new("MAList", list(targets=dat1$targets, genes=dat1$genes, source=dat1$source, M=dat1$E, A=dat1$E))
+E.avg <- avereps(E, ID=E$genes$ProbeName)
+
+boxplot(dat1$E)
+hist(dat1$E)
+
+
+```
+
+### Get annotation 
+
+We used `GEOquery` package to obtain sample annotations and our previous 
+calculated pre-processed values to create an `ExpressionSet` object.
+
+```{r}
+# get annotation using GEOquery package
+geo5 <- get_GEO(gse5)
+geo5 <- getGEO(gse5)
+```
+
+### Select column with COPD description
+
+Each experiment has its own annotation and we needed to look for a column 
+describing which sample is a "Control" and which one is 
+"COPD". 
+
+Names will be different but it is **important** to check that "Control" group
+is the first level. If need it re-level groups.
+
+```{r class.source="bg-danger",class.output="bg-danger" }
+t1$disease.state.ch1 <- relevel(t1$disease.state.ch1,ref = "Control")
+
+table(t1$disease.state.ch1)
+```
+
+### Differential expression analysis
+
+Using `DE()` function (described above), we performed a lineal regression model 
+to calculate the logarithm fold change of all genes between a "Control" and a
+"COPD" group. We also rename colnames adding the GSE ID at the end and finally, 
+we save the output in a `.CSV` file. 
+
+```{r}
+fit <- lmFit(E.avg$A,  model.matrix(~1 + t1$disease.state.ch1))
+# eBayes in lmFit model
+ebf <- eBayes(fit)
+print(colnames(coef(fit)))
+
+# It gets the genes with the p-values
+res <- topTable(ebf, number = Inf, p.value = 1, coef = "t1$disease.state.ch1Chronic Obstructive Lung Disease",confint=T)
+
+write_csv(res,
+          path=str_c(OUTPUT_DIR,"/TableGenes_",gse5,"_",TODAY,".csv")
+          )
+```
+
+
 ## `r rownames(gse_table)[6] `
 
 The authors measured lung tissue expression from 98 COPD patients and 91 controls with normal spirometry. They are all patients with cancer nodes, smokers and male.
@@ -557,8 +680,8 @@ We downloaded counts from Recount2
 gse6<- rownames(gse_table)[6] 
 
 ## Download data from Recount2
-url <- download_study('SRP041538',outdir = DATA_DIR)
-load(file.path('SRP041538', 'rse_gene.Rdata'))
+url <- download_study('SRP041538',outdir = file.path(DATA_DIR,'SRP041538'))
+load(file.path(DATA_DIR, 'SRP041538', 'rse_gene.Rdata'))
 rse_gene
 
 ## Scale counts by taking into account the total coverage per sample
@@ -570,7 +693,7 @@ rse
 
 Also sample annotation is taken from Recount following its [vignette](https://bioconductor.org/packages/release/bioc/vignettes/recount/inst/doc/recount-quickstart.html#1_basics).
 
-```{r 4 annotation} 
+```{r 6 annotation} 
 ## Sample annotation
 geochar <- lapply(split(colData(rse_gene), seq_len(nrow(colData(rse_gene)))),geo_characteristics)
 
@@ -694,6 +817,8 @@ write_csv(de7,
           path=str_c(OUTPUT_DIR,"/TableGenes_",gse7,"_",TODAY,".csv")
           )
 ```
+
+
 
 
 ## Output
