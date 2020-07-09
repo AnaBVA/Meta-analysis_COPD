@@ -146,7 +146,7 @@ and that also have a control group to compare. These experiments are described
 in the following table:
 
 
-```{r experiments, timeit = TRUE}
+```{r experiments}
 gse_table <- read.csv(file.path(DATA_DIR,"GSE_table.csv"), row.names = 1)
 kable(gse_table, caption = "GSE information")
 ```
@@ -642,6 +642,7 @@ Names will be different but it is **important** to check that "Control" group
 is the first level. If need it re-level groups.
 
 ```{r class.source="bg-danger",class.output="bg-danger" }
+t1$disease.state.ch1 <- as.factor(t1$disease.state.ch1)
 t1$disease.state.ch1 <- relevel(t1$disease.state.ch1,ref = "Control")
 
 table(t1$disease.state.ch1)
