@@ -618,16 +618,6 @@ hist(dat1$E)
 
 ```
 
-### Get annotation 
-
-We used `GEOquery` package to obtain sample annotations and our previous 
-calculated pre-processed values to create an `ExpressionSet` object.
-
-```{r}
-# get annotation using GEOquery package
-geo5 <- get_GEO(gse5)
-geo5 <- getGEO(gse5)
-```
 
 ### Select column with COPD description
 
@@ -766,7 +756,7 @@ In GEOquery annotation, we found 19 Controls, 16 COPD and 23 Unclassifed.
 We pre-processed raw data using the function `rawCEL_normCEL`, plots will be 
 shown as additional output.
 
-```{r 1}
+```{r 7}
 gse7<- rownames(gse_table)[7] 
 norm7 <- rawCEL_normCEL(gse7)
 norm7
