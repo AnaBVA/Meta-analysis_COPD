@@ -6,6 +6,7 @@ output:
   html_document:
     toc: true
     toc_float: true
+    code_folding: hide    
 editor_options: 
   chunk_output_type: console
 ---
@@ -163,11 +164,6 @@ full_tables <- data %>%
   purrr::reduce(full_join, by = "Gene.Symbol")
 
 full_tables  
-
-#left_tables <- data %>% 
-#  map(column_selection)%>% 
-#  purrr::reduce(left_join, by = "Gene.Symbol")
-
 
 write_csv(full_tables,
           path=str_c(OUTPUT_DIR,"/Full_Tables_",TODAY,".csv"))
