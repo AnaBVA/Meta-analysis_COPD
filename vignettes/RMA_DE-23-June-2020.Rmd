@@ -657,8 +657,11 @@ fit <- lmFit(E.avg$A,  model.matrix(~1 + t1$disease.state.ch1))
 ebf <- eBayes(fit)
 print(colnames(coef(fit)))
 
+coeff ="t1$disease.state.ch1Chronic Obstructive Lung Disease"
 # It gets the genes with the p-values
-res <- topTable(ebf, number = Inf, p.value = 1, coef = "t1$disease.state.ch1Chronic Obstructive Lung Disease",confint=T)
+res <- topTable(ebf, number = Inf, p.value = 1, coef = coeff,confint=T)
+
+volcanoplot(ebf,coef = coeff,highlight=20, pch=20)
 
 write_csv(res,
           path=str_c(OUTPUT_DIR,"/TableGenes_",gse5,"_",TODAY,".csv")
