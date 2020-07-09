@@ -126,6 +126,8 @@ packages <- c("knitr",
           "SummarizedExperiment",
           "GEOquery",
           "DESeq2",
+          "org.Hs.eg.db",
+          "AnnotationDbi",
           "recount")
 
 for(l in packages){
