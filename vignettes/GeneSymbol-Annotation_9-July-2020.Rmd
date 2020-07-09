@@ -27,6 +27,20 @@ Here, we want to merge the results into one table using gene symbol annotation.
 Each platform has different gene ids that are not comparable so we will use 
 gene symbol annotation (i.e. MMP8, AHR) as reference to join all results.
 
+
+### Experiments
+
+We selected 7 experiments that are in PulmonDB and are lung samples from COPD patients 
+and that also have a control group to compare. These experiments are described 
+in the following table:
+
+
+```{r experiments}
+gse_table <- read.csv(file.path(DATA_DIR,"GSE_table.csv"), row.names = 1)
+kable(gse_table, caption = "GSE information")
+```
+
+
 ## Input
 
 This script needs the following files:
@@ -148,10 +162,12 @@ full_tables <- data %>%
   map(column_selection)%>% 
   purrr::reduce(full_join, by = "Gene.Symbol")
 
+full_tables  
+
 #left_tables <- data %>% 
 #  map(column_selection)%>% 
 #  purrr::reduce(left_join, by = "Gene.Symbol")
-    
+
 
 write_csv(full_tables,
           path=str_c(OUTPUT_DIR,"/Full_Tables_",TODAY,".csv"))
