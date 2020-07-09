@@ -107,7 +107,7 @@ knitr::knit_hooks$set(timeit = local({
 )
 
 knitr::opts_knit$set(root.dir = PATH)
-knitr::opts_chunk$set(echo = TRUE,timeit=TRUE)
+knitr::opts_chunk$set(echo = TRUE,timeit=TRUE,warning=FALSE)
 ```
 
 And the analysis is run in: `r getwd() `
@@ -599,7 +599,7 @@ head(t1)
 
 We first read files into R enviroment
 
-```{r 5 reading files, message=FALSE}
+```{r 5 reading files, message=FALSE, warning=FALSE}
 
 dat1 = read.maimages(t1$file, path=file.path(DATA_DIR,"celfiles",gse5), source="agilent.median", green.only=T,
     columns=list(G="gMedianSignal", Gb="gBGMedianSignal"),
@@ -618,7 +618,7 @@ hist(dat1$E)
 
 Normalizing data using `Quantile` and calculating log2 values.
 
-```{r 5 normalizing, message=FALSE}
+```{r 5 normalizing, message=FALSE, warning=FALSE}
 dat1 <- backgroundCorrect(dat1, method="normexp", offset=1)
 dat1$E <- normalizeBetweenArrays(dat1$E, method="quantile")
 dat1$E <- log2(dat1$E)
@@ -691,7 +691,6 @@ gse6<- rownames(gse_table)[6]
 ## Download data from Recount2
 url <- download_study('SRP041538',outdir = file.path(DATA_DIR,'SRP041538'))
 load(file.path(DATA_DIR, 'SRP041538', 'rse_gene.Rdata'))
-rse_gene
 
 ## Scale counts by taking into account the total coverage per sample
 rse <- scale_counts(rse_gene)
@@ -715,7 +714,7 @@ geochar <- do.call(rbind, lapply(geochar, function(x) {
     }
 }))
 
-head(geochar)
+table(geochar$disease.state)
 ```
  
 
