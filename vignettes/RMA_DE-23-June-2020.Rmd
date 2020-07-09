@@ -753,7 +753,7 @@ r <- as_tibble(res, rownames="rownames")
 r$rownames <- gsub("\\..*","",r$rownames)
 r <- full_join(r,gene_info, by=c("rownames"="ENSEMBL")) 
 
-write.csv(r,
+write_csv(r,
           path=str_c(OUTPUT_DIR,"/TableGenes_",gse6,"_",TODAY,".csv"))
 ```
 
