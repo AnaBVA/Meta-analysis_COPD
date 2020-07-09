@@ -70,7 +70,7 @@ accessing:
 ```{bash, eval=F}
 ssh ana@10.200.0.42
 
-cd /home/ana/R/Meta-analysis_COPD
+cd /home/ana/R-projects/Meta-analysis_COPD
 ```
 
 
@@ -595,7 +595,7 @@ head(t1)
 
 ### Pre-process raw data
 
-```{r 5}
+```{r}
 
 dat1 = read.maimages(t1$file, path=file.path(DATA_DIR,"celfiles",gse5), source="agilent.median", green.only=T,
     columns=list(G="gMedianSignal", Gb="gBGMedianSignal"),
