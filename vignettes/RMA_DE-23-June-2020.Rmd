@@ -107,7 +107,10 @@ knitr::knit_hooks$set(timeit = local({
 )
 
 knitr::opts_knit$set(root.dir = PATH)
-knitr::opts_chunk$set(echo = TRUE,timeit=TRUE,warning=FALSE)
+knitr::opts_chunk$set(echo = TRUE,
+                      timeit=TRUE,
+                      warning=FALSE,
+                      attr.output='style="max-height: 500px;"')
 ```
 
 And the analysis is run in: `r getwd() `
@@ -628,7 +631,7 @@ E.avg <- avereps(E, ID=E$genes$ProbeName)
 
 ```
 
-```{r norm plots, eval=F}
+```{r norm plots}
 boxplot(dat1$E)
 #hist(dat1$E)
 ```
