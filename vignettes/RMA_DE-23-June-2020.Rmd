@@ -583,7 +583,7 @@ txt <- data.frame(file=txt,X=gsub("_.*","",txt))
 
 The annotation can be found in `targets.csv` file 
 
-```{r 5}
+```{r}
 targets<- read.csv(file.path(DATA_DIR,"celfiles",gse5,"targets.csv"))
 targets <- merge(targets,txt, by = "X")
 head(targets)
