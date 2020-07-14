@@ -107,13 +107,13 @@ We first check pvalues histograms.
 FC <- str_subset(colnames(full_tables),"logFC")
 
 # Genes with a adjusted p value les than 0.01
-adj-pvalue <- 0.01
+adj_pvalue <- 0.01
 
 adjp <- full_tables %>%
   filter(Gene.Symbol != "NA") %>%
   gather("GSE"  ,"adjP",-Gene.Symbol) %>%
   filter(GSE %in% str_subset(colnames(full_tables),"adj.P.Val|padj")) %>%
-  filter(adjP < adj-pvalue) %>%
+  filter(adjP < adj_pvalue) %>%
   mutate(GSE=gsub(".*_","",GSE))
   
 adjp
@@ -131,7 +131,7 @@ adjp %>%
 ```
 
 
-Then, we look for how many genes are up regulated with a p-value less than `r  adj-pvalue`  in the 
+Then, we look for how many genes are up regulated with a p-value less than `r  adj_pvalue`  in the 
 
 ```{r  }
 
