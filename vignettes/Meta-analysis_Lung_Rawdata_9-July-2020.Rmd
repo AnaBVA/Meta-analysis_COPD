@@ -280,6 +280,7 @@ meta.plot(genesqval$genes[i])
 
 color <- colorRampPalette(brewer.pal(n = 9, name = "RdBu"))(15) #"BrBG"
 topgenes <- full_tables[full_tables$Gene.Symbol %in% genesqval$genes,FC]
+rownames(topgenes) <- genesqval$genes
 
 pheatmap(topgenes,
          color = color,
