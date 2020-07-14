@@ -106,7 +106,7 @@ We first check pvalues histograms.
 ```{r , class.source="bg-info",class.output="bg-info" }
 FC <- str_subset(colnames(full_tables),"logFC")
 
-# Genes with a adjusted p value les than 0.01
+# Genes with a adjusted p value
 
 
 adjp <- full_tables %>%
@@ -128,8 +128,8 @@ adjp %>%
 #dev.off()
 
 adj_pvalue <- 0.01
-adjP <- filter(adjP,adjP < adj_pvalue)
-adjP
+adjp <- filter(adjp,adjP < adj_pvalue)
+adjp
 ```
 
 
