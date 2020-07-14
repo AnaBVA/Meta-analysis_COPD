@@ -284,7 +284,7 @@ rownames(topgenes) <- genesqval$genes
 
 pheatmap(topgenes,
          color = color,
-         fontsize = 15,
+         fontsize = 8,
          cluster_cols = F,
          show_colnames = F,
          border_color = NA)
