@@ -551,7 +551,7 @@ to calculate the logarithm fold change of all genes between a "Control" and a
 we save the output in a `.CSV` file. 
 
 ```{r}
-de4 <- DE(geo4,coeff=1)
+de4 <- DE(geo4)
 
 colnames(de4) <- str_c(colnames(de4),"_",gse4)
 colnames(de4)
