@@ -127,6 +127,9 @@ adjp %>%
   facet_wrap(~GSE, scales = "free_y")
 #dev.off()
 
+adj_pvalue <- 0.01
+adjP <- filter(adjP,adjP < adj_pvalue)
+adjP
 ```
 
 
@@ -144,10 +147,6 @@ logFC <- full_tables %>%
 logFC
 
 # recovering logFC values from genes with p value less than 0.01 
-
-adj_pvalue <- 0.01
-adjP <- filter(adjP,adjP < adj_pvalue)
-adjP
 
 ap0.01 <- left_join(adjp,logFC,by = c("Gene.Symbol" = "Gene.Symbol", "GSE" = "GSE")) %>%
   select(-adjP) %>%
