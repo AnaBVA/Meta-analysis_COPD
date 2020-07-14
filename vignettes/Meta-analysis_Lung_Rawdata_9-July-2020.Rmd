@@ -168,8 +168,8 @@ m <- m[comb_degree(m) >= 1]
 
 #pdf("upsetUP.pdf",width = 14,height = 6)
 UpSet(m,
-      pt_size = unit(5, "mm"), 
-      lwd = 4,
+      pt_size = unit(3.5, "mm"), 
+      lwd = 3,
       comb_col = c("red", "grey","grey","grey", "black","blue")[comb_degree(m)]
       #order.by = "freq"
     )
@@ -182,8 +182,8 @@ m <- m[comb_degree(m) >= 1]
 
 #pdf("upsetDOWN.pdf",width = 14,height = 6)
 UpSet(m,
-      pt_size = unit(5, "mm"), 
-      lwd = 4,
+      pt_size = unit(3-5, "mm"), 
+      lwd = 3,
       comb_col = c("red", "grey","grey","grey", "black","blue")[comb_degree(m)]
       #order.by = "freq"
     )
