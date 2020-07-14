@@ -47,7 +47,7 @@ cd /home/ana/R-projects/Meta-analysis_COPD
 For running the script, type:
 
 ```{bash, eval= F}
-nohup R -e "rmarkdown::render('vignettes/GeneSymbol-Annotation_9-July-2020.Rmd')" & > genesymbol.out
+nohup R -e "rmarkdown::render('vignettes/Meta-analysis_Lung_Rawdata_9-July-2020.Rmd')" & > meta-analysis.out
 ```
 
 
