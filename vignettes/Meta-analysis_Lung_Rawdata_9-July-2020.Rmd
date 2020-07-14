@@ -72,6 +72,9 @@ And this analysis is run in: `r getwd() `
 library(tidyverse)
 library(knitr)
 library(ComplexHeatmap)
+library(metafor)
+library(pheatmap)
+library(RColorBrewer)
 ```
 
 ### Experiments
@@ -168,7 +171,7 @@ m <- m[comb_degree(m) >= 1]
 
 #pdf("upsetUP.pdf",width = 14,height = 6)
 UpSet(m,
-      pt_size = unit(3.5, "mm"), 
+      pt_size = unit(3, "mm"), 
       lwd = 3,
       comb_col = c("red", "grey","grey","grey", "black","blue")[comb_degree(m)]
       #order.by = "freq"
@@ -182,12 +185,110 @@ m <- m[comb_degree(m) >= 1]
 
 #pdf("upsetDOWN.pdf",width = 14,height = 6)
 UpSet(m,
-      pt_size = unit(3-5, "mm"), 
+      pt_size = unit(3, "mm"), 
       lwd = 3,
       comb_col = c("red", "grey","grey","grey", "black","blue")[comb_degree(m)]
       #order.by = "freq"
     )
 #dev.off()
+
+
+```
+
+
+## Meta-analysis
+
+We first calculate the Standar error using confidence intervals
+
+```{r}
+
+CI.R <- str_subset(colnames(full_tables),"CI.R")
+CI.L <- str_subset(colnames(full_tables),"CI.L")
+
+for(i in 1:length(CI.R)) {
+  full_tables[str_c("SE_",gsub(".*_","",CI.R))] <- (full_tables[,CI.R]-full_tables[,CI.L]) /(2*1.96)
+}
+```
+
+Meta-analysis for a single gene
+
+
+```{r}
+
+FC <- str_subset(colnames(full_tables),"logFC")
+SE <- str_subset(colnames(full_tables),"SE_")
+GSE <- gsub(".*_","",FC)
+
+gs <- "CXCL12"
+meta.plot <- function(gs){
+gene <-  na.omit(full_tables[full_tables$Gene.Symbol == gs,])
+
+yi <- as.numeric(gene[,FC])
+sei <- as.numeric(gene[,SE])
+
+# meta analysis in the simplest way
+res <- metafor::rma(yi, sei=sei)
+funnel(res)
+forest(res,slab = GSE, main=unique(gene$Gene.Symbol))
+}
+
+meta.plot(gs)
+```
+
+Meta-analysis for all genes
+
+```{r}
+
+gs <- unique(na.omit(full_tables)$Gene.Symbol)
+
+meta <- data.frame(genes = 0,
+                   QEp=0,
+                   pval=0)
+
+
+length(gs)
+
+for (i in 1:length(gs)) {
+  gene <-  na.omit(full_tables[full_tables$Gene.Symbol == gs[i],])
+  yi <- as.numeric(gene[,FC])
+  sei <- as.numeric(gene[,SE])
+  # meta analysis with random models "REML"
+  res <- metafor::rma(yi, sei=sei)
+  meta <- rbind(meta,c(gs[i],res$QEp,res$pval))
+}
+
+meta <- meta[-1,]
+meta$QEp <- as.numeric(meta$QEp)
+meta$pval <- as.numeric(meta$pval)
+
+# FDR correction
+meta$qval <- p.adjust(meta$pval,method="fdr")
+
+meta.plot(meta$genes[1])
+
+hist(meta$qval, main="q-value from Cochrane's test", xlab="FDR(P-value)")
+hist(meta$QEp, main="Test for Heterogeneity: Q test", xlab="QEp")
+
+genesqval <- meta[meta$qval < 0.01,]
+#genesqval <- genesqval[genesqval$QEp < 0.2,]
+genesqval <-  genesqval[order(genesqval$QEp),]
+
+
+for (i in 1:15){
+meta.plot(genesqval$genes[i])
+}
+
+color <- colorRampPalette(brewer.pal(n = 9, name = "RdBu"))(15) #"BrBG"
+topgenes <- full_tables[full_tables$Gene.Symbol %in% genesqval$genes,FC]
+
+pheatmap(topgenes,
+         color = color,
+         fontsize = 15,
+         cluster_cols = F,
+         show_colnames = F,
+         border_color = NA)
+
+
 
 
 ```
