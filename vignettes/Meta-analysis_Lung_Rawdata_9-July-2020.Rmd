@@ -107,13 +107,12 @@ We first check pvalues histograms.
 FC <- str_subset(colnames(full_tables),"logFC")
 
 # Genes with a adjusted p value les than 0.01
-adj_pvalue <- 0.01
+
 
 adjp <- full_tables %>%
   filter(Gene.Symbol != "NA") %>%
   gather("GSE"  ,"adjP",-Gene.Symbol) %>%
   filter(GSE %in% str_subset(colnames(full_tables),"adj.P.Val|padj")) %>%
-  filter(adjP < adj_pvalue) %>%
   mutate(GSE=gsub(".*_","",GSE))
   
 adjp
@@ -145,6 +144,11 @@ logFC <- full_tables %>%
 logFC
 
 # recovering logFC values from genes with p value less than 0.01 
+
+adj_pvalue <- 0.01
+adjP <- filter(adjP,adjP < adj_pvalue)
+adjP
+
 ap0.01 <- left_join(adjp,logFC,by = c("Gene.Symbol" = "Gene.Symbol", "GSE" = "GSE")) %>%
   select(-adjP) %>%
   spread(GSE,logFC) %>% 
