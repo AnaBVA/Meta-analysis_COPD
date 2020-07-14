@@ -271,7 +271,9 @@ hist(meta$QEp, main="Test for Heterogeneity: Q test", xlab="QEp")
 
 genesqval <- meta[meta$qval < 0.01,]
 #genesqval <- genesqval[genesqval$QEp < 0.2,]
-genesqval <-  genesqval[order(genesqval$QEp),]
+genesqval <-  genesqval[order(genesqval$qval),]
+
+kable(genesqval, caption = "Meta-analysis")
 
 
 for (i in 1:15){
