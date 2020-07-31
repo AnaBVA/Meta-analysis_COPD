@@ -104,14 +104,12 @@ full_tables
 
 ### STEP 2
 
-We first check pvalues histograms. 
+We first check pvalues histograms. [Ref](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6164648/)
 
 ```{r , class.source="bg-info",class.output="bg-info" }
 FC <- str_subset(colnames(full_tables),"logFC")
 
 # Genes with a adjusted p value
-
-
 adjp <- full_tables %>%
   filter(Gene.Symbol != "NA") %>%
   gather("GSE"  ,"adjP",-Gene.Symbol) %>%
@@ -219,9 +217,11 @@ FC <- str_subset(colnames(full_tables),"logFC")
 SE <- str_subset(colnames(full_tables),"SE_")
 GSE <- gsub(".*_","",FC)
 
-gs <- "CXCL12"
+gs <- "HHIP"
 meta.plot <- function(gs){
-gene <-  na.omit(full_tables[full_tables$Gene.Symbol == gs,])
+gene <-  full_tables[full_tables$Gene.Symbol == gs,]
+#gene <-  na.omit(full_tables[full_tables$Gene.Symbol == gs,])
+gene <- gene[!is.na(gene$Gene.Symbol),]
 
 yi <- as.numeric(gene[,FC])
 sei <- as.numeric(gene[,SE])
@@ -254,7 +254,7 @@ for (i in 1:length(gs)) {
   sei <- as.numeric(gene[,SE])
   # meta analysis with random models "REML"
   res <- metafor::rma(yi, sei=sei)
-  meta <- rbind(meta,c(gs[i],res$QEp,res$pval))
+  meta <- rbind(meta,c(gs[i],res$QEp,res$pval,res$tau2,res$I2))
 }
 
 meta <- meta[-1,]
@@ -264,19 +264,19 @@ meta$pval <- as.numeric(meta$pval)
 # FDR correction
 meta$qval <- p.adjust(meta$pval,method="fdr")
 
-meta.plot(meta$genes[1])
+write.csv(meta,str_c(OUTPUT_DIR,"/meta-analysis_preprocessData-",TODAY,".csv"))
 
 hist(meta$qval, main="q-value from Cochrane's test", xlab="FDR(P-value)")
 hist(meta$QEp, main="Test for Heterogeneity: Q test", xlab="QEp")
 
-genesqval <- meta[meta$qval < 0.01,]
+genesqval <- meta[meta$qval <= 0.01,]
 #genesqval <- genesqval[genesqval$QEp < 0.2,]
 genesqval <-  genesqval[order(genesqval$qval),]
 
 kable(genesqval, caption = "Meta-analysis")
 
 
-for (i in 1:15){
+for (i in 1:3){
 meta.plot(genesqval$genes[i])
 }
 
