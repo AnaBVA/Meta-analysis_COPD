@@ -199,7 +199,7 @@ rawCEL_normCEL <- function(gse){
   ## hist of norm data
   hist(normData)
   # dev.off()
-  #write.csv(exprs(normData),str_c(OUTPUT_DIR,"/",gse,"_normData",TODAY,".txt"),quote=F)
+  write.csv(exprs(normData),str_c(DATA_DIR,"/normalized",gse,"_normData",TODAY,".txt"),quote=F)
   return(normData)
 }
 

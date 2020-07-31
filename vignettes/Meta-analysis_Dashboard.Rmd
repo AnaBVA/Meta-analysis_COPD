@@ -1,0 +1,141 @@
+---
+title: "Untitled"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: scroll
+    navbar:
+      - { title: "About", href: "https://example.com/about", align: left }
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(knitr)
+library(kableExtra)
+library(tidyverse)
+library(RColorBrewer)
+library(metafor)
+library(d3heatmap)
+library(DT)
+
+knitr::opts_knit$set(root.dir = "..")
+```
+
+    
+Row
+-------------------------------------
+    
+### Experiments in the Meta-analysis
+
+    
+```{r}
+gse_table <- read.csv("data/GSE_table.csv", row.names = 1)
+kable(gse_table, caption = "GSE information") %>%
+   kable_styling()
+```
+
+   
+Row {.tabset .tabset-fade}
+-------------------------------------
+
+### Heatmap {data-height=800}
+
+
+```{r}
+numericInput("cutoff", "Q-value cutoff:", value = 0.01,
+              min = 0, max = 1, step = 0.001)
+```
+
+
+```{r}
+# Data
+full_tables <- read_csv("output_data//Full_Tables_2020-07-13.csv")
+colnames(full_tables)[colnames(full_tables) == 'log2FoldChange_GSE57148'] <- 'logFC_GSE57148'
+
+meta <- read_csv("output_data/meta-analysis_preprocessData-2020-07-29.csv")[,-1]
+
+FC <- str_subset(colnames(full_tables),"logFC")
+
+# Heatmap
+genesqval <-  reactive({
+  meta[meta$qval <= input$cutoff,]
+  #genesqval[order(genesqval$qval),]
+})
+
+topgenes <- reactive({
+  data.frame(full_tables[full_tables$Gene.Symbol %in% genesqval()$genes,FC], row.names = genesqval()$genes)
+})
+
+#rownames(topgenes) <- genesqval$genes
+  
+renderD3heatmap({
+  d3heatmap(topgenes())
+})
+```
+
+
+### P-values
+
+  
+```{r}
+par(mfrow=c(1,2))
+hist(meta$pval, main= "Histogram of all Meta-analysis p-values")
+hist(meta$qval, main= "Histogram of all Meta-analysis q-values")
+```
+
+
+Column
+-------------------------------------
+
+### Table of genes
+
+```{r}
+
+output$gen <- DT::renderDataTable(
+genesqval(),
+selection = 'single'
+)
+DT::dataTableOutput('gen')
+
+```
+
+
+### Forest plot 
+
+
+```{r}
+
+CI.R <- str_subset(colnames(full_tables),"CI.R")
+CI.L <- str_subset(colnames(full_tables),"CI.L")
+
+for(i in 1:length(CI.R)) {
+  full_tables[str_c("SE_",gsub(".*_","",CI.R))] <- (full_tables[,CI.R]-full_tables[,CI.L]) /(2*1.96)
+}
+
+SE <- str_subset(colnames(full_tables),"SE_")
+GSE <- gsub(".*_","",FC)
+
+meta.plot <- function(gs){
+gene <-  full_tables[full_tables$Gene.Symbol == gs,]
+#gene <-  na.omit(full_tables[full_tables$Gene.Symbol == gs,])
+gene <- gene[!is.na(gene$Gene.Symbol),]
+
+yi <- as.numeric(gene[,FC])
+sei <- as.numeric(gene[,SE])
+
+# meta analysis in the simplest way
+res <- metafor::rma(yi, sei=sei)
+par(mfrow=c(2,1))
+forest(res,slab = GSE, main=unique(gene$Gene.Symbol))
+funnel(res)
+}
+
+renderPlot({
+  gene =  as.character(genesqval()[input$gen_rows_selected,"genes"])
+  meta.plot(gene)
+})
+
+```
+
+
