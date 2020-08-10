@@ -85,10 +85,7 @@ hist(meta$qval, main= "Histogram of all Meta-analysis q-values")
 ```
 
 
-Column
--------------------------------------
-
-### Table of genes
+### Table of genes {data-height=800}
 
 ```{r}
 
@@ -101,7 +98,7 @@ DT::dataTableOutput('gen')
 ```
 
 
-### Forest plot 
+### Forest plot {data-height=800}
 
 
 ```{r}
@@ -127,8 +124,8 @@ sei <- as.numeric(gene[,SE])
 # meta analysis in the simplest way
 res <- metafor::rma(yi, sei=sei)
 par(mfrow=c(2,1))
-forest(res,slab = GSE, main=unique(gene$Gene.Symbol))
-funnel(res)
+forest(res,slab = GSE, main=unique(gene$Gene.Symbol),psize = 1.8,cex = 1.8)
+funnel(res,psize = 1.8,cex = 1.8)
 }
 
 renderPlot({
