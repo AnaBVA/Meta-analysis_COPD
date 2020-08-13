@@ -54,8 +54,7 @@ nohup R -e "rmarkdown::render('vignettes/Meta-analysis_Lung_Rawdata_9-July-2020.
 The script can be found in: `r getwd() `
 
 ```{r setup}
-setwd("..")
-PATH = getwd()
+PATH = here::here()
 DATA_DIR = file.path(PATH,"data")
 OUTPUT_DIR = file.path(PATH,"output_data")
 FIG_DIR = file.path(PATH,"fig")
@@ -217,7 +216,7 @@ FC <- str_subset(colnames(full_tables),"logFC")
 SE <- str_subset(colnames(full_tables),"SE_")
 GSE <- gsub(".*_","",FC)
 
-gs <- "HHIP"
+gs <- "CXCL12"
 meta.plot <- function(gs){
 gene <-  full_tables[full_tables$Gene.Symbol == gs,]
 #gene <-  na.omit(full_tables[full_tables$Gene.Symbol == gs,])
@@ -239,23 +238,35 @@ Meta-analysis for all genes
 
 ```{r}
 
-gs <- unique(na.omit(full_tables)$Gene.Symbol)
+#gs <- unique(na.omit(full_tables)$Gene.Symbol)
+gs <- unique(full_tables$Gene.Symbol)
+
 
 meta <- data.frame(genes = 0,
                    QEp=0,
-                   pval=0)
+                   pval=0,
+                   tau2=0,
+                   I2=0,
+                   num_exp=0)
 
+fc <- full_tables[,FC]
+gm<- full_tables$Gene.Symbol[which(rowSums(!is.na(fc)) > 2)]
+gm <- na.omit(gm)
 
-length(gs)
+length(gm)
 
-for (i in 1:length(gs)) {
-  gene <-  na.omit(full_tables[full_tables$Gene.Symbol == gs[i],])
+for (i in gm) {
+  gene <- full_tables[which(full_tables$Gene.Symbol == i),]
   yi <- as.numeric(gene[,FC])
   sei <- as.numeric(gene[,SE])
+  num_exp <- sum(!is.na(yi))
   # meta analysis with random models "REML"
   res <- metafor::rma(yi, sei=sei)
-  meta <- rbind(meta,c(gs[i],res$QEp,res$pval,res$tau2,res$I2))
+  num_exp <- sum(!is.na(yi))
+  meta <- rbind(meta,c(i,res$QEp,res$pval,res$tau2,res$I2,num_exp))
 }
+
+
 
 meta <- meta[-1,]
 meta$QEp <- as.numeric(meta$QEp)
@@ -263,6 +274,7 @@ meta$pval <- as.numeric(meta$pval)
 
 # FDR correction
 meta$qval <- p.adjust(meta$pval,method="fdr")
+
 
 write.csv(meta,str_c(OUTPUT_DIR,"/meta-analysis_preprocessData-",TODAY,".csv"))
 
