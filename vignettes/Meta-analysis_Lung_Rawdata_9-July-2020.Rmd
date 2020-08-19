@@ -148,47 +148,60 @@ logFC
 
 # recovering logFC values from genes with p value less than 0.01 
 
-ap0.01 <- left_join(adjp,logFC,by = c("Gene.Symbol" = "Gene.Symbol", "GSE" = "GSE")) %>%
+ap <- left_join(adjp,logFC,by = c("Gene.Symbol" = "Gene.Symbol", "GSE" = "GSE")) %>%
   select(-adjP) %>%
   spread(GSE,logFC) %>% 
   replace(is.na(.), 0)
 
-ap0.01
+ap
 
 # selecting up regulated genes
-up <- ap0.01 %>%
+up <- ap %>%
   mutate_at(vars(-Gene.Symbol),funs(if_else( .>0, 1, 0)))
   
-down <- ap0.01 %>%
+down <- ap %>%
   mutate_at(vars(-Gene.Symbol),funs(if_else( .<0, 1, 0)))
 
 ### UP 
-m <- make_comb_mat(up,mode = "intersect")
-m <- m[comb_degree(m) >= 1]
+m <- make_comb_mat(up,mode = "distinct")
+m <- m[comb_degree(m) >= 4 | comb_degree(m) == 1]
 
 #pdf("upsetUP.pdf",width = 14,height = 6)
-UpSet(m,
+ht <- draw(UpSet(m,
       pt_size = unit(3, "mm"), 
       lwd = 3,
-      comb_col = c("red", "grey","grey","grey", "black","blue")[comb_degree(m)]
+      comb_col = c("red", "grey","grey","grey", "black","blue")[comb_degree(m)])
       #order.by = "freq"
     )
+od = column_order(ht)
+cs = comb_size(m)
+decorate_annotation("Intersection\nsize", {
+    grid.text(cs[od], x = seq_along(cs), y = unit(cs[od], "native") + unit(2, "pt"), 
+        default.units = "native", just = "bottom", gp = gpar(fontsize = 8))
+})
+
 #dev.off()
 
 
 ### DOWN
-m <- make_comb_mat(down,mode = "intersect")
-m <- m[comb_degree(m) >= 1]
+m <- make_comb_mat(down,mode = "distinct")
+m <- m[comb_degree(m) >= 4 | comb_degree(m) == 1] 
 
 #pdf("upsetDOWN.pdf",width = 14,height = 6)
-UpSet(m,
+ht <- draw(UpSet(m,
       pt_size = unit(3, "mm"), 
       lwd = 3,
-      comb_col = c("red", "grey","grey","grey", "black","blue")[comb_degree(m)]
+      comb_col = c("red", "grey","grey","grey", "black","blue")[comb_degree(m)])
       #order.by = "freq"
     )
 #dev.off()
 
+od = column_order(ht)
+cs = comb_size(m)
+decorate_annotation("Intersection\nsize", {
+    grid.text(cs[od], x = seq_along(cs), y = unit(cs[od], "native") + unit(2, "pt"), 
+        default.units = "native", just = "bottom", gp = gpar(fontsize = 8))
+})
 
 ```
 
@@ -278,6 +291,8 @@ meta$qval <- p.adjust(meta$pval,method="fdr")
 
 write.csv(meta,str_c(OUTPUT_DIR,"/meta-analysis_preprocessData-",TODAY,".csv"))
 
+#meta <- read.csv(str_c(OUTPUT_DIR,"/meta-analysis_preprocessData-2020-08-13.csv"))
+
 hist(meta$qval, main="q-value from Cochrane's test", xlab="FDR(P-value)")
 hist(meta$QEp, main="Test for Heterogeneity: Q test", xlab="QEp")
 
@@ -292,18 +307,28 @@ for (i in 1:3){
 meta.plot(genesqval$genes[i])
 }
 
-color <- colorRampPalette(brewer.pal(n = 9, name = "RdBu"))(15) #"BrBG"
-topgenes <- full_tables[full_tables$Gene.Symbol %in% genesqval$genes,FC]
-rownames(topgenes) <- genesqval$genes
-
+color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
+breaks <- c(seq(min(topgenes),-0.1,length.out = 7),0,seq(0.1,max(topgenes),length.out = 7))
+#"BrBG"
+topgenes <- full_tables[full_tables$Gene.Symbol %in% genesqval$genes,c("Gene.Symbol",FC)]
+topgenes <- column_to_rownames(topgenes,"Gene.Symbol")
+topgenes <- na.omit(topgenes)
+#ordering rows
+#topgenes <- topgenes[order(rowMeans(topgenes),decreasing = T),]
 ```
 
 ```{r fig.height=15}
 
-pheatmap(topgenes,
+pheatmap(na.omit(topgenes),
          color = color,
-         fontsize = 10,
+         breaks = breaks,
+         fontsize_row = 7,
+         fontsize_col = 10,
+         cluster_rows = T,
+         clustering_distance_rows = "euclidean",
+         clustering_method = "ward.D",
          cluster_cols = T,
+         cutree_rows = 2,
          show_colnames = T,
          border_color = NA)
 
