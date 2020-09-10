@@ -66,27 +66,26 @@ p$SMOKING_STATUS[grep("non-smoker",p$title)] <- "NON-SMOKER"
 p$SMOKING_STATUS[grep(" smoker",p$title)] <- "SMOKER"     
 
 # add it to the expression object
-pData(geo[[i]][[1]]) <- p
+pData(geo[[i]][[2]]) <- p
 
 ########### Gene.Symbol
 # We also add a new column with Gene.Symbol annotation
-f <- fData(geo[[i]][[1]])
+f <- fData(geo[[i]][[2]])
 head(f)
 
+# Parse column to have Gene.Symbol
+ff <- dplyr::mutate(f,
+                   geneInfo = strsplit(gene_assignment, " /// "),
+                   gene1 = sapply(geneInfo, `[`, 1),
+                   GENE.SYMBOL = sapply(strsplit(gene1, " // "), `[`, 2)
+)
 
-ff <- AnnotationDbi::select(hugene10sttranscriptcluster.db,
-                            as.character(f$SPOT_ID),
-                            "SYMBOL",
-                            keytype = "ENTREZID")
+rownames(ff) <- rownames(f)
+f <- dplyr::select(ff,ID,GB_LIST,GENE.SYMBOL)
 
-f <- merge(f,ff, by.x= "SPOT_ID",by.y="ENTREZID",sort=F)
-rownames(f) <- f$ID
-head(f)
-
-f$GENE.SYMBOL <- f$SYMBOL
 length(f$GENE.SYMBOL)
 length(unique(f$GENE.SYMBOL))
-fData(geo[[i]][[1]]) <- f
+fData(geo[[i]][[2]]) <- f
 
 ########### Summary
 df <- df %>% add_row(
@@ -697,8 +696,8 @@ df <- df %>% add_row(
 
 
 ##############################################################
-# saveRDS(geo,here::here("data/2020-09-GSE_LungTissue-CURATED.RDS"))
-# write_csv(df,"output_data/2020-09-03-GSE_Summary.csv")
+saveRDS(geo,here::here("data/2020-09-GSE_LungTissue-CURATED.RDS"))
 
 df <- df[which(df$GSE != "NA"),]
+write_csv(df,"output_data/2020-09-03-GSE_Summary.csv")
 

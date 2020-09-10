@@ -1,0 +1,85 @@
+---
+title: "1-download_raw-data.RMD"
+author: Ana BVA
+date: "`r BiocStyle::doc_date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
+
+## Introduction
+
+<div class="alert alert-info">
+  <strong>Aim:</strong> The aim of this script
+</div>
+
+### Background 
+
+Some relevant information with links [GEO](https://www.ncbi.nlm.nih.gov/geo/)
+
+
+## Input
+
+This script needs the following files:
+
+<div class="alert alert-warning">
+  <strong>Data 1:</strong> Matrix of normalized experiments  
+  <strong>Data 2:</strong> Meta data 
+</div>
+
+## Analysis
+
+### Setup
+
+The script can be found in: `r getwd() `
+
+```{r setup}
+PATH = here::here()
+DATA_DIR = file.path(PATH,"Data/")
+OUTPUT_DIR = file.path(PATH,"output/")
+FIG_DIR = file.path(PATH,"Fig")
+
+knitr::opts_knit$set(root.dir = PATH)
+```
+
+And this analysis is run in: `r getwd() `
+
+### Libraries
+
+```{r libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+
+### STEP 1
+
+```{r , class.source="bg-info",class.output="bg-info" }
+1+1
+```
+
+
+### STEP 2
+
+## Output
+
+This script produces the following data, and can be found in `r getwd() ` 
+
+<div class="alert alert-success">
+  <strong>Figure 1:</strong> Boxplot of samples  
+  <strong>Figure 2:</strong> Heatmap of COPD patients 
+</div>
+
+## Session Info
+
+```{r sessionInfo}
+sessionInfo()
+```
+
+
+
+
+

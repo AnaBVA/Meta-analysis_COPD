@@ -1,0 +1,255 @@
+---
+title: "Data selection"
+author: Ana BVA
+date: "`r BiocStyle::doc_date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r echo=FALSE}
+knitr::opts_knit$set(root.dir = '..')
+```
+
+<div class="alert alert-info">
+  <strong>Aim:</strong> To select datasets that measure gene expression in COPD patients. 
+</div>
+
+# Introduction
+
+Selecting the experiments is a key point in a meta-analysis so it is important 
+to decide which experiments will be used in the analysis. Raw and normalized 
+data from gene expression analysis are stored in public repositories. [GEO](https://www.ncbi.nlm.nih.gov/geo/) from 
+NCBI and [ArrayExpress](https://www.ebi.ac.uk/arrayexpress/) 
+from EMBL-EBI are the most popular, the data is available for everyone and both 
+databases have web interface to search and download data.
+
+
+## Search of papers related with COPD and transcriptomics in GEO
+
+Using `e-utilities` from [NCBI](https://www.ncbi.nlm.nih.gov/books/NBK179288/?report=classic),
+I searched articles related with 'Chronic Obstructive Pulmonary Disease' or 'COPD' and
+'microarrays' or 'RNA sequencing'. 
+
+
+```{bash eval= F}
+# Search for articles in pubmed
+ esearch -db pubmed -query '(("chronic obstructive pulmonary disease" OR "COPD") AND ("microarrays" OR ("RNA sequencing"))' |
+  efetch -format docsum |
+  xtract -pattern DocumentSummary -element Id PubDate Authors Title FullJournalName > output_data/pubmed_articles.txt
+  
+# Get abstracts in pubmed
+ esearch -db pubmed -query '(("chronic obstructive pulmonary disease" OR "COPD") AND ("microarrays" OR ("RNA sequencing"))' |
+  efetch -format abstract > output_data/pubmed_abstract.txt
+```
+
+
+```{r}
+pubmed <- read.csv("output_data/pubmed_articles.txt", sep = "\t", header = F)
+head(pubmed)
+```
+
+
+### Retrieve GSEs 
+
+We also use `e-utilities` from [NCBI](https://www.ncbi.nlm.nih.gov/books/NBK179288/?report=classic) to retrieve GSE ids that are related with COPD from human samples.
+
+
+```{bash eval= F}
+# Search for GSE in NCBI
+esearch -db gds -query '(("chronic obstructive pulmonary disease" OR "COPD" OR "Emphysema" OR "chronic bronchitis") AND ("Expression profiling by high throughput sequencing"[Filter] OR "Expression profiling by array"[Filter]) AND "Homo sapiens"[orgn] AND "gse"[Filter]' |
+  efetch -format xml >  output_data/GSE_query.txt
+
+perl scripts/parsegeo.pl output_data/GSE_query.txt
+```
+
+Table looks like this
+
+```{r}
+###################################     
+# Read table "output_data/GSE_query_tab.txt"
+###################################
+
+gse <- read.csv("output_data/GSE_query_tab.txt", 
+                sep = "\t", 
+                header = T,
+                row.names = 1)
+
+head(gse)
+
+###################################     
+# Libraries
+###################################
+
+library(stringr)
+library(tidyr)
+
+###################################     
+# find_text() function
+###################################
+# function to find words in the description and title columns
+# and add a string in a new vector
+find_text <- function(text){
+gse$x <- NA
+gse$x[str_which(tolower(str_c(gse$Description,gse$Extended.Description)), tolower(text))] <- toupper(text)
+return(gse$x)
+}
+
+
+
+###################################
+# "SampleType" as new column
+###################################
+# Blood related 
+gse$Blood <- find_text("Blood")
+# Tissue related
+gse$Tissue <- find_text("Tissue")
+# Airway Epithelium 
+gse$Epithelium <- find_text("Epithelium")
+
+# Collapse columns 
+gse <- unite(gse,
+             "SampleType",
+             Blood:Tissue:Epithelium,
+             na.rm = TRUE, 
+             remove = TRUE)
+
+
+###################################
+# "Disease" as new column
+###################################
+
+# Emphysema
+gse$Emphysema <- find_text("Emphysema")
+
+# Bronchitis
+gse$Bronchitis <- find_text("Bronchitis")
+
+# COPD
+gse$COPD <- find_text("COPD")
+
+# Collapse columns 
+gse <- unite(gse,
+             "Disease",
+             Emphysema:Bronchitis:COPD,
+             na.rm = TRUE, 
+             remove = TRUE)
+
+
+
+###################################
+# "Controls" as new column (either control or normal)
+###################################
+# control
+gse$control <- find_text("control")
+
+# normal
+gse$normal <- find_text("normal")
+
+# Collapse columns 
+gse <- unite(gse,
+             "Controls",
+             control:normal,
+             na.rm = TRUE, 
+             remove = TRUE)
+
+
+###################################
+# "Patient" as new column
+###################################
+gse$Patient <- find_text("Patient")
+
+
+###################################
+# write table as "output_data/GSE_query_mined.txt"
+###################################
+
+write.table(gse,file = "output_data/GSE_query_mined.txt",quote = F,sep = "\t",row.names = F)
+
+
+
+
+```
+
+
+
+I have already search "COPD" in GEO but I want to use [GEOquery](https://bioconductor.org/packages/release/bioc/html/GEOquery.html) 
+and [GEOmetadb](https://www.bioconductor.org/packages/release/bioc/vignettes/GEOmetadb/inst/doc/GEOmetadb.html) 
+packages for R. It is meant to search and download experiments in R environment.
+
+The justification is that I want to see if I find the same datasets as using 
+the web interface. Because, using GEOquery has more advantages such as 
+downloading the data into R enviroment. 
+
+
+## Searching Data
+
+I am following [GEOmetadb vignette](https://www.bioconductor.org/packages/release/bioc/vignettes/GEOmetadb/inst/doc/GEOmetadb.html).
+
+We call the library
+
+```{r message=FALSE, warning=FALSE}
+library(GEOmetadb)
+```
+
+We connect with the database GEOmetadb
+
+```{r}
+con <- dbConnect(SQLite(),'GEOmetadb.sqlite')
+```
+
+We then search for all COPD experiments from human patients measured in lung 
+and blood. 
+
+```{r}
+query <- paste("SELECT DISTINCT gse.title,gse.gse",
+             "FROM",
+             "  gsm JOIN gse_gsm ON gsm.gsm=gse_gsm.gsm",
+             "  JOIN gse ON gse_gsm.gse=gse.gse",
+             "  JOIN gse_gpl ON gse_gpl.gse=gse.gse",
+             "  JOIN gpl ON gse_gpl.gpl=gpl.gpl",
+             "WHERE",
+             "  gsm.molecule_ch1 like '%total RNA%' AND",
+             "  gse.summary LIKE '%chronic obstructive pulmonary disease%' OR",
+             "  gse.summary LIKE '%COPD%' AND",
+             "  gpl.organism LIKE '%Homo sapiens%'",sep=" ")
+
+```
+
+
+```{reval=F}
+
+rs <- dbGetQuery(con,paste(query))
+dim(rs)
+rs[1:5,]
+
+# gsms duplicated
+from_to <- sapply(rs[,"gse"], geoConvert, sqlite_db_name = "GEOmetadb.sqlite")
+
+df <- data.frame()
+
+for (i in seq(from_to[2,])){
+  df <- rbind(df,from_to[2,][[i]])
+}
+
+```
+
+We disconnect from the database
+```{r}
+dbDisconnect(con)
+```
+
+
+
+
+
+
+
+
+
+
+
+library(colorout)
