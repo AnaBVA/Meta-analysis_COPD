@@ -1,0 +1,87 @@
+---
+title: "1-download_raw-data.RMD"
+author: Ana BVA
+date: "`r BiocStyle::doc_date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
+
+## Introduction
+
+<div class="alert alert-info">
+  <strong>Aim:</strong> Download raw data using GEOquery
+</div>
+
+### Background 
+
+We are going to download raw data and meta information from [GEO](https://www.ncbi.nlm.nih.gov/geo/) using `GEOquery` package.
+
+
+## Input
+
+This script needs the following files:
+
+<div class="alert alert-warning">
+  <strong>GSE list:</strong> GSE IDs from the experiments
+</div>
+
+## Analysis
+
+### Setup
+
+The script can be found in: `r getwd() `. And the directories were set using
+`R/setup.R` (e.i. DATA, OUPUT, DOWNLOAD) as a small functions that will paste the names into complete paths.
+
+```{r setup}
+knitr::opts_knit$set(root.dir = here::here())
+source(here::here("R/setup.R"))
+```
+
+And this analysis is run in: `r getwd() `
+
+### Libraries
+
+```{r libraries, message=FALSE, warning=FALSE}
+library(GEOquery)
+```
+
+
+### GSE IDs
+
+We need the GSE IDs to download raw files, the IDs are stored in a separate file named `GSE_IDs.txt`, we used `getGEOSuppFiles()` for download raw data.
+
+```{r , class.source="bg-info",class.output="bg-info" }
+tissue <- scan(DATA("GSE_IDs.txt"),
+               character(), 
+               sep = ",")
+
+sapply(tissue,getGEOSuppFiles,baseDir = here::here("download"))
+```
+
+
+### STEP 2
+
+## Output
+
+This script produces the following data, and can be found in `r getwd() ` 
+
+<div class="alert alert-success">
+  <strong>Figure 1:</strong> Boxplot of samples  
+  <strong>Figure 2:</strong> Heatmap of COPD patients 
+</div>
+
+## Session Info
+
+```{r sessionInfo}
+sessionInfo()
+```
+
+
+
+
+
