@@ -1591,7 +1591,7 @@ div.tocify {
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <div class="alert alert-info">
-<p><strong>Aim:</strong> The aim of this script is to download raw data using GEOquery</p>
+<p><strong>Aim:</strong> Download raw data using GEOquery</p>
 </div>
 <div id="background" class="section level3">
 <h3>Background</h3>
@@ -1605,78 +1605,433 @@ div.tocify {
 <p><strong>GSE list:</strong> GSE IDs from the experiments</p>
 </div>
 </div>
-<div id="analysis" class="section level2">
-<h2>Analysis</h2>
-<div id="setup" class="section level3">
-<h3>Setup</h3>
-<p>The script can be found in: /Users/user/Documents/Doctorado/Analysis/Meta-analysis_COPD/vignettes</p>
-<pre class="r"><code>PATH = here::here()
-knitr::opts_knit$set(root.dir = PATH)
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<p>For running the script, type:</p>
+<pre class="bash"><code>ssh -X aaltamirano@dna.lavis.unam.mx
+qrsh
+cd /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/output_data/.out
+ module load r/4.0.1 
+
+nohup R -e &quot;rmarkdown::render(here::here('vignettes/1-download_raw-data.RMD'))&quot; &amp; &gt; 1-download_raw-data.out</code></pre>
+<p>The script can be found in: /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/vignettes. And the directories were set using <code>R/setup.R</code> (e.i. DATA, OUPUT, DOWNLOAD) as a small functions that will paste the names into complete paths.</p>
+<pre class="r"><code>knitr::opts_knit$set(root.dir = here::here())
 source(here::here(&quot;R/setup.R&quot;))</code></pre>
-<p>And this analysis is run in: /Users/user/Documents/Doctorado/Analysis/Meta-analysis_COPD</p>
-</div>
+<p>And this analysis is run in: /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD</p>
 <div id="libraries" class="section level3">
 <h3>Libraries</h3>
-<pre class="r"><code>library(tidyverse)</code></pre>
+<pre class="r"><code>library(GEOquery)</code></pre>
 </div>
-<div id="step-1" class="section level3">
-<h3>STEP 1</h3>
-<pre class="r bg-info"><code>1+1</code></pre>
-<pre class="bg-info"><code>## [1] 2</code></pre>
 </div>
-<div id="step-2" class="section level3">
-<h3>STEP 2</h3>
+<div id="analysis" class="section level2">
+<h2>Analysis</h2>
+<div id="gse-ids" class="section level3">
+<h3>GSE IDs</h3>
+<p>We need the GSE IDs to download raw files, the IDs are stored in a separate file named <code>GSE_IDs.txt</code>, we used <code>getGEOSuppFiles()</code> for download raw data.</p>
+<pre class="r bg-info"><code>tissue &lt;- scan(DATA(&quot;GSE_IDs.txt&quot;),
+               character(), 
+               sep = &quot;,&quot;)
+
+sapply(tissue,getGEOSuppFiles,baseDir = here::here(&quot;GEOquery&quot;))</code></pre>
+<pre><code>## No supplemental files found.</code></pre>
+<pre><code>## Check URL manually if in doubt</code></pre>
+<pre><code>## https://ftp.ncbi.nlm.nih.gov/geo/series/GSE17nnn/GSE17770/suppl/</code></pre>
+<pre><code>## No supplemental files found.</code></pre>
+<pre><code>## Check URL manually if in doubt</code></pre>
+<pre><code>## https://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119040/suppl/</code></pre>
+<pre class="bg-info"><code>## $GSE27597
+##                                                                                                  size
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar 1406177280
+##                                                                                            isdir
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar FALSE
+##                                                                                            mode
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar  644
+##                                                                                                          mtime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar 2020-09-09 21:20:31
+##                                                                                                          ctime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar 2020-09-09 21:20:31
+##                                                                                                          atime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar 2020-09-09 21:11:32
+##                                                                                             uid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar 1033
+##                                                                                             gid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar 1003
+##                                                                                                  uname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar aaltamirano
+##                                                                                             grname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar amedina
+## 
+## $GSE106986
+##                                                                                                                             size
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                           181422080
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz   3338869
+##                                                                                                                        isdir
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                           FALSE
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz FALSE
+##                                                                                                                        mode
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                            644
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz  644
+##                                                                                                                                      mtime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                           2020-09-09 21:21:41
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz 2020-09-09 21:21:43
+##                                                                                                                                      ctime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                           2020-09-09 21:21:41
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz 2020-09-09 21:21:43
+##                                                                                                                                      atime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                           2020-09-09 21:20:32
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz 2020-09-09 21:21:41
+##                                                                                                                         uid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                           1033
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz 1033
+##                                                                                                                         gid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                           1003
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz 1003
+##                                                                                                                              uname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                           aaltamirano
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz aaltamirano
+##                                                                                                                         grname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                           amedina
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz amedina
+## 
+## $GSE37768
+##                                                                                                 size
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar 310056960
+##                                                                                            isdir
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar FALSE
+##                                                                                            mode
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar  644
+##                                                                                                          mtime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar 2020-09-09 21:23:42
+##                                                                                                          ctime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar 2020-09-09 21:23:42
+##                                                                                                          atime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar 2020-09-09 21:21:43
+##                                                                                             uid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar 1033
+##                                                                                             gid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar 1003
+##                                                                                                  uname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar aaltamirano
+##                                                                                             grname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar amedina
+## 
+## $GSE57148
+##                                                                                                                    size
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz 24496559
+##                                                                                                                isdir
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz FALSE
+##                                                                                                                mode
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz  644
+##                                                                                                                              mtime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz 2020-09-09 21:23:54
+##                                                                                                                              ctime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz 2020-09-09 21:23:54
+##                                                                                                                              atime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz 2020-09-09 21:23:43
+##                                                                                                                 uid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz 1033
+##                                                                                                                 gid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz 1003
+##                                                                                                                      uname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz aaltamirano
+##                                                                                                                 grname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz amedina
+## 
+## $GSE47460
+##                                                                                                  size
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar 1760778240
+##                                                                                            isdir
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar FALSE
+##                                                                                            mode
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar  644
+##                                                                                                          mtime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar 2020-09-09 21:35:12
+##                                                                                                          ctime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar 2020-09-09 21:35:12
+##                                                                                                          atime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar 2020-09-09 21:23:55
+##                                                                                             uid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar 1033
+##                                                                                             gid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar 1003
+##                                                                                                  uname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar aaltamirano
+##                                                                                             grname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar amedina
+## 
+## $GSE38974
+##                                                                                               size
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar 7270400
+##                                                                                            isdir
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar FALSE
+##                                                                                            mode
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar  644
+##                                                                                                          mtime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar 2020-09-09 21:35:16
+##                                                                                                          ctime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar 2020-09-09 21:35:16
+##                                                                                                          atime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar 2020-09-09 21:35:13
+##                                                                                             uid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar 1033
+##                                                                                             gid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar 1003
+##                                                                                                  uname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar aaltamirano
+##                                                                                             grname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar amedina
+## 
+## $GSE8581
+##                                                                                               size
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar 299182080
+##                                                                                          isdir
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar FALSE
+##                                                                                          mode
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar  644
+##                                                                                                        mtime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar 2020-09-09 21:37:10
+##                                                                                                        ctime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar 2020-09-09 21:37:10
+##                                                                                                        atime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar 2020-09-09 21:35:17
+##                                                                                           uid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar 1033
+##                                                                                           gid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar 1003
+##                                                                                                uname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar aaltamirano
+##                                                                                           grname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar amedina
+## 
+## $GSE38934
+##                                                                                                size
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38934/GSE38934_RAW.tar 50964480
+##                                                                                            isdir
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38934/GSE38934_RAW.tar FALSE
+##                                                                                            mode
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38934/GSE38934_RAW.tar  644
+##                                                                                                          mtime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38934/GSE38934_RAW.tar 2020-09-09 21:37:31
+##                                                                                                          ctime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38934/GSE38934_RAW.tar 2020-09-09 21:37:31
+##                                                                                                          atime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38934/GSE38934_RAW.tar 2020-09-09 21:37:11
+##                                                                                             uid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38934/GSE38934_RAW.tar 1033
+##                                                                                             gid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38934/GSE38934_RAW.tar 1003
+##                                                                                                  uname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38934/GSE38934_RAW.tar aaltamirano
+##                                                                                             grname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE38934/GSE38934_RAW.tar amedina
+## 
+## $GSE69818
+##                                                                                                 size
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE69818/GSE69818_RAW.tar 162764800
+##                                                                                            isdir
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE69818/GSE69818_RAW.tar FALSE
+##                                                                                            mode
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE69818/GSE69818_RAW.tar  644
+##                                                                                                          mtime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE69818/GSE69818_RAW.tar 2020-09-09 21:38:33
+##                                                                                                          ctime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE69818/GSE69818_RAW.tar 2020-09-09 21:38:33
+##                                                                                                          atime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE69818/GSE69818_RAW.tar 2020-09-09 21:37:31
+##                                                                                             uid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE69818/GSE69818_RAW.tar 1033
+##                                                                                             gid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE69818/GSE69818_RAW.tar 1003
+##                                                                                                  uname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE69818/GSE69818_RAW.tar aaltamirano
+##                                                                                             grname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE69818/GSE69818_RAW.tar amedina
+## 
+## $GSE63073
+##                                                                                                               size
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity1_table.txt.gz 1159457
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity2_table.txt.gz 1328271
+##                                                                                                            isdir
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity1_table.txt.gz FALSE
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity2_table.txt.gz FALSE
+##                                                                                                            mode
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity1_table.txt.gz  644
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity2_table.txt.gz  644
+##                                                                                                                          mtime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity1_table.txt.gz 2020-09-09 21:38:35
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity2_table.txt.gz 2020-09-09 21:38:37
+##                                                                                                                          ctime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity1_table.txt.gz 2020-09-09 21:38:35
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity2_table.txt.gz 2020-09-09 21:38:37
+##                                                                                                                          atime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity1_table.txt.gz 2020-09-09 21:38:34
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity2_table.txt.gz 2020-09-09 21:38:35
+##                                                                                                             uid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity1_table.txt.gz 1033
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity2_table.txt.gz 1033
+##                                                                                                             gid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity1_table.txt.gz 1003
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity2_table.txt.gz 1003
+##                                                                                                                  uname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity1_table.txt.gz aaltamirano
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity2_table.txt.gz aaltamirano
+##                                                                                                             grname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity1_table.txt.gz amedina
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE63073/GSE63073_intensity2_table.txt.gz amedina
+## 
+## $GSE17770
+## NULL
+## 
+## $GSE1650
+##                                                                                              size
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar 97320960
+##                                                                                          isdir
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar FALSE
+##                                                                                          mode
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar  644
+##                                                                                                        mtime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar 2020-09-09 21:39:15
+##                                                                                                        ctime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar 2020-09-09 21:39:15
+##                                                                                                        atime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar 2020-09-09 21:38:38
+##                                                                                           uid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar 1033
+##                                                                                           gid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar 1003
+##                                                                                                uname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar aaltamirano
+##                                                                                           grname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar amedina
+## 
+## $GSE1122
+##                                                                                              size
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar 31569920
+##                                                                                          isdir
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar FALSE
+##                                                                                          mode
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar  644
+##                                                                                                        mtime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar 2020-09-09 21:39:28
+##                                                                                                        ctime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar 2020-09-09 21:39:28
+##                                                                                                        atime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar 2020-09-09 21:05:03
+##                                                                                           uid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar 1033
+##                                                                                           gid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar 1003
+##                                                                                                uname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar aaltamirano
+##                                                                                           grname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar amedina
+## 
+## $GSE119040
+## NULL
+## 
+## $GSE103174
+##                                                                                                                             size
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                           118087680
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz   4574543
+##                                                                                                                        isdir
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                           FALSE
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz FALSE
+##                                                                                                                        mode
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                            644
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz  644
+##                                                                                                                                      mtime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                           2020-09-09 21:40:20
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz 2020-09-09 21:40:24
+##                                                                                                                                      ctime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                           2020-09-09 21:40:20
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz 2020-09-09 21:40:24
+##                                                                                                                                      atime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                           2020-09-09 21:39:30
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz 2020-09-09 21:40:20
+##                                                                                                                         uid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                           1033
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz 1033
+##                                                                                                                         gid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                           1003
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz 1003
+##                                                                                                                              uname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                           aaltamirano
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz aaltamirano
+##                                                                                                                         grname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                           amedina
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz amedina
+## 
+## $GSE124180
+##                                                                                                                 size
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz 2233692
+##                                                                                                              isdir
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz FALSE
+##                                                                                                              mode
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz  644
+##                                                                                                                            mtime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz 2020-09-09 21:40:27
+##                                                                                                                            ctime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz 2020-09-09 21:40:27
+##                                                                                                                            atime
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz 2020-09-09 21:40:25
+##                                                                                                               uid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz 1033
+##                                                                                                               gid
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz 1003
+##                                                                                                                    uname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz aaltamirano
+##                                                                                                               grname
+## /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz amedina</code></pre>
 </div>
 </div>
 <div id="output" class="section level2">
 <h2>Output</h2>
-<p>This script produces the following data, and can be found in /Users/user/Documents/Doctorado/Analysis/Meta-analysis_COPD</p>
+<p>This script produces the following data, and can be found in /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD</p>
 <div class="alert alert-success">
-<p><strong>Figure 1:</strong> Boxplot of samples<br />
-<strong>Figure 2:</strong> Heatmap of COPD patients</p>
+<p><strong>Figure 1:</strong> RAW data in <code>/GEOquery</code> <strong>Figure 2:</strong> Heatmap of COPD patients</p>
 </div>
 </div>
 <div id="session-info" class="section level2">
 <h2>Session Info</h2>
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>## R version 4.0.2 (2020-06-22)
-## Platform: x86_64-apple-darwin17.0 (64-bit)
-## Running under: macOS Catalina 10.15.6
+<pre><code>## R version 4.0.1 (2020-06-06)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Running under: CentOS Linux 7 (Core)
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## BLAS:   /cm/shared/apps/r/4.0.1-studio/lib64/R/lib/libRblas.so
+## LAPACK: /cm/shared/apps/r/4.0.1-studio/lib64/R/lib/libRlapack.so
 ## 
 ## locale:
-## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 ## 
 ## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## [1] parallel  stats     graphics  grDevices utils     datasets  methods  
+## [8] base     
 ## 
 ## other attached packages:
-## [1] forcats_0.5.0    stringr_1.4.0    dplyr_1.0.2.9000 purrr_0.3.4     
-## [5] readr_1.3.1      tidyr_1.1.2      tibble_3.0.3     ggplot2_3.3.2   
-## [9] tidyverse_1.3.0 
+## [1] GEOquery_2.56.0     Biobase_2.48.0      BiocGenerics_0.34.0
+## [4] stringr_1.4.0      
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] tidyselect_1.1.0    xfun_0.16           haven_2.3.1        
-##  [4] colorspace_1.4-1    vctrs_0.3.4         generics_0.0.2     
-##  [7] htmltools_0.5.0     yaml_2.2.1          blob_1.2.1         
-## [10] rlang_0.4.7         pillar_1.4.6        glue_1.4.2         
-## [13] withr_2.2.0         DBI_1.1.0           dbplyr_1.4.4       
-## [16] modelr_0.1.8        readxl_1.3.1        lifecycle_0.2.0    
-## [19] munsell_0.5.0       gtable_0.3.0        cellranger_1.1.0   
-## [22] rvest_0.3.6         evaluate_0.14       knitr_1.29         
-## [25] fansi_0.4.1         broom_0.7.0         Rcpp_1.0.5         
-## [28] scales_1.1.1        backports_1.1.9     BiocManager_1.30.10
-## [31] jsonlite_1.7.0      fs_1.5.0            BiocStyle_2.16.0   
-## [34] hms_0.5.3           digest_0.6.25       stringi_1.4.6      
-## [37] grid_4.0.2          rprojroot_1.3-2     here_0.1           
-## [40] cli_2.0.2           tools_4.0.2         magrittr_1.5       
-## [43] crayon_1.3.4        pkgconfig_2.0.3     ellipsis_0.3.1     
-## [46] xml2_1.3.2          reprex_0.3.0        lubridate_1.7.9    
-## [49] assertthat_0.2.1    rmarkdown_2.3       httr_1.4.2         
-## [52] rstudioapi_0.11     R6_2.4.1            compiler_4.0.2</code></pre>
+##  [1] Rcpp_1.0.4.6        xml2_1.3.2          knitr_1.29         
+##  [4] magrittr_1.5        hms_0.5.3           tidyselect_1.1.0   
+##  [7] here_0.1            R6_2.4.1            rlang_0.4.6        
+## [10] dplyr_1.0.0         tools_4.0.1         xfun_0.15          
+## [13] htmltools_0.5.0     ellipsis_0.3.1      yaml_2.2.1         
+## [16] rprojroot_1.3-2     digest_0.6.25       tibble_3.0.1       
+## [19] lifecycle_0.2.0     crayon_1.3.4        tidyr_1.1.2        
+## [22] readr_1.3.1         purrr_0.3.4         BiocManager_1.30.10
+## [25] vctrs_0.3.1         curl_4.3            glue_1.4.1         
+## [28] evaluate_0.14       rmarkdown_2.3       limma_3.44.3       
+## [31] stringi_1.4.6       pillar_1.4.4        compiler_4.0.1     
+## [34] generics_0.0.2      backports_1.1.8     BiocStyle_2.16.0   
+## [37] pkgconfig_2.0.3</code></pre>
 </div>
 
 
