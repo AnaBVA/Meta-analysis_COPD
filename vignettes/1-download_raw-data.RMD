@@ -30,9 +30,21 @@ This script needs the following files:
   <strong>GSE list:</strong> GSE IDs from the experiments
 </div>
 
-## Analysis
 
-### Setup
+## Setup
+
+For running the script, type:
+
+```{bash, eval = F}
+ssh -X aaltamirano@dna.lavis.unam.mx
+qrsh
+cd /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/output_data/.out
+ module load r/4.0.1 
+
+nohup R -e "rmarkdown::render(here::here('vignettes/1-download_raw-data.RMD'))" & > 1-download_raw-data.out
+```
+
+
 
 The script can be found in: `r getwd() `. And the directories were set using
 `R/setup.R` (e.i. DATA, OUPUT, DOWNLOAD) as a small functions that will paste the names into complete paths.
@@ -51,6 +63,9 @@ library(GEOquery)
 ```
 
 
+
+## Analysis
+
 ### GSE IDs
 
 We need the GSE IDs to download raw files, the IDs are stored in a separate file named `GSE_IDs.txt`, we used `getGEOSuppFiles()` for download raw data.
@@ -60,18 +75,16 @@ tissue <- scan(DATA("GSE_IDs.txt"),
                character(), 
                sep = ",")
 
-sapply(tissue,getGEOSuppFiles,baseDir = here::here("download"))
+sapply(tissue,getGEOSuppFiles,baseDir = here::here("GEOquery"))
 ```
 
-
-### STEP 2
 
 ## Output
 
 This script produces the following data, and can be found in `r getwd() ` 
 
 <div class="alert alert-success">
-  <strong>Figure 1:</strong> Boxplot of samples  
+  <strong>Figure 1:</strong> RAW data in  `/GEOquery`
   <strong>Figure 2:</strong> Heatmap of COPD patients 
 </div>
 
