@@ -41,7 +41,7 @@ qrsh
 cd /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/output_data/.out
  module load r/4.0.1 
 
-nohup R -e "rmarkdown::render(here::here('vignettes/1-download_raw-data.RMD'))" & > 1-download_raw-data.out
+nohup R -e "rmarkdown::render(here::here('vignettes/1-download_raw-data.RMD'))" > 1-download_raw-data.out &
 ```
 
 
