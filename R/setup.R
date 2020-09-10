@@ -1,3 +1,4 @@
+library(stringr)
 
 TODAY = format(Sys.time(),'%Y-%m-%d')
 
