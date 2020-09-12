@@ -82,7 +82,7 @@ sapply(tissue,getGEOSuppFiles,baseDir = here::here("GEOquery"))
 We download GEOquery data for the experiments 
 
 ```{r}
-geo <- sapply(gse_table$Accession,getGEO,destdir = here::here("GEOquery"))
+geo <- sapply(tissue,getGEO,destdir = here::here("GEOquery"))
 saveRDS(geo,OUTPUT(c(TODAY,"_GEOquery-download.RDS")))
 ```
 
