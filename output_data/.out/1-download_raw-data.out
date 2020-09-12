@@ -21,15 +21,23 @@ Type 'q()' to quit R.
 
 
 processing file: 1-download_raw-data.RMD
+<<<<<<< HEAD
   |                                                                              |                                                                      |   0%  |                                                                              |.....                                                                 |   8%
    inline R code fragments
 
   |                                                                              |...........                                                           |  15%
+=======
+  |                                                                              |                                                                      |   0%  |                                                                              |......                                                                |   9%
+   inline R code fragments
+
+  |                                                                              |.............                                                         |  18%
+>>>>>>> b0615271525c0d3a27ca807cd2c6c752a3721cfc
 label: unnamed-chunk-1 (with options) 
 List of 2
  $ eval  : symbol F
  $ engine: chr "bash"
 
+<<<<<<< HEAD
   |                                                                              |................                                                      |  23%
    inline R code fragments
 
@@ -39,6 +47,17 @@ label: setup
    inline R code fragments
 
   |                                                                              |................................                                      |  46%
+=======
+  |                                                                              |...................                                                   |  27%
+   inline R code fragments
+
+  |                                                                              |.........................                                             |  36%
+label: setup
+  |                                                                              |................................                                      |  45%
+   inline R code fragments
+
+  |                                                                              |......................................                                |  55%
+>>>>>>> b0615271525c0d3a27ca807cd2c6c752a3721cfc
 label: libraries (with options) 
 List of 2
  $ message: logi FALSE
@@ -77,16 +96,27 @@ Welcome to Bioconductor
 
 Setting options('download.file.method.GEOquery'='auto')
 Setting options('GEOquery.inmemory.gpl'=FALSE)
+<<<<<<< HEAD
   |                                                                              |......................................                                |  54%
   ordinary text without R code
 
   |                                                                              |...........................................                           |  62%
+=======
+  |                                                                              |.............................................                         |  64%
+  ordinary text without R code
+
+  |                                                                              |...................................................                   |  73%
+>>>>>>> b0615271525c0d3a27ca807cd2c6c752a3721cfc
 label: unnamed-chunk-2 (with options) 
 List of 2
  $ class.source: chr "bg-info"
  $ class.output: chr "bg-info"
 
+<<<<<<< HEAD
 Read 12 items
+=======
+Read 16 items
+>>>>>>> b0615271525c0d3a27ca807cd2c6c752a3721cfc
 trying URL 'https://ftp.ncbi.nlm.nih.gov/geo/series/GSE27nnn/GSE27597/suppl//GSE27597_RAW.tar?tool=geoquery'
 Content type 'application/x-tar' length 1406177280 bytes (1341.0 MB)
 ==================================================
@@ -127,6 +157,29 @@ Content type 'application/x-tar' length 299182080 bytes (285.3 MB)
 ==================================================
 downloaded 285.3 MB
 
+<<<<<<< HEAD
+=======
+trying URL 'https://ftp.ncbi.nlm.nih.gov/geo/series/GSE38nnn/GSE38934/suppl//GSE38934_RAW.tar?tool=geoquery'
+Content type 'application/x-tar' length 50964480 bytes (48.6 MB)
+==================================================
+downloaded 48.6 MB
+
+trying URL 'https://ftp.ncbi.nlm.nih.gov/geo/series/GSE69nnn/GSE69818/suppl//GSE69818_RAW.tar?tool=geoquery'
+Content type 'application/x-tar' length 162764800 bytes (155.2 MB)
+==================================================
+downloaded 155.2 MB
+
+trying URL 'https://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63073/suppl//GSE63073_intensity1_table.txt.gz?tool=geoquery'
+Content type 'application/x-gzip' length 1159457 bytes (1.1 MB)
+==================================================
+downloaded 1.1 MB
+
+trying URL 'https://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63073/suppl//GSE63073_intensity2_table.txt.gz?tool=geoquery'
+Content type 'application/x-gzip' length 1328271 bytes (1.3 MB)
+==================================================
+downloaded 1.3 MB
+
+>>>>>>> b0615271525c0d3a27ca807cd2c6c752a3721cfc
 trying URL 'https://ftp.ncbi.nlm.nih.gov/geo/series/GSE1nnn/GSE1650/suppl//GSE1650_RAW.tar?tool=geoquery'
 Content type 'application/x-tar' length 97320960 bytes (92.8 MB)
 ==================================================
@@ -152,6 +205,7 @@ Content type 'application/x-gzip' length 2233692 bytes (2.1 MB)
 ==================================================
 downloaded 2.1 MB
 
+<<<<<<< HEAD
   |                                                                              |................................................                      |  69%
   ordinary text without R code
 
@@ -236,6 +290,12 @@ downloaded 6482 bytes
    inline R code fragments
 
   |                                                                              |.................................................................     |  92%
+=======
+  |                                                                              |.........................................................             |  82%
+   inline R code fragments
+
+  |                                                                              |................................................................      |  91%
+>>>>>>> b0615271525c0d3a27ca807cd2c6c752a3721cfc
 label: sessionInfo
   |                                                                              |......................................................................| 100%
   ordinary text without R code
@@ -243,11 +303,22 @@ label: sessionInfo
 
 output file: 1-download_raw-data.knit.md
 
+<<<<<<< HEAD
 /mnt/Genoma/amedina/aaltamirano/anaconda3/bin/pandoc +RTS -K512m -RTS 1-download_raw-data.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output 1-download_raw-data.html --email-obfuscation none --self-contained --standalone --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /cm/shared/apps/r/4.0.1-studio/lib64/R/library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable 'theme:bootstrap' --include-in-header /tmp/Rtmp8LADlo/rmarkdown-str4b1349c8c089.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --lua-filter /cm/shared/apps/r/4.0.1-studio/lib64/R/library/rmarkdown/rmd/lua/pagebreak.lua --lua-filter /cm/shared/apps/r/4.0.1-studio/lib64/R/library/rmarkdown/rmd/lua/latex-div.lua --variable code_folding=hide --variable code_menu=1 
 
 Output created: 1-download_raw-data.html
 Warning message:
 In for (i in seq_along(col)) col[i] <- length(scan(file, what = "",  :
   closing unused connection 4 (https://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119040/suppl/)
+=======
+/mnt/Genoma/amedina/aaltamirano/anaconda3/bin/pandoc +RTS -K512m -RTS 1-download_raw-data.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output 1-download_raw-data.html --email-obfuscation none --self-contained --standalone --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /cm/shared/apps/r/4.0.1-studio/lib64/R/library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable 'theme:bootstrap' --include-in-header /tmp/RtmpvJsp8c/rmarkdown-str31ae343364a7.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --lua-filter /cm/shared/apps/r/4.0.1-studio/lib64/R/library/rmarkdown/rmd/lua/pagebreak.lua --lua-filter /cm/shared/apps/r/4.0.1-studio/lib64/R/library/rmarkdown/rmd/lua/latex-div.lua --variable code_folding=hide --variable code_menu=1 
+
+Output created: 1-download_raw-data.html
+Warning messages:
+1: In for (i in 1L:d2) { :
+  closing unused connection 5 (https://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119040/suppl/)
+2: In for (i in 1L:d2) { :
+  closing unused connection 4 (https://ftp.ncbi.nlm.nih.gov/geo/series/GSE17nnn/GSE17770/suppl/)
+>>>>>>> b0615271525c0d3a27ca807cd2c6c752a3721cfc
 > 
 > 
