@@ -1,5 +1,5 @@
 ---
-title: "1-download_raw-data.RMD"
+title: "1: Dowload RAW data"
 author: Ana BVA
 date: "`r BiocStyle::doc_date()`"
 output:
@@ -64,9 +64,7 @@ library(GEOquery)
 
 
 
-## Analysis
-
-### GSE IDs
+## Download raw data
 
 We need the GSE IDs to download raw files, the IDs are stored in a separate file named `GSE_IDs.txt`, we used `getGEOSuppFiles()` for download raw data.
 
@@ -79,13 +77,23 @@ sapply(tissue,getGEOSuppFiles,baseDir = here::here("GEOquery"))
 ```
 
 
+## Download GEOquery data
+
+We download GEOquery data for the experiments 
+
+```{r}
+geo <- sapply(gse_table$Accession,getGEO,destdir = here::here("GEOquery"))
+saveRDS(geo,OUTPUT(c(TODAY,"_GEOquery-download.RDS")))
+```
+
+
 ## Output
 
 This script produces the following data, and can be found in `r getwd() ` 
 
 <div class="alert alert-success">
-  <strong>Figure 1:</strong> RAW data in  `/GEOquery`
-  <strong>Figure 2:</strong> Heatmap of COPD patients 
+  <strong>Data 1:</strong> RAW data in  `/GEOquery`
+  <strong> 2:</strong> Heatmap of COPD patients 
 </div>
 
 ## Session Info
