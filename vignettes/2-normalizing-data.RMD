@@ -90,7 +90,10 @@ In this function you need:
 rawCEL_normCEL <- function(gse){
   # select and untar files
   gsepath <- file.path(here::here("GEOquery"),gse)
-  untar(list.files(gsepath,full.names=T,pattern="tar"), exdir=gsepath)
+  ifelse(length(list.files(gsepath)) < 2,
+    untar(list.files(gsepath,full.names=T,pattern="tar"), exdir=gsepath),
+    print(length(list.files(gsepath)))
+  )
   # for CEL files "AFFYMETRIX"
   if(any(grepl("cel",list.files(gsepath),ignore.case = T))){
     celfiles <- list.celfiles(gsepath,
@@ -119,7 +122,7 @@ rawCEL_normCEL <- function(gse){
   else if(any(grepl("txt",list.files(gsepath),ignore.case = T))){
     files <- list.files(gsepath,full.names=T, pattern = "txt")
     # read agilent files
-    RG <- read.maimages(files[1:5],source = "agilent.median",green.only=T)
+    RG <- read.maimages(files,source = "agilent.median",green.only=T)
     #plots: raw data
     boxplot(RG$E)
     hist(RG$E)
