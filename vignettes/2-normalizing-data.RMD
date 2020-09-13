@@ -60,8 +60,7 @@ And this analysis is run in: `r getwd() `
 
 ```{r libraries, message=FALSE, warning=FALSE}
 library(limma)
-library(affy)
-library(affyPLM)
+library(oligo)
 library(tidyverse)
 ```
 
@@ -94,9 +93,11 @@ rawCEL_normCEL <- function(gse){
   untar(list.files(gsepath,full.names=T,pattern="tar"), exdir=gsepath)
   # for CEL files "AFFYMETRIX"
   if(any(grepl("cel",list.files(gsepath),ignore.case = T))){
-    celfiles <- list.celfiles(gsepath)
+    celfiles <- list.celfiles(gsepath,
+                              full.names=TRUE,
+                              listGzipped=TRUE)
     # read CEL files in R
-    rawData <- ReadAffy(celfile.path = gsepath)
+    rawData <- read.celfiles(celfiles)
     #### Figures of raw data
     #pdf(str_c("raw_",gse,"_boxplot",TODAY,".pdf"))
     ## plots of raw data
@@ -104,7 +105,7 @@ rawCEL_normCEL <- function(gse){
     hist(rawData,target="core")
     #dev.off()
     ## RMA normalization
-    normData <- rma(rawData,target="core")
+    normData <- rma(rawData)
     #### Figures of Normalized data
     #pdf(str_c("norm_",gse,"_boxplot",TODAY,".pdf"))
     ## `plots of norm data
@@ -159,23 +160,13 @@ gse_table <- read_tsv(DATA("2-Table_GSE-info.txt"))
 knitr::kable(gse_table, caption = "GSE information")
 ```
 
-### STEP 1: GEOquery information
-
-We read GEOquery data for all the experiments 
-
-```{r}
-geo <- readRDS(OUTPUT("2020-09-11_GEOquery-download.RDS"))
-```
-
-
-### STEP 2: Normalizing raw data
+### STEP 1: Normalizing raw data
 
 Normalize raw data
 
 ```{r}
 geo_norm <- sapply(gse_table$Accession,rawCEL_normCEL)
-
-
+saveRDS(geo_norm,OUTPUT(c(TODAY,"_normData.RDS")))
 ```
 
 
@@ -184,8 +175,7 @@ geo_norm <- sapply(gse_table$Accession,rawCEL_normCEL)
 This script produces the following data, and can be found in `r getwd() ` 
 
 <div class="alert alert-success">
-  <strong>Figure 1:</strong> Boxplot of samples  
-  <strong>Figure 2:</strong> Heatmap of COPD patients 
+  <strong>`2020-09-12_normData.RDS`:</strong> Normalized data 
 </div>
 
 ## Session Info
