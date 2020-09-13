@@ -96,7 +96,7 @@ rawCEL_normCEL <- function(gse){
   if(length(list.files(gsepath)) == 0){
     message("No Supplementary files found")
     } else if (length(list.files(gsepath)) < 3 & length(list.files(gsepath)) != 0 ){
-    ifelse(any(list.files(gsepath,pattern="tar")),
+    ifelse(any(list.files(gsepath,pattern="tar") !=0),
                 untar(list.files(gsepath,full.names=T,pattern="tar"), exdir=gsepath),
                 list.files(gsepath))
     } else{
@@ -115,8 +115,8 @@ rawCEL_normCEL <- function(gse){
     #### Figures of raw data
     #pdf(str_c("raw_",gse,"_boxplot",TODAY,".pdf"))
     ## plots of raw data
-    boxplot(rawData,target="core")
-    hist(rawData,target="core")
+    boxplot(rawData)
+    hist(rawData)
     #dev.off()
     ## RMA normalization
     normData <- rma(rawData)
