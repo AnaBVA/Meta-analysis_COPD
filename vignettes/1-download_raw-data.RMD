@@ -92,7 +92,7 @@ saveRDS(geo,OUTPUT(c(TODAY,"_GEOquery-download.RDS")))
 This script produces the following data, and can be found in `r getwd() ` 
 
 <div class="alert alert-success">
-  <strong>Data 1:</strong> RAW data in  `/GEOquery`
+  <strong>Data 1:</strong> RAW data in  `/GEOquery`  
   <strong>RDS:</strong> Data from GEOquery `OUTPUT(c(TODAY,"_GEOquery-download.RDS"))` 
 </div>
 

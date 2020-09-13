@@ -2,10 +2,11 @@
 
 ## AIM: Meta-analysis of gene expression experiments on COPD patients
 
-This repository was created to analyze a meta-analysis from COPD patients using public data and pre-processing (e.i. RMA).
-All data was downloaded into the computer `DNA.lavis.unam.mx` (restricted access). The scripts were also run in that maching.
+This repository was created to perform a meta-analysis from COPD patients using public data.
 
-We followed this steps, and individual script can be found in /vignettes:
+All data was downloaded into the computer `DNA.lavis.unam.mx` and `10.200.0.42`(restricted access) and raw data downloaded and normalized (e.i. RMA).
+
+We followed this steps, and script can be found in `/vignettes`:
 
 - 0: Data selection `/0-Data-selection.RMD`
 
@@ -26,15 +27,12 @@ We followed this steps, and individual script can be found in /vignettes:
 - 8: Dash-board `/8-dashboard.RMD`
 
 
-
-The `HTML`outputs can also be downloaded.
-
-The Dashboard app needs some files that can be found in:
+Additional files that can be found in:
 https://drive.google.com/drive/folders/1Lw57iquTxWMonUanZPo5G-Yb0QZDDVdP?usp=sharing
 
-
+For running the dashboard app you can:
 ```{r}
-rmarkdown::run("vignettes/Meta-analysis_Dashboard.Rmd")
+rmarkdown::run("vignettes/2020-06-13_Meta-analysis_7GSE/Meta-analysis_Dashboard.Rmd")
 ```
 
 

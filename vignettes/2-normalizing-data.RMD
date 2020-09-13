@@ -60,6 +60,8 @@ And this analysis is run in: `r getwd() `
 
 ```{r libraries, message=FALSE, warning=FALSE}
 library(limma)
+library(affy)
+library(affyPLM)
 library(tidyverse)
 ```
 
@@ -89,7 +91,7 @@ In this function you need:
 rawCEL_normCEL <- function(gse){
   # select and untar files
   gsepath <- file.path(here::here("GEOquery"),gse)
-  untar(list.files(gsepath,full.names=T), exdir=gsepath)
+  untar(list.files(gsepath,full.names=T,pattern="tar"), exdir=gsepath)
   # for CEL files "AFFYMETRIX"
   if(any(grepl("cel",list.files(gsepath),ignore.case = T))){
     celfiles <- list.celfiles(gsepath)
@@ -102,7 +104,7 @@ rawCEL_normCEL <- function(gse){
     hist(rawData,target="core")
     #dev.off()
     ## RMA normalization
-    normData <- rma(rawData)
+    normData <- rma(rawData,target="core")
     #### Figures of Normalized data
     #pdf(str_c("norm_",gse,"_boxplot",TODAY,".pdf"))
     ## `plots of norm data
@@ -125,8 +127,8 @@ rawCEL_normCEL <- function(gse){
     RG$E <- normalizeBetweenArrays(RG$E, method="quantile")
     RG$E <- log2(RG$E)
     #plots: norm
-    hist(RG$E)
     boxplot(RG$E)
+    hist(RG$E,100)
     return(RG)
   }
   # anyother case
@@ -162,7 +164,7 @@ knitr::kable(gse_table, caption = "GSE information")
 We read GEOquery data for all the experiments 
 
 ```{r}
-geo <- readRDS(OUTPUT(c(TODAY,"_GEOquery-download.RDS")))
+geo <- readRDS(OUTPUT("2020-09-11_GEOquery-download.RDS"))
 ```
 
 
@@ -172,6 +174,8 @@ Normalize raw data
 
 ```{r}
 geo_norm <- sapply(gse_table$Accession,rawCEL_normCEL)
+
+
 ```
 
 
