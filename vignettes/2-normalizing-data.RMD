@@ -43,6 +43,10 @@ qrsh
 cd /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/output_data/.out
  module load r/4.0.1 
 
+## OR
+ssh ana@10.200.0.42
+cd /home/ana/R-projects/Meta-analysis_COPD/output_data/.out
+
 nohup R -e "rmarkdown::render(here::here('vignettes/2-normalizing-data.RMD'))" > 2-normalizing-data.out &
 ```
 
@@ -115,8 +119,8 @@ rawCEL_normCEL <- function(gse){
     #### Figures of raw data
     #pdf(str_c("raw_",gse,"_boxplot",TODAY,".pdf"))
     ## plots of raw data
-    boxplot(rawData)
-    hist(rawData)
+    #boxplot(rawData,target="core")
+    #hist(rawData,target="core")
     #dev.off()
     ## RMA normalization
     normData <- rma(rawData)
@@ -161,9 +165,6 @@ rawCEL_normCEL <- function(gse){
 #sapply(tissue,rawCEL_normCEL)
 
 ```
-
-
-
 
 
 ## Analysis
