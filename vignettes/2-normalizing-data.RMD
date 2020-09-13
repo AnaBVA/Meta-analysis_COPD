@@ -88,17 +88,28 @@ In this function you need:
 
 ```{r rawCEL_normCEL}
 rawCEL_normCEL <- function(gse){
+  
   # select and untar files
   gsepath <- file.path(here::here("GEOquery"),gse)
-  ifelse(length(list.files(gsepath)) < 2,
-    untar(list.files(gsepath,full.names=T,pattern="tar"), exdir=gsepath),
+  print(gse)
+  
+  if(length(list.files(gsepath)) == 0){
+    message("No Supplementary files found")
+    } else if (length(list.files(gsepath)) < 3 & length(list.files(gsepath)) != 0 ){
+    ifelse(any(list.files(gsepath,pattern="tar")),
+                untar(list.files(gsepath,full.names=T,pattern="tar"), exdir=gsepath),
+                list.files(gsepath))
+    } else{
     print(length(list.files(gsepath)))
-  )
+    }
+  
   # for CEL files "AFFYMETRIX"
   if(any(grepl("cel",list.files(gsepath),ignore.case = T))){
+    message("This is an Affymetrix array")
     celfiles <- list.celfiles(gsepath,
                               full.names=TRUE,
                               listGzipped=TRUE)
+    
     # read CEL files in R
     rawData <- read.celfiles(celfiles)
     #### Figures of raw data
@@ -118,26 +129,32 @@ rawCEL_normCEL <- function(gse){
     #write.csv(exprs(normData),str_c("/normalized",gse,"_normData",TODAY,".tx  t"),quote=F)
     return(normData)
   }
+  
   #for TXT files "AGILENT"
-  else if(any(grepl("txt",list.files(gsepath),ignore.case = T))){
+  else if(sum(grepl("txt",list.files(gsepath),ignore.case = T)) >2){
+    message("This is an Agilent array")
     files <- list.files(gsepath,full.names=T, pattern = "txt")
-    # read agilent files
+    files <- grep("annot",files,value=T,invert=T)
+   
+     # read agilent files
     RG <- read.maimages(files,source = "agilent.median",green.only=T)
     #plots: raw data
     boxplot(RG$E)
     hist(RG$E)
     # normalizing data
-    RG <- backgroundCorrect(RG, method="normexp", offset=1)
+    RG <- limma::backgroundCorrect(RG, method="normexp", offset=1)
     RG$E <- normalizeBetweenArrays(RG$E, method="quantile")
     RG$E <- log2(RG$E)
     #plots: norm
     boxplot(RG$E)
     hist(RG$E,100)
+    
     return(RG)
   }
+  
   # anyother case
   else{
-    print("This is not Affymetrix or Agilent")
+    message("This is not Affymetrix or Agilent")
   }
 }
 
