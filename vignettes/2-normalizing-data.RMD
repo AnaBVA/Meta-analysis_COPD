@@ -47,7 +47,7 @@ cd /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/output_data/.out
 ssh ana@10.200.0.42
 cd /home/ana/R-projects/Meta-analysis_COPD/output_data/.out
 
-nohup R -e "rmarkdown::render(here::here('vignettes/2-normalizing-data.RMD'))" > 2-normalizing-data.out &
+nohup R -e "rmarkdown::render(here::here('vignettes/2-normalizing-data.RMD'))" > output_data/.out/2-normalizing-data.out &
 ```
 
 The script can be found in: `r getwd() `. And the directories were set using
