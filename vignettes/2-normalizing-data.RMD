@@ -189,7 +189,7 @@ Normalize raw data
 
 ```{r}
 geo_norm <- sapply(gse_table$Accession,rawCEL_normCEL)
-saveRDS(geo_norm,OUTPUT(c(TODAY,"_normData.RDS")))
+saveRDS(geo_norm,OUTPUT(c(TODAY,"_normData.xz")),compress = "xz")
 ```
 
 
