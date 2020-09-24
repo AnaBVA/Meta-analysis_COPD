@@ -12,7 +12,7 @@
 <meta name="author" content="Ana BVA" />
 
 
-<title>1: Dowload RAW data</title>
+<title>1-download_raw-data.RMD</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1593,9 +1593,9 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">1: Dowload RAW data</h1>
+<h1 class="title toc-ignore">1-download_raw-data.RMD</h1>
 <h4 class="author">Ana BVA</h4>
-<h4 class="date">12 settembre 2020</h4>
+<h4 class="date">22 settembre 2020</h4>
 
 </div>
 
@@ -1603,550 +1603,53 @@ div.tocify {
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <div class="alert alert-info">
-<p><strong>Aim:</strong> Download raw data using GEOquery</p>
+<p><strong>Aim:</strong> The aim of this script</p>
 </div>
 <div id="background" class="section level3">
 <h3>Background</h3>
-<p>We are going to download raw data and meta information from <a href="https://www.ncbi.nlm.nih.gov/geo/">GEO</a> using <code>GEOquery</code> package.</p>
+<p>Some relevant information with links <a href="https://www.ncbi.nlm.nih.gov/geo/">GEO</a></p>
 </div>
 </div>
 <div id="input" class="section level2">
 <h2>Input</h2>
 <p>This script needs the following files:</p>
 <div class="alert alert-warning">
-<p><strong>GSE list:</strong> GSE IDs from the experiments</p>
+<p><strong>Data 1:</strong> Matrix of normalized experiments<br />
+<strong>Data 2:</strong> Meta data</p>
 </div>
 </div>
-<div id="setup" class="section level2">
-<h2>Setup</h2>
-<p>For running the script, type:</p>
-<pre class="bash"><code>ssh -X aaltamirano@dna.lavis.unam.mx
-qrsh
-cd /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/output_data/.out
- module load r/4.0.1 
+<div id="analysis" class="section level2">
+<h2>Analysis</h2>
+<div id="setup" class="section level3">
+<h3>Setup</h3>
+<p>The script can be found in: /home/ana/R-projects/Meta-analysis_COPD/vignettes</p>
+<pre class="r"><code>PATH = here::here()
+DATA_DIR = file.path(PATH,&quot;Data/&quot;)
+OUTPUT_DIR = file.path(PATH,&quot;output/&quot;)
+FIG_DIR = file.path(PATH,&quot;Fig&quot;)
 
-nohup R -e &quot;rmarkdown::render(here::here(&#39;vignettes/1-download_raw-data.RMD&#39;))&quot; &gt; 1-download_raw-data.out &amp;</code></pre>
-<p>The script can be found in: /home/ana/R-projects/Meta-analysis_COPD/vignettes. And the directories were set using <code>R/setup.R</code> (e.i. DATA, OUPUT, DOWNLOAD) as a small functions that will paste the names into complete paths.</p>
-<pre class="r"><code>knitr::opts_knit$set(root.dir = here::here())
-source(here::here(&quot;R/setup.R&quot;))</code></pre>
+knitr::opts_knit$set(root.dir = PATH)</code></pre>
 <p>And this analysis is run in: /home/ana/R-projects/Meta-analysis_COPD</p>
+</div>
 <div id="libraries" class="section level3">
 <h3>Libraries</h3>
-<pre class="r"><code>library(GEOquery)</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
 </div>
+<div id="step-1" class="section level3">
+<h3>STEP 1</h3>
+<pre class="r bg-info"><code>1+1</code></pre>
+<pre class="bg-info"><code>## [1] 2</code></pre>
 </div>
-<div id="download-raw-data" class="section level2">
-<h2>Download raw data</h2>
-<p>We need the GSE IDs to download raw files, the IDs are stored in a separate file named <code>GSE_IDs.txt</code>, we used <code>getGEOSuppFiles()</code> for download raw data.</p>
-<pre class="r bg-info"><code>tissue &lt;- scan(DATA(&quot;GSE_IDs.txt&quot;),
-               character(), 
-               sep = &quot;,&quot;)
-
-sapply(tissue,getGEOSuppFiles,baseDir = here::here(&quot;GEOquery&quot;))</code></pre>
-<pre><code>## No supplemental files found.</code></pre>
-<pre><code>## Check URL manually if in doubt</code></pre>
-<pre><code>## https://ftp.ncbi.nlm.nih.gov/geo/series/GSE119nnn/GSE119040/suppl/</code></pre>
-<pre class="bg-info"><code>## $GSE27597
-##                                                                                  size
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar 1406177280
-##                                                                            isdir
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar FALSE
-##                                                                            mode
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar  664
-##                                                                                          mtime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar 2020-09-12 21:05:35
-##                                                                                          ctime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar 2020-09-12 21:05:35
-##                                                                                          atime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar 2020-09-12 21:04:53
-##                                                                             uid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar 1000
-##                                                                             gid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar 1000
-##                                                                            uname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar   ana
-##                                                                            grname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSE27597_RAW.tar    ana
-## 
-## $GSE106986
-##                                                                                                             size
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                           181422080
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz   3338869
-##                                                                                                        isdir
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                           FALSE
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz FALSE
-##                                                                                                        mode
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                            664
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz  664
-##                                                                                                                      mtime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                           2020-09-12 21:06:23
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz 2020-09-12 21:06:24
-##                                                                                                                      ctime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                           2020-09-12 21:06:23
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz 2020-09-12 21:06:24
-##                                                                                                                      atime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                           2020-09-12 21:05:37
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz 2020-09-12 21:06:23
-##                                                                                                         uid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                           1000
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz 1000
-##                                                                                                         gid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                           1000
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz 1000
-##                                                                                                        uname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                             ana
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz   ana
-##                                                                                                        grname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_RAW.tar                              ana
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSE106986_log2_norm_annotated_matrix.txt.gz    ana
-## 
-## $GSE37768
-##                                                                                 size
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar 310056960
-##                                                                            isdir
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar FALSE
-##                                                                            mode
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar  664
-##                                                                                          mtime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar 2020-09-12 21:06:43
-##                                                                                          ctime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar 2020-09-12 21:06:43
-##                                                                                          atime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar 2020-09-12 21:06:25
-##                                                                             uid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar 1000
-##                                                                             gid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar 1000
-##                                                                            uname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar   ana
-##                                                                            grname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSE37768_RAW.tar    ana
-## 
-## $GSE57148
-##                                                                                                    size
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz 24496559
-##                                                                                                isdir
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz FALSE
-##                                                                                                mode
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz  664
-##                                                                                                              mtime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz 2020-09-12 21:06:49
-##                                                                                                              ctime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz 2020-09-12 21:06:49
-##                                                                                                              atime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz 2020-09-12 21:06:43
-##                                                                                                 uid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz 1000
-##                                                                                                 gid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz 1000
-##                                                                                                uname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz   ana
-##                                                                                                grname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE57148/GSE57148_COPD_FPKM_Normalized.txt.gz    ana
-## 
-## $GSE47460
-##                                                                                  size
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar 1760778240
-##                                                                            isdir
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar FALSE
-##                                                                            mode
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar  664
-##                                                                                          mtime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar 2020-09-12 21:08:16
-##                                                                                          ctime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar 2020-09-12 21:08:16
-##                                                                                          atime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar 2020-09-12 21:06:50
-##                                                                             uid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar 1000
-##                                                                             gid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar 1000
-##                                                                            uname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar   ana
-##                                                                            grname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSE47460_RAW.tar    ana
-## 
-## $GSE38974
-##                                                                               size
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar 7270400
-##                                                                            isdir
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar FALSE
-##                                                                            mode
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar  664
-##                                                                                          mtime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar 2020-09-12 21:08:20
-##                                                                                          ctime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar 2020-09-12 21:08:20
-##                                                                                          atime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar 2020-09-12 21:08:17
-##                                                                             uid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar 1000
-##                                                                             gid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar 1000
-##                                                                            uname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar   ana
-##                                                                            grname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE38974/GSE38974_RAW.tar    ana
-## 
-## $GSE8581
-##                                                                               size
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar 299182080
-##                                                                          isdir
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar FALSE
-##                                                                          mode
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar  664
-##                                                                                        mtime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar 2020-09-12 21:08:39
-##                                                                                        ctime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar 2020-09-12 21:08:39
-##                                                                                        atime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar 2020-09-12 21:08:20
-##                                                                           uid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar 1000
-##                                                                           gid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar 1000
-##                                                                          uname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar   ana
-##                                                                          grname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSE8581_RAW.tar    ana
-## 
-## $GSE1650
-##                                                                              size
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar 97320960
-##                                                                          isdir
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar FALSE
-##                                                                          mode
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar  664
-##                                                                                        mtime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar 2020-09-12 21:08:46
-##                                                                                        ctime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar 2020-09-12 21:08:46
-##                                                                                        atime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar 2020-09-12 21:08:39
-##                                                                           uid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar 1000
-##                                                                           gid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar 1000
-##                                                                          uname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar   ana
-##                                                                          grname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSE1650_RAW.tar    ana
-## 
-## $GSE1122
-##                                                                              size
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar 31569920
-##                                                                          isdir
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar FALSE
-##                                                                          mode
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar  664
-##                                                                                        mtime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar 2020-09-12 21:08:51
-##                                                                                        ctime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar 2020-09-12 21:08:51
-##                                                                                        atime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar 2020-09-12 21:08:47
-##                                                                           uid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar 1000
-##                                                                           gid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar 1000
-##                                                                          uname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar   ana
-##                                                                          grname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSE1122_RAW.tar    ana
-## 
-## $GSE119040
-## NULL
-## 
-## $GSE103174
-##                                                                                                             size
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                           118087680
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz   4574543
-##                                                                                                        isdir
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                           FALSE
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz FALSE
-##                                                                                                        mode
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                            664
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz  664
-##                                                                                                                      mtime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                           2020-09-12 21:09:35
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz 2020-09-12 21:09:36
-##                                                                                                                      ctime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                           2020-09-12 21:09:35
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz 2020-09-12 21:09:36
-##                                                                                                                      atime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                           2020-09-12 21:08:55
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz 2020-09-12 21:09:35
-##                                                                                                         uid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                           1000
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz 1000
-##                                                                                                         gid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                           1000
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz 1000
-##                                                                                                        uname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                             ana
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz   ana
-##                                                                                                        grname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_RAW.tar                              ana
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSE103174_log2RMAsignals_genesymbols.txt.gz    ana
-## 
-## $GSE124180
-##                                                                                                 size
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz 2233692
-##                                                                                              isdir
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz FALSE
-##                                                                                              mode
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz  664
-##                                                                                                            mtime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz 2020-09-12 21:09:38
-##                                                                                                            ctime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz 2020-09-12 21:09:38
-##                                                                                                            atime
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz 2020-09-12 21:09:37
-##                                                                                               uid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz 1000
-##                                                                                               gid
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz 1000
-##                                                                                              uname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz   ana
-##                                                                                              grname
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GSE124180/GSE124180_gene_count_table.tsv.gz    ana</code></pre>
+<div id="step-2" class="section level3">
+<h3>STEP 2</h3>
 </div>
-<div id="download-geoquery-data" class="section level2">
-<h2>Download GEOquery data</h2>
-<p>We download GEOquery data for the experiments</p>
-<pre class="r"><code>geo &lt;- sapply(tissue,getGEO,destdir = here::here(&quot;GEOquery&quot;))</code></pre>
-<pre><code>## Found 2 file(s)</code></pre>
-<pre><code>## GSE27597-GPL13243_series_matrix.txt.gz</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   ID_REF = col_character(),
-##   GSM684494 = col_double(),
-##   GSM684495 = col_double(),
-##   GSM684496 = col_double(),
-##   GSM684497 = col_double(),
-##   GSM684498 = col_double(),
-##   GSM684499 = col_double(),
-##   GSM684500 = col_double(),
-##   GSM684501 = col_double()
-## )</code></pre>
-<pre><code>## File stored at:</code></pre>
-<pre><code>## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GPL13243.soft</code></pre>
-<pre><code>## GSE27597-GPL5175_series_matrix.txt.gz</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   .default = col_double()
-## )</code></pre>
-<pre><code>## See spec(...) for full column specifications.</code></pre>
-<pre><code>## File stored at:</code></pre>
-<pre><code>## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GPL5175.soft</code></pre>
-<pre><code>## Found 1 file(s)</code></pre>
-<pre><code>## GSE106986_series_matrix.txt.gz</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   .default = col_double(),
-##   ID_REF = col_character()
-## )</code></pre>
-<pre><code>## See spec(...) for full column specifications.</code></pre>
-<pre><code>## File stored at:</code></pre>
-<pre><code>## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GPL13497.soft</code></pre>
-<pre><code>## Found 1 file(s)</code></pre>
-<pre><code>## GSE37768_series_matrix.txt.gz</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   .default = col_double(),
-##   ID_REF = col_character()
-## )</code></pre>
-<pre><code>## See spec(...) for full column specifications.</code></pre>
-<pre><code>## File stored at:</code></pre>
-<pre><code>## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GPL570.soft</code></pre>
-<pre><code>## Warning: 62 parsing failures.
-##   row     col           expected    actual         file
-## 54614 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54615 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54616 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54617 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54618 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## ..... ....... .................. ......... ............
-## See problems(...) for more details.</code></pre>
-<pre><code>## Found 1 file(s)</code></pre>
-<pre><code>## GSE57148_series_matrix.txt.gz</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   .default = col_character()
-## )</code></pre>
-<pre><code>## See spec(...) for full column specifications.</code></pre>
-<pre><code>## File stored at:</code></pre>
-<pre><code>## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GPL11154.soft</code></pre>
-<pre><code>## Found 2 file(s)</code></pre>
-<pre><code>## GSE47460-GPL14550_series_matrix.txt.gz</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   .default = col_double(),
-##   ID_REF = col_character()
-## )</code></pre>
-<pre><code>## See spec(...) for full column specifications.</code></pre>
-<pre><code>## File stored at:</code></pre>
-<pre><code>## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GPL14550.soft</code></pre>
-<pre><code>## GSE47460-GPL6480_series_matrix.txt.gz</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   .default = col_double(),
-##   ID_REF = col_character()
-## )</code></pre>
-<pre><code>## See spec(...) for full column specifications.</code></pre>
-<pre><code>## File stored at:</code></pre>
-<pre><code>## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GPL6480.soft</code></pre>
-<pre><code>## Warning: 94 parsing failures.
-##   row          col           expected actual         file
-## 41001 CONTROL_TYPE 1/0/T/F/TRUE/FALSE    pos literal data
-## 41002 CONTROL_TYPE 1/0/T/F/TRUE/FALSE    pos literal data
-## 41003 CONTROL_TYPE 1/0/T/F/TRUE/FALSE    pos literal data
-## 41004 CONTROL_TYPE 1/0/T/F/TRUE/FALSE    pos literal data
-## 41005 CONTROL_TYPE 1/0/T/F/TRUE/FALSE    pos literal data
-## ..... ............ .................. ...... ............
-## See problems(...) for more details.</code></pre>
-<pre><code>## Found 2 file(s)</code></pre>
-<pre><code>## GSE38974-GPL4133_series_matrix.txt.gz</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   .default = col_double()
-## )</code></pre>
-<pre><code>## See spec(...) for full column specifications.</code></pre>
-<pre><code>## File stored at:</code></pre>
-<pre><code>## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GPL4133.soft</code></pre>
-<pre><code>## Warning: Duplicated column names deduplicated: &#39;SPOT_ID&#39; =&gt; &#39;SPOT_ID_1&#39; [21]</code></pre>
-<pre><code>## GSE38974-GPL7723_series_matrix.txt.gz</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   .default = col_double()
-## )</code></pre>
-<pre><code>## See spec(...) for full column specifications.</code></pre>
-<pre><code>## File stored at:</code></pre>
-<pre><code>## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GPL7723.soft</code></pre>
-<pre><code>## Found 1 file(s)</code></pre>
-<pre><code>## GSE8581_series_matrix.txt.gz</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   .default = col_double(),
-##   ID_REF = col_character()
-## )</code></pre>
-<pre><code>## See spec(...) for full column specifications.</code></pre>
-<pre><code>## Using locally cached version of GPL570 found here:
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GPL570.soft</code></pre>
-<pre><code>## Warning: 62 parsing failures.
-##   row     col           expected    actual         file
-## 54614 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54615 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54616 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54617 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54618 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## ..... ....... .................. ......... ............
-## See problems(...) for more details.</code></pre>
-<pre><code>## Found 1 file(s)</code></pre>
-<pre><code>## GSE1650_series_matrix.txt.gz</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   .default = col_double(),
-##   ID_REF = col_character()
-## )</code></pre>
-<pre><code>## See spec(...) for full column specifications.</code></pre>
-<pre><code>## File stored at:</code></pre>
-<pre><code>## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GPL96.soft</code></pre>
-<pre><code>## Warning: 68 parsing failures.
-##   row     col           expected    actual         file
-## 22216 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 22217 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 22218 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 22219 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 22220 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## ..... ....... .................. ......... ............
-## See problems(...) for more details.</code></pre>
-<pre><code>## Found 1 file(s)</code></pre>
-<pre><code>## GSE1122_series_matrix.txt.gz</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   ID_REF = col_character(),
-##   GSM18403 = col_double(),
-##   GSM18404 = col_double(),
-##   GSM18405 = col_double(),
-##   GSM18406 = col_double(),
-##   GSM18407 = col_double(),
-##   GSM18408 = col_double(),
-##   GSM18409 = col_double(),
-##   GSM18410 = col_double(),
-##   GSM18411 = col_double(),
-##   GSM18412 = col_double(),
-##   GSM18413 = col_double(),
-##   GSM18414 = col_double(),
-##   GSM18415 = col_double(),
-##   GSM18416 = col_double(),
-##   GSM18417 = col_double()
-## )</code></pre>
-<pre><code>## File stored at:</code></pre>
-<pre><code>## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GPL80.soft</code></pre>
-<pre><code>## Found 1 file(s)</code></pre>
-<pre><code>## GSE119040_series_matrix.txt.gz</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   ID_REF = col_character(),
-##   GSM3356872 = col_double(),
-##   GSM3356873 = col_double(),
-##   GSM3356874 = col_double(),
-##   GSM3356875 = col_double(),
-##   GSM3356876 = col_double(),
-##   GSM3356877 = col_double(),
-##   GSM3356878 = col_double(),
-##   GSM3356879 = col_double(),
-##   GSM3356880 = col_double(),
-##   GSM3356881 = col_double()
-## )</code></pre>
-<pre><code>## Using locally cached version of GPL96 found here:
-## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GPL96.soft</code></pre>
-<pre><code>## Warning: 68 parsing failures.
-##   row     col           expected    actual         file
-## 22216 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 22217 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 22218 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 22219 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 22220 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## ..... ....... .................. ......... ............
-## See problems(...) for more details.</code></pre>
-<pre><code>## Found 1 file(s)</code></pre>
-<pre><code>## GSE103174_series_matrix.txt.gz</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   .default = col_double(),
-##   ID_REF = col_character()
-## )</code></pre>
-<pre><code>## See spec(...) for full column specifications.</code></pre>
-<pre><code>## File stored at:</code></pre>
-<pre><code>## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GPL13667.soft</code></pre>
-<pre><code>## Warning: 85 parsing failures.
-##   row     col           expected        actual         file
-## 36977 SPOT_ID 1/0/T/F/TRUE/FALSE full length   literal data
-## 49209 SPOT_ID 1/0/T/F/TRUE/FALSE full length   literal data
-## 49294 SPOT_ID 1/0/T/F/TRUE/FALSE --AFFX-DapX-3 literal data
-## 49295 SPOT_ID 1/0/T/F/TRUE/FALSE --AFFX-DapX-5 literal data
-## 49296 SPOT_ID 1/0/T/F/TRUE/FALSE --AFFX-DapX-M literal data
-## ..... ....... .................. ............. ............
-## See problems(...) for more details.</code></pre>
-<pre><code>## Found 1 file(s)</code></pre>
-<pre><code>## GSE124180_series_matrix.txt.gz</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   .default = col_character()
-## )</code></pre>
-<pre><code>## See spec(...) for full column specifications.</code></pre>
-<pre><code>## File stored at:</code></pre>
-<pre><code>## /home/ana/R-projects/Meta-analysis_COPD/GEOquery/GPL16791.soft</code></pre>
-<pre class="r"><code>saveRDS(geo,OUTPUT(c(TODAY,&quot;_GEOquery-download.RDS&quot;)))</code></pre>
 </div>
 <div id="output" class="section level2">
 <h2>Output</h2>
 <p>This script produces the following data, and can be found in /home/ana/R-projects/Meta-analysis_COPD</p>
 <div class="alert alert-success">
-<p><strong>Data 1:</strong> RAW data in <code>/GEOquery</code><br />
-<strong>RDS:</strong> Data from GEOquery <code>OUTPUT(c(TODAY,&quot;_GEOquery-download.RDS&quot;))</code></p>
+<p><strong>Figure 1:</strong> Boxplot of samples<br />
+<strong>Figure 2:</strong> Heatmap of COPD patients</p>
 </div>
 </div>
 <div id="session-info" class="section level2">
@@ -2169,27 +1672,32 @@ sapply(tissue,getGEOSuppFiles,baseDir = here::here(&quot;GEOquery&quot;))</code>
 ## [11] LC_MEASUREMENT=it_IT.UTF-8 LC_IDENTIFICATION=C       
 ## 
 ## attached base packages:
-## [1] parallel  stats     graphics  grDevices utils     datasets  methods  
-## [8] base     
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] GEOquery_2.56.0     Biobase_2.48.0      BiocGenerics_0.34.0
-## [4] stringr_1.4.0      
+## [1] forcats_0.5.0   stringr_1.4.0   dplyr_1.0.2     purrr_0.3.4    
+## [5] readr_1.3.1     tidyr_1.1.2     tibble_3.0.3    ggplot2_3.3.2  
+## [9] tidyverse_1.3.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.5          xml2_1.3.2          knitr_1.29         
-##  [4] magrittr_1.5        hms_0.5.3           tidyselect_1.1.0   
-##  [7] here_0.1            R6_2.4.1            rlang_0.4.7        
-## [10] dplyr_1.0.0         tools_4.0.2         xfun_0.16          
-## [13] htmltools_0.5.0     ellipsis_0.3.1      yaml_2.2.1         
-## [16] rprojroot_1.3-2     digest_0.6.25       tibble_3.0.3       
-## [19] lifecycle_0.2.0     crayon_1.3.4        tidyr_1.1.0        
-## [22] readr_1.3.1         purrr_0.3.4         BiocManager_1.30.10
-## [25] vctrs_0.3.2         curl_4.3            glue_1.4.1         
-## [28] evaluate_0.14       rmarkdown_2.3       limma_3.44.3       
-## [31] stringi_1.4.6       pillar_1.4.6        compiler_4.0.2     
-## [34] generics_0.0.2      backports_1.1.8     BiocStyle_2.16.0   
-## [37] pkgconfig_2.0.3</code></pre>
+##  [1] tidyselect_1.1.0    xfun_0.17           haven_2.3.1        
+##  [4] colorspace_1.4-1    vctrs_0.3.4         generics_0.0.2     
+##  [7] htmltools_0.5.0     yaml_2.2.1          blob_1.2.1         
+## [10] rlang_0.4.7         pillar_1.4.6        glue_1.4.2         
+## [13] withr_2.2.0         DBI_1.1.0           dbplyr_1.4.4       
+## [16] modelr_0.1.8        readxl_1.3.1        lifecycle_0.2.0    
+## [19] munsell_0.5.0       gtable_0.3.0        cellranger_1.1.0   
+## [22] rvest_0.3.6         evaluate_0.14       knitr_1.29         
+## [25] fansi_0.4.1         broom_0.7.0         Rcpp_1.0.5         
+## [28] scales_1.1.1        backports_1.1.9     BiocManager_1.30.10
+## [31] jsonlite_1.7.1      fs_1.5.0            BiocStyle_2.16.0   
+## [34] hms_0.5.3           digest_0.6.25       stringi_1.5.3      
+## [37] grid_4.0.2          rprojroot_1.3-2     here_0.1           
+## [40] cli_2.0.2           tools_4.0.2         magrittr_1.5       
+## [43] crayon_1.3.4        pkgconfig_2.0.3     ellipsis_0.3.1     
+## [46] xml2_1.3.2          reprex_0.3.0        lubridate_1.7.9    
+## [49] assertthat_0.2.1    rmarkdown_2.3       httr_1.4.2         
+## [52] rstudioapi_0.11     R6_2.4.1            compiler_4.0.2</code></pre>
 </div>
 
 
