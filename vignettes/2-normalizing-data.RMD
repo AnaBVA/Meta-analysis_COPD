@@ -4,6 +4,7 @@ author: Ana BVA
 date: "`r BiocStyle::doc_date()`"
 output:
   html_document:
+    self_contained: no
     toc: true
     toc_float: true
     code_folding: hide
@@ -39,8 +40,9 @@ For running the script, type:
 
 ```{bash, eval = F}
 ssh -X aaltamirano@dna.lavis.unam.mx
-qrsh
-cd /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/output_data/.out
+qrsh -l h_vmem=100G
+# cd /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/
+cd /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD
  module load r/4.0.1 
 
 ## OR
