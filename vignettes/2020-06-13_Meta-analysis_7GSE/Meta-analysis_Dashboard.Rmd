@@ -31,7 +31,7 @@ Row
 
     
 ```{r}
-gse_table <- read.csv("data/GSE_table.csv", row.names = 1)
+gse_table <- read.csv(here::here("data/GSE_table.csv"), row.names = 1)
 kable(gse_table, caption = "GSE information") %>%
    kable_styling()
 ```
@@ -51,10 +51,10 @@ numericInput("cutoff", "Q-value cutoff:", value = 0.001,
 
 ```{r}
 # Data
-full_tables <- read_csv("output_data//Full_Tables_2020-07-13.csv")
+full_tables <- read_csv(here::here("output_data/Full_Tables_2020-07-13.csv"))
 colnames(full_tables)[colnames(full_tables) == 'log2FoldChange_GSE57148'] <- 'logFC_GSE57148'
 
-meta <- read_csv("output_data/meta-analysis_preprocessData-2020-08-13.csv")[,-1]
+meta <- read_csv(here::here("output_data/meta-analysis_preprocessData-2020-08-13.csv"))[,-1]
 
 FC <- str_subset(colnames(full_tables),"logFC")
 

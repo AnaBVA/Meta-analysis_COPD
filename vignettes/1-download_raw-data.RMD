@@ -66,16 +66,15 @@ library(GEOquery)
 
 ## Download raw data
 
-We need the GSE IDs to download raw files, the IDs are stored in a separate file named `GSE_IDs.txt`, we used `getGEOSuppFiles()` for download raw data.
+We need the GSE IDs to download raw files, the IDs are stored in a separate file named `GSE_IDs.txt`, we used `getGEOSuppFiles()` for download raw data. We do it using GSE ids from tissue:
 
 ```{r , class.source="bg-info",class.output="bg-info" }
-tissue <- scan(DATA("GSE_IDs.txt"),
+tissue <- scan(DATA("tissue_GSE_IDs.txt"),
                character(), 
                sep = ",")
 
 sapply(tissue,getGEOSuppFiles,baseDir = here::here("GEOquery"))
 ```
-
 
 ## Download GEOquery data
 

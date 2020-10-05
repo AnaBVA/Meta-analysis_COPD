@@ -40,8 +40,7 @@ For running the script, type:
 
 ```{bash, eval = F}
 ssh -X aaltamirano@dna.lavis.unam.mx
-qrsh -l h_vmem=100G
-# cd /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/
+qrsh 
 cd /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD
  module load r/4.0.1 
 
@@ -50,21 +49,30 @@ ssh ana@10.200.0.42
 cd /home/ana/R-projects/Meta-analysis_COPD/output_data/.out
 
 nohup R -e "rmarkdown::render(here::here('vignettes/2-normalizing-data.RMD'))" > output_data/.out/2-normalizing-data.out &
+
 ```
 
 The script can be found in: `r getwd() `. And the directories were set using
 `R/setup.R` (e.i. DATA, OUPUT, DOWNLOAD) as a small functions that will paste the names into complete paths.
 
-```{r setup}
+```{r setup,}
 knitr::opts_knit$set(root.dir = here::here())
 source(here::here("R/setup.R"))
 ```
 
 And this analysis is run in: `r getwd() `
 
+For memmory reasons, we run the normalization using an Rscript 
+
+```{bash,eval = F}
+## For running R script
+nohup R CMD BATCH R/2-normalizing-data.R &
+```
+
+
 ### Libraries
 
-```{r libraries, message=FALSE, warning=FALSE}
+```{r libraries, message=FALSE, warning=FALSE,eval = F}
 library(limma)
 library(oligo)
 library(tidyverse)
@@ -92,7 +100,7 @@ In this function you need:
 </div>
 
 
-```{r rawCEL_normCEL}
+```{r rawCEL_normCEL,eval = F}
 rawCEL_normCEL <- function(gse){
   
   # select and untar files
@@ -145,8 +153,8 @@ rawCEL_normCEL <- function(gse){
      # read agilent files
     RG <- read.maimages(files,source = "agilent.median",green.only=T)
     #plots: raw data
-    boxplot(RG$E)
-    hist(RG$E)
+    # boxplot(RG$E)
+    # hist(RG$E)
     # normalizing data
     RG <- limma::backgroundCorrect(RG, method="normexp", offset=1)
     RG$E <- normalizeBetweenArrays(RG$E, method="quantile")
@@ -187,7 +195,7 @@ knitr::kable(gse_table, caption = "GSE information")
 
 Normalize raw data
 
-```{r}
+```{r,eval = F}
 geo_norm <- sapply(gse_table$Accession,rawCEL_normCEL)
 saveRDS(geo_norm,OUTPUT(c(TODAY,"_normData.xz")),compress = "xz")
 ```
