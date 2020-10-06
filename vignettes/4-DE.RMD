@@ -241,7 +241,8 @@ r$logFC <- r$log2FoldChange
 
 colnames(r) <- str_c(colnames(r),"_",names(geo[i]))
 colnames(r)
-
+r <- r[,-12]
+colnames(r)
 
 write_csv(r,path= OUTPUT(c("DE/",TODAY,"_TableGenes_",names(geo[i]),".csv")))
 
