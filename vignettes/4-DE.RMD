@@ -243,8 +243,8 @@ colnames(r) <- str_c(colnames(r),"_",names(geo[i]))
 colnames(r)
 
 
-write_csv(r,
-          path=str_c(OUTPUT_DIR,"/DE/",TODAY,"_TableGenes_",names(geo[i]),".csv"))
+write_csv(r,path= OUTPUT(c("DE/",TODAY,"_TableGenes_",names(geo[i]),".csv")))
+
 
 de4 <- r
 ```
@@ -347,8 +347,7 @@ colnames(r) <- str_c(colnames(r),"_",names(geo[i]))
 colnames(r)
 
 
-write_csv(r,
-          path=str_c(OUTPUT_DIR,"/DE/",TODAY,"_TableGenes_",names(geo[i]),".csv"))
+write_csv(r,path= OUTPUT(c("DE/",TODAY,"_TableGenes_",names(geo[i]),".csv")))
 
 # saving the results to later combine all the information 
 de12 <- r
