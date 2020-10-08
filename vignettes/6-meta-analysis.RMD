@@ -122,7 +122,9 @@ adjp %>%
 
 adj_pvalue <- 0.5
 adjp <- filter(adjp,adjP < adj_pvalue)
+unique(adjp$GSE)
 adjp
+
 ```
 
 
@@ -157,7 +159,7 @@ down <- ap %>%
 
 ### UP 
 m <- make_comb_mat(up,mode = "distinct")
-m <- m[comb_degree(m) >= 4 | comb_degree(m) == 1]
+m <- m[comb_degree(m) >= 8 | comb_degree(m) == 1]
 
 #pdf("upsetUP.pdf",width = 14,height = 6)
 ht <- draw(UpSet(m,
@@ -166,6 +168,7 @@ ht <- draw(UpSet(m,
       comb_col = c("red", "grey","grey","grey", "black","blue")[comb_degree(m)])
       #order.by = "freq"
     )
+
 od = column_order(ht)
 cs = comb_size(m)
 decorate_annotation("Intersection\nsize", {
@@ -178,7 +181,7 @@ decorate_annotation("Intersection\nsize", {
 
 ### DOWN
 m <- make_comb_mat(down,mode = "distinct")
-m <- m[comb_degree(m) >= 4 | comb_degree(m) == 1] 
+m <- m[comb_degree(m) >= 8 | comb_degree(m) == 1] 
 
 #pdf("upsetDOWN.pdf",width = 14,height = 6)
 ht <- draw(UpSet(m,
@@ -282,9 +285,7 @@ meta$pval <- as.numeric(meta$pval)
 meta$qval <- p.adjust(meta$pval,method="fdr")
 
 
-write.csv(meta,str_c(OUTPUT_DIR,"/meta-analysis_preprocessData-",TODAY,".csv"))
-
-#meta <- read.csv(str_c(OUTPUT_DIR,"/meta-analysis_preprocessData-2020-08-13.csv"))
+write.csv(meta, OUTPUT(TODAY,"_Step6_meta-analysis.csv"))
 
 hist(meta$qval, main="q-value from Cochrane's test", xlab="FDR(P-value)")
 hist(meta$QEp, main="Test for Heterogeneity: Q test", xlab="QEp")
@@ -369,8 +370,8 @@ pheatmap(topgenes,
 This script produces the following data, and can be found in `r getwd() ` 
 
 <div class="alert alert-success">
-  <strong>Figure 1:</strong> Boxplot of samples  
-  <strong>Figure 2:</strong> Heatmap of COPD patients 
+  <strong>Plots:</strong> Upset plots, forest plot, heatmap, etc.     
+  <strong>Table:</strong> Results from the meta-analysis `r OUTPUT(TODAY,"_Step6_meta-analysis.csv")` 
 </div>
 
 ## Session Info
