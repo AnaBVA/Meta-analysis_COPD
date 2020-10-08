@@ -5,4 +5,5 @@
 .DS
 fig
 download
-output_data/2020-09-11_GEOquery-download.RDS
+output_data
+.httr-oauth
