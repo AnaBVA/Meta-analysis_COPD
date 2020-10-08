@@ -945,9 +945,9 @@ This script produces the following data, and can be found in `r getwd() `
 ```{r}
 
 ##############################################################
-saveRDS(geo,OUTPUT(c(TODAY,"_GSE_LungTissue-CURATED.RDS")))
+saveRDS(geo,OUTPUT(c(TODAY,"_Step3_LungTissue-CURATED.RDS")))
 
-write_csv(df,OUTPUT(c(TODAY,"_GSE_Summary.csv")))
+write_csv(df,OUTPUT(c(TODAY,"_Step3_Summary.csv")))
 
 ```
 
