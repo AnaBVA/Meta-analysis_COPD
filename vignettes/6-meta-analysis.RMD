@@ -1,5 +1,5 @@
 ---
-title: "1-download_raw-data.RMD"
+title: "6-meta-analysis.RMD"
 author: Ana BVA
 date: "`r BiocStyle::doc_date()`"
 output:
@@ -159,7 +159,7 @@ down <- ap %>%
 
 ### UP 
 m <- make_comb_mat(up,mode = "distinct")
-m <- m[comb_degree(m) >= 8 | comb_degree(m) == 1]
+m <- m[comb_degree(m) >= 5 | comb_degree(m) == 1]
 
 #pdf("upsetUP.pdf",width = 14,height = 6)
 ht <- draw(UpSet(m,
@@ -181,7 +181,7 @@ decorate_annotation("Intersection\nsize", {
 
 ### DOWN
 m <- make_comb_mat(down,mode = "distinct")
-m <- m[comb_degree(m) >= 8 | comb_degree(m) == 1] 
+m <- m[comb_degree(m) >= 5 | comb_degree(m) == 1] 
 
 #pdf("upsetDOWN.pdf",width = 14,height = 6)
 ht <- draw(UpSet(m,
@@ -271,7 +271,7 @@ for (i in gm) {
   sei <- as.numeric(gene[,SE])
   num_exp <- sum(!is.na(yi))
   # meta analysis with random models "REML"
-  res <- metafor::rma(yi, sei=sei,control=list(stepadj=.5,maxiter=1000))
+  res <- suppressWarnings(metafor::rma(yi, sei=sei,control=list(stepadj=.5,maxiter=1000)))
   num_exp <- sum(!is.na(yi))
   meta <- rbind(meta,c(i,res$QEp,res$pval,res$tau2,res$I2,num_exp))
 }
@@ -291,17 +291,20 @@ write.csv(meta, OUTPUT(c(TODAY,"_Step6_meta-analysis.csv")))
 hist(meta$qval, main="q-value from Cochrane's test", xlab="FDR(P-value)")
 hist(meta$QEp, main="Test for Heterogeneity: Q test", xlab="QEp")
 
-genesqval <- meta[meta$qval <= 0.01,]
+qval_cutoff <- 0.1
+genesqval <- meta[meta$qval <= qval_cutoff,]
 #genesqval <- genesqval[genesqval$QEp < 0.2,]
 genesqval <-  genesqval[order(genesqval$qval),]
 
 kable(genesqval, caption = "Meta-analysis")
 
-up <- "CXCL12"
-down <- "SLC25A4"
+up <- "IL6"
+down <- "PRKCZ"
+ace2 <- "ACE2"
 
 meta.plot(up)
 meta.plot(down)
+meta.plot(ace2)
 
 topgenes <- full_tables[full_tables$GENE.SYMBOL %in% genesqval$genes,c("GENE.SYMBOL",FC)]
 topgenes <- column_to_rownames(topgenes,"GENE.SYMBOL")
@@ -318,7 +321,8 @@ breaks <- c(seq(min(topgenes,na.rm = T),-0.1,length.out = 7),0,seq(0.1,max(topge
 
 ```{r fig.height=15}
 
-pheatmap(na.omit(topgenes),
+pheatmap(topgenes,
+         main = str_c("Genes with q-val less than ",qval_cutoff),
          color = color,
          breaks = breaks,
          fontsize_row = 7,
@@ -327,7 +331,7 @@ pheatmap(na.omit(topgenes),
          clustering_distance_rows = "euclidean",
          clustering_method = "ward.D",
          cluster_cols = T,
-         cutree_rows = 2,
+         cutree_rows = 3,
          show_colnames = T,
          border_color = NA)
 
@@ -340,7 +344,8 @@ We also checked for expression in TFs
 ````{r}
 tfs <- read.csv(DATA("hs_hgnc_curated_tfs.txt"),col.names = "TF")
 
-genesqval <- meta[meta$qval <= 0.1,]
+qval_cutoff <- 0.1
+genesqval <- meta[meta$qval <= qval_cutoff,]
 tf_copd <- genesqval$genes[which(genesqval$genes %in% tfs$TF)]
 
 topgenes <- full_tables[full_tables$GENE.SYMBOL %in% tf_copd,c("GENE.SYMBOL",FC)]
@@ -353,6 +358,7 @@ color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
 breaks <- c(seq(min(topgenes,na.rm = T),-0.1,length.out = 7),0,seq(0.1,max(topgenes,na.rm = T),length.out = 7))
 
 pheatmap(topgenes,
+         main = str_c("TFs with q-val less than ",qval_cutoff),
          color = color,
          breaks = breaks,
          fontsize_row = 8,
