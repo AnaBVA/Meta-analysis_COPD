@@ -82,7 +82,7 @@ We will import DE results from all experiments.
 
 ```{r}
 files <- list.files(OUTPUT("DE"), full.names = T)
-files <- gtools::mixedsort(files)
+files <- gtools::mixedsort(files)[-10]
 data <- files %>% map(read_csv)
 ```
 

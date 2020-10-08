@@ -98,7 +98,7 @@ colnames(full_tables)
 
 We first check pvalues histograms. [Ref](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6164648/)
 
-```{r , class.source="bg-info",class.output="bg-info" }
+```{r , class.source="bg-info",class.output="bg-info", fig.width= 8 }
 FC <- str_subset(colnames(full_tables),"logFC")
 
 # Genes with a adjusted p value
@@ -130,7 +130,7 @@ adjp
 
 Then, we look for how many genes are up regulated with a p-value less than `r  adj_pvalue`  in the 
 
-```{r  }
+```{r fig.width=10 }
 
 # log fold change
 logFC <- full_tables %>%
@@ -312,7 +312,7 @@ topgenes <- column_to_rownames(topgenes,"GENE.SYMBOL")
 
 topgenes <- scale(topgenes)
 
-# keeping genes with less than 2 NAs 
+# keeping genes with less than 2 NAs
 topgenes <- topgenes[which(rowSums(is.na(topgenes)) <= 2),]
 #topgenes <- na.omit(topgenes)
 
