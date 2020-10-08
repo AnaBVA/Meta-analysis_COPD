@@ -376,7 +376,7 @@ This script produces the following data, and can be found in `r getwd() `
 
 <div class="alert alert-success">
   <strong>Plots:</strong> Upset plots, forest plot, heatmap, etc.     
-  <strong>Table:</strong> Results from the meta-analysis `r OUTPUT(TODAY,"_Step6_meta-analysis.csv")` 
+  <strong>Table:</strong> Results from the meta-analysis `r OUTPUT(c(TODAY,"_Step6_meta-analysis.csv"))` 
 </div>
 
 ## Session Info
