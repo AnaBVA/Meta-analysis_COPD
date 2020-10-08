@@ -260,17 +260,18 @@ meta <- data.frame(genes = 0,
                    I2=0,
                    num_exp=0)
 
-gm<- full_tables$GENE.SYMBOL
+gm <- full_tables$GENE.SYMBOL
+full_tables[full_tables == 0] <- NA
 
 length(gm)
 
-for (i in gm[1:5]) {
+for (i in gm) {
   gene <- full_tables[which(full_tables$GENE.SYMBOL == i),]
   yi <- as.numeric(gene[,FC])
   sei <- as.numeric(gene[,SE])
   num_exp <- sum(!is.na(yi))
   # meta analysis with random models "REML"
-  res <- metafor::rma(yi, sei=sei)
+  res <- metafor::rma(yi, sei=sei,control=list(stepadj=.5,maxiter=1000))
   num_exp <- sum(!is.na(yi))
   meta <- rbind(meta,c(i,res$QEp,res$pval,res$tau2,res$I2,num_exp))
 }
