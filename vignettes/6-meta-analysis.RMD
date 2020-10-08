@@ -287,11 +287,12 @@ meta$qval <- p.adjust(meta$pval,method="fdr")
 
 
 write.csv(meta, OUTPUT(c(TODAY,"_Step6_meta-analysis.csv")))
+# meta <- read.csv(OUTPUT("2020-10-08_Step6_meta-analysis.csv"))
 
 hist(meta$qval, main="q-value from Cochrane's test", xlab="FDR(P-value)")
 hist(meta$QEp, main="Test for Heterogeneity: Q test", xlab="QEp")
 
-qval_cutoff <- 0.1
+qval_cutoff <- 0.01
 genesqval <- meta[meta$qval <= qval_cutoff,]
 #genesqval <- genesqval[genesqval$QEp < 0.2,]
 genesqval <-  genesqval[order(genesqval$qval),]
@@ -308,8 +309,13 @@ meta.plot(ace2)
 
 topgenes <- full_tables[full_tables$GENE.SYMBOL %in% genesqval$genes,c("GENE.SYMBOL",FC)]
 topgenes <- column_to_rownames(topgenes,"GENE.SYMBOL")
+
 topgenes <- scale(topgenes)
+
+# keeping genes with less than 2 NAs 
+topgenes <- topgenes[which(rowSums(is.na(topgenes)) <= 2),]
 #topgenes <- na.omit(topgenes)
+
 #ordering rows
 #topgenes <- topgenes[order(rowMeans(topgenes),decreasing = T),]
 
