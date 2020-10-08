@@ -291,7 +291,7 @@ write.csv(meta, OUTPUT(c(TODAY,"_Step6_meta-analysis.csv")))
 hist(meta$qval, main="q-value from Cochrane's test", xlab="FDR(P-value)")
 hist(meta$QEp, main="Test for Heterogeneity: Q test", xlab="QEp")
 
-genesqval <- meta[meta$qval <= 0.5,]
+genesqval <- meta[meta$qval <= 0.01,]
 #genesqval <- genesqval[genesqval$QEp < 0.2,]
 genesqval <-  genesqval[order(genesqval$qval),]
 
@@ -303,14 +303,17 @@ down <- "SLC25A4"
 meta.plot(up)
 meta.plot(down)
 
-color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
-breaks <- c(seq(min(topgenes),-0.1,length.out = 7),0,seq(0.1,max(topgenes),length.out = 7))
-#"BrBG"
 topgenes <- full_tables[full_tables$GENE.SYMBOL %in% genesqval$genes,c("GENE.SYMBOL",FC)]
 topgenes <- column_to_rownames(topgenes,"GENE.SYMBOL")
-topgenes <- na.omit(topgenes)
+topgenes <- scale(topgenes)
+#topgenes <- na.omit(topgenes)
 #ordering rows
 #topgenes <- topgenes[order(rowMeans(topgenes),decreasing = T),]
+
+#"BrBG"
+color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
+breaks <- c(seq(min(topgenes,na.rm = T),-0.1,length.out = 7),0,seq(0.1,max(topgenes,na.rm = T),length.out = 7))
+
 ```
 
 ```{r fig.height=15}
@@ -335,18 +338,19 @@ pheatmap(na.omit(topgenes),
 We also checked for expression in TFs 
 
 ````{r}
-tfs <- read.csv(str_c(DATA_DIR,"/hs_hgnc_curated_tfs.txt"),col.names = "TF")
+tfs <- read.csv(DATA("hs_hgnc_curated_tfs.txt"),col.names = "TF")
 
-genesqval <- meta[meta$qval <= 0.5,]
+genesqval <- meta[meta$qval <= 0.1,]
 tf_copd <- genesqval$genes[which(genesqval$genes %in% tfs$TF)]
 
 topgenes <- full_tables[full_tables$GENE.SYMBOL %in% tf_copd,c("GENE.SYMBOL",FC)]
 topgenes <- column_to_rownames(topgenes,"GENE.SYMBOL")
-topgenes <- na.omit(topgenes)
+topgenes <- scale(topgenes)
+#topgenes <- na.omit(topgenes)
 
 
 color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
-breaks <- c(seq(min(topgenes),-0.1,length.out = 7),0,seq(0.1,max(topgenes),length.out = 7))
+breaks <- c(seq(min(topgenes,na.rm = T),-0.1,length.out = 7),0,seq(0.1,max(topgenes,na.rm = T),length.out = 7))
 
 pheatmap(topgenes,
          color = color,
