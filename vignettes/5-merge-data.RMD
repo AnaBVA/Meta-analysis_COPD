@@ -132,6 +132,7 @@ genes <- full_tables %>%
   select(GENE.SYMBOL)
 
 full_tables <- filter(full_tables, GENE.SYMBOL %in% genes$GENE.SYMBOL)
+full_tables <- full_tables[which(!is.na(full_tables$GENE.SYMBOL)),]
 
 full_tables
 

@@ -14,12 +14,23 @@ editor_options:
 ## Introduction
 
 <div class="alert alert-info">
-  <strong>Aim:</strong> The aim of this script
+  <strong>Aim:</strong> To do a meta-analysis for COPD experiments
 </div>
 
-### Background 
 
-Some relevant information with links [GEO](https://www.ncbi.nlm.nih.gov/geo/)
+We previously had run the following scripts:
+
+- 0: Data selection `/0-Data-selection.RMD`
+
+- 1: Dowload RAW data `/1-download_raw-data.RMD`
+
+- 2: Normalizing data `/2-normalizing-data.RMD`
+
+- 3: Curating data `/3-curatig-data.RMD`
+
+- 4: Differential gene expression analysis  `/4-DE.RMD`
+
+- 5: Merging data `/5-merge-data.RMD`
 
 
 ## Input
@@ -27,42 +38,331 @@ Some relevant information with links [GEO](https://www.ncbi.nlm.nih.gov/geo/)
 This script needs the following files:
 
 <div class="alert alert-warning">
-  <strong>Data 1:</strong> Matrix of normalized experiments  
-  <strong>Data 2:</strong> Meta data 
+  <strong>Table:</strong> Table with all DE results. Output from step 5   
 </div>
 
 ## Analysis
 
 ### Setup
 
-The script can be found in: `r getwd() `
+For running the script, type:
+
+```{bash, eval = F}
+ssh -X aaltamirano@dna.lavis.unam.mx
+qrsh
+cd /mnt/Genoma/amedina/DataDNA/R-projects/Meta-analysis_COPD/output_data/.out
+ module load r/4.0.1 
+
+## OR
+ssh ana@10.200.0.42
+cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/output_data/.out
+
+nohup R -e "rmarkdown::render(here::here('vignettes/6-meta-analysis.RMD'))" > 6-meta-analysis.RMD.out &
+```
+
+The script can be found in: `r getwd() `. And the directories were set using
+`R/setup.R` (e.i. DATA, OUPUT, DOWNLOAD) as a small functions that will paste the names into complete paths.
+
 
 ```{r setup}
-PATH = here::here()
-DATA_DIR = file.path(PATH,"Data/")
-OUTPUT_DIR = file.path(PATH,"output/")
-FIG_DIR = file.path(PATH,"Fig")
-
-knitr::opts_knit$set(root.dir = PATH)
+knitr::opts_knit$set(root.dir = here::here())
+source(here::here("R/setup.R"))
 ```
 
 And this analysis is run in: `r getwd() `
+
 
 ### Libraries
 
 ```{r libraries, message=FALSE, warning=FALSE}
 library(tidyverse)
+library(knitr)
+library(ComplexHeatmap)
+library(metafor)
+library(pheatmap)
+library(RColorBrewer)
 ```
 
 
-### STEP 1
+### Read data
 
 ```{r , class.source="bg-info",class.output="bg-info" }
-1+1
+full_tables <- read_csv(OUTPUT("2020-10-08_Step5_Full_Tables.csv"))
+colnames(full_tables)
+
 ```
 
 
-### STEP 2
+
+### p-Values
+
+We first check pvalues histograms. [Ref](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6164648/)
+
+```{r , class.source="bg-info",class.output="bg-info" }
+FC <- str_subset(colnames(full_tables),"logFC")
+
+# Genes with a adjusted p value
+adjp <- full_tables %>%
+  filter(GENE.SYMBOL != "NA") %>%
+  gather("GSE"  ,"adjP",-GENE.SYMBOL) %>%
+  filter(GSE %in% str_subset(colnames(full_tables),"adj.P.Val|padj")) %>%
+  mutate(GSE=gsub(".*_","",GSE))
+  
+adjp
+
+
+#pdf("Pvalues.pdf",width = 8,height = 6)
+adjp %>%    
+  group_by(GSE) %>%
+  ggplot( aes(x=adjP, fill=GSE)) +
+  geom_histogram( color="#e9ecef", alpha=0.6) + #position = 'identity'
+  geom_vline(xintercept=0.5, linetype="dashed", color = "red") +
+  facet_wrap(~GSE, scales = "free_y")
+#dev.off()
+
+adj_pvalue <- 0.5
+adjp <- filter(adjp,adjP < adj_pvalue)
+adjp
+```
+
+
+Then, we look for how many genes are up regulated with a p-value less than `r  adj_pvalue`  in the 
+
+```{r  }
+
+# log fold change
+logFC <- full_tables %>%
+  filter(GENE.SYMBOL != "NA") %>%
+  gather("GSE"  ,"logFC",-GENE.SYMBOL) %>%
+  filter(GSE %in% str_subset(colnames(full_tables),"logFC")) %>% 
+  mutate(GSE=gsub(".*_","",GSE))
+
+logFC
+
+# recovering logFC values from genes with p value less than 0.01 
+
+ap <- left_join(adjp,logFC,by = c("GENE.SYMBOL" = "GENE.SYMBOL", "GSE" = "GSE")) %>%
+  select(-adjP) %>%
+  spread(GSE,logFC) %>% 
+  replace(is.na(.), 0)
+
+ap
+
+# selecting up regulated genes
+up <- ap %>%
+  mutate_at(vars(-GENE.SYMBOL),list(~if_else( .>0, 1, 0)))
+  
+down <- ap %>%
+  mutate_at(vars(-GENE.SYMBOL),list(~if_else( .<0, 1, 0)))
+
+### UP 
+m <- make_comb_mat(up,mode = "distinct")
+m <- m[comb_degree(m) >= 4 | comb_degree(m) == 1]
+
+#pdf("upsetUP.pdf",width = 14,height = 6)
+ht <- draw(UpSet(m,
+      pt_size = unit(3, "mm"), 
+      lwd = 3,
+      comb_col = c("red", "grey","grey","grey", "black","blue")[comb_degree(m)])
+      #order.by = "freq"
+    )
+od = column_order(ht)
+cs = comb_size(m)
+decorate_annotation("Intersection\nsize", {
+    grid.text(cs[od], x = seq_along(cs), y = unit(cs[od], "native") + unit(2, "pt"), 
+        default.units = "native", just = "bottom", gp = gpar(fontsize = 8))
+})
+
+#dev.off()
+
+
+### DOWN
+m <- make_comb_mat(down,mode = "distinct")
+m <- m[comb_degree(m) >= 4 | comb_degree(m) == 1] 
+
+#pdf("upsetDOWN.pdf",width = 14,height = 6)
+ht <- draw(UpSet(m,
+      pt_size = unit(3, "mm"), 
+      lwd = 3,
+      comb_col = c("red", "grey","grey","grey", "black","blue")[comb_degree(m)])
+      #order.by = "freq"
+    )
+#dev.off()
+
+od = column_order(ht)
+cs = comb_size(m)
+decorate_annotation("Intersection\nsize", {
+    grid.text(cs[od], x = seq_along(cs), y = unit(cs[od], "native") + unit(2, "pt"), 
+        default.units = "native", just = "bottom", gp = gpar(fontsize = 8))
+})
+
+```
+
+
+## Meta-analysis
+
+We first calculate the Standar error using confidence intervals
+
+```{r}
+
+CI.R <- str_subset(colnames(full_tables),"CI.R")
+CI.L <- str_subset(colnames(full_tables),"CI.L")
+
+for(i in 1:length(CI.R)) {
+  full_tables[str_c("SE_",gsub(".*_","",CI.R))] <- (full_tables[,CI.R]-full_tables[,CI.L]) /(2*1.96)
+}
+```
+
+Meta-analysis for a single gene
+
+
+```{r}
+
+FC <- str_subset(colnames(full_tables),"logFC")
+SE <- str_subset(colnames(full_tables),"SE_")
+GSE <- gsub(".*_","",FC)
+
+gs <- "CXCL12"
+
+## Funtion to perform a meta-analysis per gene
+meta.plot <- function(gs){
+gene <-  full_tables[full_tables$GENE.SYMBOL == gs,]
+#gene <-  na.omit(full_tables[full_tables$GENE.SYMBOL == gs,])
+gene <- gene[!is.na(gene$GENE.SYMBOL),]
+
+yi <- as.numeric(gene[,FC])
+sei <- as.numeric(gene[,SE])
+
+# meta analysis in the simplest way
+res <- metafor::rma(yi, sei=sei)
+funnel(res)
+forest(res,slab = GSE, main=unique(gene$GENE.SYMBOL))
+}
+
+meta.plot(gs)
+```
+
+Meta-analysis for all genes. We are saving the results in a new dataframe.
+
+```{r}
+
+#gs <- unique(na.omit(full_tables)$GENE.SYMBOL)
+gs <- full_tables$GENE.SYMBOL
+
+
+meta <- data.frame(genes = 0,
+                   QEp=0,
+                   pval=0,
+                   tau2=0,
+                   I2=0,
+                   num_exp=0)
+
+gm<- full_tables$GENE.SYMBOL
+
+length(gm)
+
+for (i in gm[1:5]) {
+  gene <- full_tables[which(full_tables$GENE.SYMBOL == i),]
+  yi <- as.numeric(gene[,FC])
+  sei <- as.numeric(gene[,SE])
+  num_exp <- sum(!is.na(yi))
+  # meta analysis with random models "REML"
+  res <- metafor::rma(yi, sei=sei)
+  num_exp <- sum(!is.na(yi))
+  meta <- rbind(meta,c(i,res$QEp,res$pval,res$tau2,res$I2,num_exp))
+}
+
+
+
+meta <- meta[-1,]
+meta$QEp <- as.numeric(meta$QEp)
+meta$pval <- as.numeric(meta$pval)
+
+# FDR correction
+meta$qval <- p.adjust(meta$pval,method="fdr")
+
+
+write.csv(meta,str_c(OUTPUT_DIR,"/meta-analysis_preprocessData-",TODAY,".csv"))
+
+#meta <- read.csv(str_c(OUTPUT_DIR,"/meta-analysis_preprocessData-2020-08-13.csv"))
+
+hist(meta$qval, main="q-value from Cochrane's test", xlab="FDR(P-value)")
+hist(meta$QEp, main="Test for Heterogeneity: Q test", xlab="QEp")
+
+genesqval <- meta[meta$qval <= 0.01,]
+#genesqval <- genesqval[genesqval$QEp < 0.2,]
+genesqval <-  genesqval[order(genesqval$qval),]
+
+kable(genesqval, caption = "Meta-analysis")
+
+up <- "CXCL12"
+down <- "SLC25A4"
+
+meta.plot(up)
+meta.plot(down)
+
+color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
+breaks <- c(seq(min(topgenes),-0.1,length.out = 7),0,seq(0.1,max(topgenes),length.out = 7))
+#"BrBG"
+topgenes <- full_tables[full_tables$GENE.SYMBOL %in% genesqval$genes,c("GENE.SYMBOL",FC)]
+topgenes <- column_to_rownames(topgenes,"GENE.SYMBOL")
+topgenes <- na.omit(topgenes)
+#ordering rows
+#topgenes <- topgenes[order(rowMeans(topgenes),decreasing = T),]
+```
+
+```{r fig.height=15}
+
+pheatmap(na.omit(topgenes),
+         color = color,
+         breaks = breaks,
+         fontsize_row = 7,
+         fontsize_col = 10,
+         cluster_rows = T,
+         clustering_distance_rows = "euclidean",
+         clustering_method = "ward.D",
+         cluster_cols = T,
+         cutree_rows = 2,
+         show_colnames = T,
+         border_color = NA)
+
+```
+
+### TFs
+
+We also checked for expression in TFs 
+
+````{r}
+tfs <- read.csv(str_c(DATA_DIR,"/hs_hgnc_curated_tfs.txt"),col.names = "TF")
+
+genesqval <- meta[meta$qval <= 0.5,]
+tf_copd <- genesqval$genes[which(genesqval$genes %in% tfs$TF)]
+
+topgenes <- full_tables[full_tables$GENE.SYMBOL %in% tf_copd,c("GENE.SYMBOL",FC)]
+topgenes <- column_to_rownames(topgenes,"GENE.SYMBOL")
+topgenes <- na.omit(topgenes)
+
+
+color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
+breaks <- c(seq(min(topgenes),-0.1,length.out = 7),0,seq(0.1,max(topgenes),length.out = 7))
+
+pheatmap(topgenes,
+         color = color,
+         breaks = breaks,
+         fontsize_row = 8,
+         fontsize_col = 10,
+         cluster_rows = T,
+         clustering_distance_rows = "euclidean",
+         clustering_method = "ward.D",
+         cluster_cols = T,
+         cutree_rows = 2,
+         show_colnames = T,
+         border_color = NA)
+
+
+```
+
+
 
 ## Output
 
