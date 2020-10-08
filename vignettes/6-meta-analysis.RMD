@@ -286,7 +286,7 @@ meta$pval <- as.numeric(meta$pval)
 meta$qval <- p.adjust(meta$pval,method="fdr")
 
 
-write.csv(meta, OUTPUT(TODAY,"_Step6_meta-analysis.csv"))
+write.csv(meta, OUTPUT(c(TODAY,"_Step6_meta-analysis.csv")))
 
 hist(meta$qval, main="q-value from Cochrane's test", xlab="FDR(P-value)")
 hist(meta$QEp, main="Test for Heterogeneity: Q test", xlab="QEp")
