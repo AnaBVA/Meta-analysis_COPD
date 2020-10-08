@@ -291,7 +291,7 @@ write.csv(meta, OUTPUT(c(TODAY,"_Step6_meta-analysis.csv")))
 hist(meta$qval, main="q-value from Cochrane's test", xlab="FDR(P-value)")
 hist(meta$QEp, main="Test for Heterogeneity: Q test", xlab="QEp")
 
-genesqval <- meta[meta$qval <= 0.01,]
+genesqval <- meta[meta$qval <= 0.5,]
 #genesqval <- genesqval[genesqval$QEp < 0.2,]
 genesqval <-  genesqval[order(genesqval$qval),]
 
