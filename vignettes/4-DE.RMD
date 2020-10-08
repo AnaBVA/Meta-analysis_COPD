@@ -156,7 +156,7 @@ colnames(de)
 
 # saving the results in a csv
 message("Saving data into csv")
-write_csv(de,path= OUTPUT(c("DE/",TODAY,"_TableGenes_",names(geo[i]),".csv")))
+write_csv(de,path= OUTPUT(c("DE/",TODAY,"_TableGenes_",i,"_",names(geo[i]),".csv")))
 
 # saving the results to later combine all the information 
  return(de)
@@ -181,6 +181,9 @@ Using `DE()` function (described above), we performed a lineal regression model
 to calculate the logarithm fold change of all genes between a "Control" and a
 "COPD" group. We also rename colnames adding the GSE ID at the end and finally, 
 we save the output in a `.CSV` file. 
+
+
+### `r names(geo)[1] `
 
 ```{r}
 i <- 1

@@ -175,7 +175,7 @@ f <- dplyr::select(ff,ID,GB_LIST,GENE.SYMBOL)
 
 length(f$GENE.SYMBOL)
 length(unique(f$GENE.SYMBOL))
-fData(geo[[i]][[2]]) <- f
+fData(geo[[i]][[1]]) <- f
 
 ### Adding normalized data 
 colnames(norm[[i]]) <- gsub("\\..*","",colnames(norm[[i]]))
