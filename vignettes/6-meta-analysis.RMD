@@ -273,7 +273,7 @@ for (i in gm) {
   # meta analysis with random models "REML"
   res <- suppressWarnings(metafor::rma(yi, sei=sei,control=list(stepadj=.5,maxiter=1000)))
   num_exp <- sum(!is.na(yi))
-  meta <- rbind(meta,c(i,res$zval,res$pval,res$se,res$H2,res$tau2,res$I2,num_exp))
+  meta <- rbind(meta,c(i,res·QEp,res$zval,res$pval,res$se,res$H2,res$tau2,res$I2,num_exp))
 }
 
 
