@@ -63,6 +63,7 @@ library(reactable)
 
 ```{r , class.source="bg-info",class.output="bg-info" }
 meta <- read.csv("output_data/meta-analysis_preprocessData-2020-08-13.csv")[,-1]
+
 signature <- meta[meta$qval <= 0.1,"QEp"]
 names(signature) <- meta[meta$qval <= 0.1,"genes"]
 

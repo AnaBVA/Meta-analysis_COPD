@@ -86,6 +86,15 @@ library(RColorBrewer)
 
 ### Read data
 
+
+```{r experiments}
+gse_table <- read.csv(OUTPUT("2020-10-07_Step3_Summary.csv"), row.names = 1)
+gse_table <- gse_table[-which(rownames(gse_table)=="GSE119040"),]
+kable(gse_table, caption = "GSE information") %>%
+  kableExtra::scroll_box(width = "100%", height = "100px")
+```
+
+
 ```{r , class.source="bg-info",class.output="bg-info" }
 full_tables <- read_csv(OUTPUT("2020-10-08_Step5_Full_Tables.csv"))
 colnames(full_tables)
@@ -233,11 +242,19 @@ gene <-  full_tables[full_tables$GENE.SYMBOL == gs,]
 #gene <-  na.omit(full_tables[full_tables$GENE.SYMBOL == gs,])
 gene <- gene[!is.na(gene$GENE.SYMBOL),]
 
-yi <- as.numeric(gene[,FC])
-sei <- as.numeric(gene[,SE])
+dat <- data.frame(
+  yi = as.numeric(gene[,FC]),
+  sei = as.numeric(gene[,SE]),
+  n1i = as.numeric(gse_table$CONTROL),
+  n2i = as.numeric(gse_table$COPD)
+)
+
+
+
+dat <- escalc(measure="ZCOR", yi=yi,sei=sei,n1i=n1i,n2i=n2i, data = dat) 
 
 # meta analysis in the simplest way
-res <- metafor::rma(yi, sei=sei)
+res <- metafor::rma(yi, sei=sei,n1i=n1i,n2i=n2i, data=dat)
 funnel(res)
 forest(res,slab = GSE, main=unique(gene$GENE.SYMBOL))
 }
@@ -290,10 +307,14 @@ meta$qval <- p.adjust(meta$pval,method="fdr")
 
 
 write.csv(meta, OUTPUT(c(TODAY,"_Step6_meta-analysis.csv")))
-# meta <- read.csv(OUTPUT("2020-10-08_Step6_meta-analysis.csv"))
+# meta <- read.csv(OUTPUT("2020-10-16_Step6_meta-analysis.csv"))
 
 hist(meta$qval, main="q-value from Cochrane's test", xlab="FDR(P-value)")
 hist(meta$QEp, main="Test for Heterogeneity: Q test", xlab="QEp")
+hist(meta$estimate, main = "Estimate vlues", xlab = "estimate values")
+hist(meta$tau2,100)
+hist(meta$I2)
+hist(meta$H2)
 
 qval_cutoff <- 0.01
 genesqval <- meta[meta$qval <= qval_cutoff,]
@@ -355,6 +376,7 @@ tfs <- read.csv(DATA("hs_hgnc_curated_tfs.txt"),col.names = "TF")
 
 qval_cutoff <- 0.1
 genesqval <- meta[meta$qval <= qval_cutoff,]
+write.csv(genesqval[which(genesqval$genes %in% tfs$TF),], OUTPUT(c(TODAY,"_Step6_TF-",qval_cutoff,"-meta-analysis.csv")))
 tf_copd <- genesqval$genes[which(genesqval$genes %in% tfs$TF)]
 
 topgenes <- full_tables[full_tables$GENE.SYMBOL %in% tf_copd,c("GENE.SYMBOL",FC)]
