@@ -1,5 +1,5 @@
 
-R version 4.0.1 (2020-06-06) -- "See Things Now"
+R version 4.0.2 (2020-06-22) -- "Taking Off Again"
 Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -91,7 +91,7 @@ The following object is masked from ‘package:limma’:
 > library(tidyverse)
 ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
 ✔ ggplot2 3.3.2     ✔ purrr   0.3.4
-✔ tibble  3.0.1     ✔ dplyr   1.0.0
+✔ tibble  3.0.3     ✔ dplyr   1.0.2
 ✔ tidyr   1.1.2     ✔ forcats 0.5.0
 ✔ readr   1.3.1     
 ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
@@ -202,95 +202,95 @@ Loading required package: pd.huex.1.0.st.v2
 Loading required package: RSQLite
 Loading required package: DBI
 Platform design info loaded.
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684089.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684090.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684091.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684092.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684093.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684094.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684095.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684096.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684097.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684098.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684101.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684103.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684105.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684107.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684109.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684112.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684114.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684117.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684119.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684120.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684121.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684122.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684123.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684124.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684125.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684126.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684127.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684128.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684129.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684130.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684132.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684133.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684135.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684136.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684139.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684141.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684143.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684144.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684145.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684146.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684147.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684148.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684149.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684150.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684151.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684152.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684153.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684154.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684155.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684156.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684157.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684158.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684159.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684160.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684161.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684162.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684163.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684164.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684165.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684166.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684167.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684168.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684169.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684170.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684089.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684090.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684091.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684092.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684093.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684094.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684095.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684096.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684097.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684098.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684101.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684103.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684105.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684107.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684109.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684112.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684114.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684117.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684119.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684120.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684121.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684122.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684123.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684124.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684125.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684126.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684127.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684128.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684129.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684130.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684132.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684133.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684135.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684136.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684139.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684141.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684143.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684144.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684145.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684146.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684147.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684148.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684149.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684150.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684151.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684152.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684153.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684154.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684155.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684156.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684157.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684158.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684159.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684160.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684161.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684162.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684163.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684164.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684165.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684166.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684167.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684168.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684169.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE27597/GSM684170.CEL.gz
 Background correcting
 Normalizing
 Calculating Expression
 [1] "GSE106986"
 [1] 21
 This is an Agilent array
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858891_COPD1_7533_11_SG11474142_252665218783_S001_GE1_1105_Oct12_1_3.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858892_COPD2_1093-12_SG11474142_252665231995_S001_GE1_1105_Oct12_1_2.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858893_COPD3_12928_12_SG11474142_252665218763_S001_GE1_1105_Oct12_1_1.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858894_COPD4_19192_08_SG11474142_252665218769_S001_GE1_1105_Oct12_1_1.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858895_COPD5_1250-12_SG11474142_252665231995_S001_GE1_1105_Oct12_1_3.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858896_COPD6_12893_12_SG11474142_252665218783_S001_GE1_1105_Oct12_1_1.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858897_COPD7_24215-11_SG11474142_252665231996_S001_GE1_1105_Oct12_1_4.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858898_COPD8_9495_10_SG11474142_252665218767_S001_GE1_1105_Oct12_1_3.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858899_COPD9_15982_07_SG11474142_252665218770_S001_GE1_1105_Oct12_1_1.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858900_COPD10_13230_12_SG11474142_252665218766_S001_GE1_1105_Oct12_1_3.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858901_COPD11_12488_12_SG11474142_252665218765_S001_GE1_1105_Oct12_1_4.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858902_COPD12_21918_11_SG11474142_252665218764_S001_GE1_1105_Oct12_1_3.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858903_COPD13_3139_11_SG11474142_252665218767_S001_GE1_1105_Oct12_1_1.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858904_COPD14_5161_12_SG11474142_252665218765_S001_GE1_1105_Oct12_1_3.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858905_non1_1117-11_SG11474142_252665231997_S001_GE1_1105_Oct12_1_3.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858906_non2_6591-11_SG11474142_252665231997_S001_GE1_1105_Oct12_1_4.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858907_non3_8167-10_SG11474142_252665231997_S001_GE1_1105_Oct12_1_1.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858908_non4_17287-11_SG11474142_252665231996_S001_GE1_1105_Oct12_1_2.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858909_non5_24903-11_SG11474142_252665231927_S001_GE1_1105_Oct12_1_3.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858891_COPD1_7533_11_SG11474142_252665218783_S001_GE1_1105_Oct12_1_3.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858892_COPD2_1093-12_SG11474142_252665231995_S001_GE1_1105_Oct12_1_2.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858893_COPD3_12928_12_SG11474142_252665218763_S001_GE1_1105_Oct12_1_1.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858894_COPD4_19192_08_SG11474142_252665218769_S001_GE1_1105_Oct12_1_1.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858895_COPD5_1250-12_SG11474142_252665231995_S001_GE1_1105_Oct12_1_3.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858896_COPD6_12893_12_SG11474142_252665218783_S001_GE1_1105_Oct12_1_1.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858897_COPD7_24215-11_SG11474142_252665231996_S001_GE1_1105_Oct12_1_4.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858898_COPD8_9495_10_SG11474142_252665218767_S001_GE1_1105_Oct12_1_3.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858899_COPD9_15982_07_SG11474142_252665218770_S001_GE1_1105_Oct12_1_1.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858900_COPD10_13230_12_SG11474142_252665218766_S001_GE1_1105_Oct12_1_3.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858901_COPD11_12488_12_SG11474142_252665218765_S001_GE1_1105_Oct12_1_4.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858902_COPD12_21918_11_SG11474142_252665218764_S001_GE1_1105_Oct12_1_3.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858903_COPD13_3139_11_SG11474142_252665218767_S001_GE1_1105_Oct12_1_1.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858904_COPD14_5161_12_SG11474142_252665218765_S001_GE1_1105_Oct12_1_3.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858905_non1_1117-11_SG11474142_252665231997_S001_GE1_1105_Oct12_1_3.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858906_non2_6591-11_SG11474142_252665231997_S001_GE1_1105_Oct12_1_4.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858907_non3_8167-10_SG11474142_252665231997_S001_GE1_1105_Oct12_1_1.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858908_non4_17287-11_SG11474142_252665231996_S001_GE1_1105_Oct12_1_2.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE106986/GSM2858909_non5_24903-11_SG11474142_252665231927_S001_GE1_1105_Oct12_1_3.txt.gz 
 Array 1 corrected
 Array 2 corrected
 Array 3 corrected
@@ -315,44 +315,44 @@ Array 19 corrected
 This is an Affymetrix array
 Loading required package: pd.hg.u133.plus.2
 Platform design info loaded.
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927630_NS1-CEL1.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927631_NS2-CEL10.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927632_NS3-CEL11.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927633_NS4-CEL12.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927634_NS5-CEL13.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927635_NS6-CEL20.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927636_NS7-CEL27.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927637_NS8-CEL34.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927638_NS9-CEL28.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927639_S1-CEL14.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927640_S2-CEL15.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927641_S3-CEL16.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927642_S4-CEL21.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927643_S5-CEL22.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927644_S6-CEL23.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927645_S7-CEL30.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927646_S8-CEL31.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927647_S9-CEL35.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927648_S10-CEL36.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927649_S11-CEL37.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927650_COPD1-CEL2.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927651_COPD2-CEL3.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927652_COPD3-CEL4.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927653_COPD4-CEL5.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927654_COPD5-CEL6.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927655_COPD6-CEL7.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927656_COPD7-CEL8.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927657_COPD8-CEL9.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927658_COPD9-CEL17.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927659_COPD10-CEL18.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927660_COPD11-CEL19.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927661_COPD12-CEL24.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927662_COPD13-CEL25.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927663_COPD14-CEL26.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927664_COPD15-CEL29.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927665_COPD16-CEL32.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927666_COPD17-CEL33.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927667_COPD18-CEL38.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927630_NS1-CEL1.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927631_NS2-CEL10.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927632_NS3-CEL11.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927633_NS4-CEL12.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927634_NS5-CEL13.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927635_NS6-CEL20.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927636_NS7-CEL27.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927637_NS8-CEL34.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927638_NS9-CEL28.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927639_S1-CEL14.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927640_S2-CEL15.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927641_S3-CEL16.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927642_S4-CEL21.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927643_S5-CEL22.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927644_S6-CEL23.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927645_S7-CEL30.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927646_S8-CEL31.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927647_S9-CEL35.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927648_S10-CEL36.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927649_S11-CEL37.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927650_COPD1-CEL2.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927651_COPD2-CEL3.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927652_COPD3-CEL4.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927653_COPD4-CEL5.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927654_COPD5-CEL6.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927655_COPD6-CEL7.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927656_COPD7-CEL8.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927657_COPD8-CEL9.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927658_COPD9-CEL17.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927659_COPD10-CEL18.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927660_COPD11-CEL19.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927661_COPD12-CEL24.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927662_COPD13-CEL25.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927663_COPD14-CEL26.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927664_COPD15-CEL29.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927665_COPD16-CEL32.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927666_COPD17-CEL33.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE37768/GSM927667_COPD18-CEL38.CEL.gz
 Background correcting
 Normalizing
 Calculating Expression
@@ -361,435 +361,435 @@ This is not Affymetrix or Agilent
 [1] "GSE47460"
 [1] 431
 This is an Agilent array
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149948_LT000842RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149950_LT001600RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149951_LT001796RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149952_LT004173LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149958_LT022835RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149962_LT026501RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149963_LT028264RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149966_LT037781RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149971_LT045714LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149975_LT047679RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149981_LT052751LL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149985_LT056464LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149987_LT058471RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149988_LT058983RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149992_LT061842RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149993_LT063974LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149996_LT071706RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149998_LT073345RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150001_LT077355RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150010_LT092669LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150012_LT095376RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150014_LT097622RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150017_LT104535RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150030_LT113211RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150031_LT115873LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150032_LT117785RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150037_LT121655RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150040_LT122283RM_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150041_LT122757RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150053_LT132955RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150055_LT136731LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150056_LT137431RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150067_LT157253RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150070_LT160423LL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150075_LT167208LL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150078_LT171169LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150080_LT172184LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150081_LT174005RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150085_LT181242RM_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150089_LT187987LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150090_LT188012RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150100_LT205601LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150119_LT258372RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150122_LT264690LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150143_LT003990RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150144_LT010012LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150145_LT012861RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150146_LT023631RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150147_LT030041RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150148_LT044225RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150149_LT046027RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150150_LT055745RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150151_LT058156LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150152_LT075094LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150153_LT077800RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150154_LT089451RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150155_LT109097LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150156_LT115840LL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150157_LT120371LL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150158_LT132314LI_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150159_LT141224LL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150160_LT141870LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150161_LT148286LL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150162_LT155982RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150163_LT158011LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150164_LT159988RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150165_LT163513RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150166_LT168204LL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150167_LT177521RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150168_LT178307RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150169_LT188161LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150170_LT194990RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150171_LT198741LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150172_LT231101RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150173_LT231373LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150174_LT280560LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150175_LT280646RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150176_LT286300LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150177_LT295133LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150178_LT002501RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150179_LT002902RU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150180_LT007259RU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150181_LT008331RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150182_LT017275LL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150183_LT020259LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150184_LT020426LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150185_LT024106RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150186_LT024460RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150187_LT025997RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150188_LT028044RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150189_LT028427LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150190_LT030151RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150191_LT033422RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150192_LT034070LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150193_LT034821RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150194_LT035239LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150195_LT035774RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150196_LT039091RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150197_LT041723RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150198_LT042151RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150199_LT042552RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150200_LT043343LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150201_LT043798LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150202_LT057312LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150203_LT057972LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150204_LT058691LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150205_LT059736LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150206_LT059975LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150207_LT061106RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150208_LT062141RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150209_LT067836RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150210_LT070403LL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150211_LT072387LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150212_LT072808RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150213_LT075462RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150214_LT076181LI_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150215_LT076617LL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150216_LT077082RU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150217_LT077317LI_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150218_LT078404RM_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150219_LT078696LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150220_LT080176RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150221_LT080836RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150222_LT082092RU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150223_LT083706RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150224_LT083759RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150225_LT084406RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150226_LT084808LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150227_LT087663RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150228_LT089723LL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150229_LT094217RM_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150230_LT094532RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150231_LT098394RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150232_LT100707RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150233_LT103266RU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150234_LT109231RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150235_LT111643RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150236_LT112563LL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150237_LT112597RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150238_LT113005RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150239_LT115251RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150240_LT118064RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150241_LT118801RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150242_LT122336LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150243_LT126327LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150244_LT130861RU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150245_LT134279LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150246_LT134719RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150247_LT134829RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150248_LT136415RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150249_LT137832LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150250_LT138418LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150251_LT139051LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150252_LT139601RU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150253_LT140046RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150254_LT140471RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150255_LT148377LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150256_LT148511LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150257_LT151255LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150258_LT151920RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150259_LT151949RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150260_LT152615RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150261_LT152653LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150262_LT154785RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150263_LT156041LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150264_LT156276RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150265_LT157177RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150266_LT158647RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150267_LT161434RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150268_LT162479RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150269_LT163771RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150270_LT165736LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150271_LT167064RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150272_LT168128RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150273_LT170158LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150274_LT175949LL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150275_LT176562LL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150276_LT177956LL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150277_LT178790LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150278_LT178929RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150279_LT178967RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150280_LT180781RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150281_LT182636RU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150282_LT184241RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150283_LT184772RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150284_LT185970RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150285_LT186521RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150286_LT188524RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150287_LT189721RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150288_LT190004RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150289_LT191087RM_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150290_LT192758RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150291_LT194473RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150292_LT195188RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150293_LT195871RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150294_LT197511LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150295_LT198062LL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150296_LT198134LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150297_LT198612RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150298_LT199384RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150299_LT199987LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150300_LT203231RM_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150301_LT203541RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150302_LT206005RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150303_LT208505LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150304_LT208778RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150305_LT210463LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150306_LT211379RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150307_LT212777RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150308_LT213352LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150309_LT213735RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150310_LT214473RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150311_LT216419RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150312_LT220968RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150313_LT223474RM_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150314_LT228241RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150315_LT230415RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150316_LT233620RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150317_LT236710RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150318_LT238531RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150319_LT239116RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150321_LT242119LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150331_LT242530RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150332_LT243058RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150334_LT244480LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150336_LT245031LL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150338_LT245084RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150339_LT245840RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150341_LT246702RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150343_LT249917LL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150344_LT255244RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150346_LT255718RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150347_LT256532LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150349_LT257433RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150351_LT261141RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150352_LT262371RM_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150353_LT263636RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150354_LT266802RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150355_LT268509LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150357_LT270247RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150358_LT271100LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150359_LT273284LL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150361_LT277002LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150362_LT286056RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150363_LT287158LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150364_LT298520RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150365_LT000216LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150366_LT000379LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150367_LT002410RM_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150368_LT005256RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150369_LT005419RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150370_LT006946RM_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150371_LT011501RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150372_LT012933RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150373_LT013011LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150374_LT017495RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150375_LT017533RM_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150376_LT017811RM_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150377_LT019699RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150378_LT021461RM_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150379_LT021748RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150380_LT022251RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150381_LT022271LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150382_LT022562LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150383_LT024967LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150384_LT026534RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150385_LT030347RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150386_LT030662LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150387_LT036383LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150388_LT037710RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150389_LT041389RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150390_LT046539RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150391_LT047152LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150392_LT050079RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150393_LT053283RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150394_LT058319LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150395_LT059721LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150396_LT060717LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150397_LT062121LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150398_LT067200LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150399_LT069585RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150400_LT076421LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150401_LT077264RU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150402_LT078347LL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150403_LT079487LL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150404_LT080750LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150405_LT081282RM_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150406_LT081498RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150407_LT082461RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150408_LT083950RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150409_LT084038RM_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150410_LT087826LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150411_LT090666LI_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150412_LT091552LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150413_LT093297LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150414_LT095342LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150415_LT099879RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150416_LT100821RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150417_LT102131RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150418_LT102695LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150419_LT108067RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150420_LT111916LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150421_LT116004RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150422_LT118629RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150423_LT119682RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150424_LT123131RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150425_LT123552RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150426_LT124161RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150427_LT126767LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150428_LT128191LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150429_LT130603LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150430_LT134121RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150431_LT134776LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150432_LT135390LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150433_LT139649RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150434_LT139691RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150435_LT142159RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150436_LT143944LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150437_LT144769RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150438_LT145196LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150439_LT147610LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150440_LT151370RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150441_LT151513LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150442_LT155318RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150443_LT156171LL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150444_LT156481LL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150445_LT157856LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150446_LT158795LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150447_LT159753LL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150448_LT162096RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150449_LT163384LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150450_LT165114RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150451_LT166111RU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150452_LT166240RM_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150453_LT167891LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150454_LT167906LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150455_LT168094RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150456_LT168902RM_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150457_LT171097RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150458_LT172093RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150459_LT173597LL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150460_LT173946RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150461_LT175399RU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150462_LT176510LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150463_LT180102RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150464_LT184423LL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150465_LT184901RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150466_LT185396RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150467_LT186388LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150468_LT190870RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150469_LT191618LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150470_LT191675RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150471_LT195011RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150472_LT195207LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150473_LT195484RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150474_LT195522RU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150475_LT196309RU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150476_LT196677RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150477_LT197381LI_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150478_LT197821RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150479_LT200930RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150480_LT201348LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150481_LT201831RU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150482_LT204935LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150483_LT206871LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150484_LT207073RU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150485_LT213606RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150486_LT215341RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150487_LT220661RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150488_LT221381RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150489_LT221687RM_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150490_LT221782LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150491_LT221983RM_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150492_LT223106RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150493_LT227135RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150494_LT228772LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150495_LT228897LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150496_LT229669RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150497_LT232073LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150498_LT232107RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150499_LT233821RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150500_LT234205RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150501_LT234755LL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150502_LT234774LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150503_LT235441RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150504_LT236045LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150505_LT236519LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150506_LT236557RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150507_LT237439RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150508_LT238765RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150509_LT241811LL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150510_LT242161RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150511_LT243794RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150512_LT244399LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150513_LT244824RU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150514_LT245983LU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150515_LT246349LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150516_LT246774RM_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150517_LT247728RL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150518_LT248906LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150519_LT249481LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150520_LT249811RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150521_LT251693LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150522_LT251947LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150523_LT253131RU_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150524_LT253371RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150525_LT253677RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150526_LT256221LL_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150527_LT256920RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150528_LT259072LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150529_LT264283RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150530_LT266817LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150531_LT270821RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150532_LT277811RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150533_LT279828RU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150534_LT280282RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150535_LT280851LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150536_LT282601LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150537_LT285031LU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150538_LT285671LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150539_LT285906LL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150540_LT286644RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150541_LT287196LL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150542_LT288719RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150543_LT290677RU_CTRL.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150544_LT291449RL_COPD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150545_LT295717RL_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150546_LT297451LU_ILD.txt.gz 
-Read /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150547_LT299181LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149948_LT000842RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149950_LT001600RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149951_LT001796RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149952_LT004173LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149958_LT022835RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149962_LT026501RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149963_LT028264RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149966_LT037781RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149971_LT045714LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149975_LT047679RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149981_LT052751LL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149985_LT056464LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149987_LT058471RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149988_LT058983RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149992_LT061842RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149993_LT063974LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149996_LT071706RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1149998_LT073345RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150001_LT077355RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150010_LT092669LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150012_LT095376RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150014_LT097622RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150017_LT104535RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150030_LT113211RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150031_LT115873LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150032_LT117785RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150037_LT121655RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150040_LT122283RM_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150041_LT122757RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150053_LT132955RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150055_LT136731LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150056_LT137431RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150067_LT157253RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150070_LT160423LL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150075_LT167208LL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150078_LT171169LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150080_LT172184LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150081_LT174005RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150085_LT181242RM_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150089_LT187987LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150090_LT188012RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150100_LT205601LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150119_LT258372RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150122_LT264690LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150143_LT003990RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150144_LT010012LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150145_LT012861RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150146_LT023631RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150147_LT030041RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150148_LT044225RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150149_LT046027RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150150_LT055745RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150151_LT058156LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150152_LT075094LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150153_LT077800RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150154_LT089451RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150155_LT109097LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150156_LT115840LL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150157_LT120371LL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150158_LT132314LI_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150159_LT141224LL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150160_LT141870LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150161_LT148286LL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150162_LT155982RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150163_LT158011LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150164_LT159988RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150165_LT163513RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150166_LT168204LL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150167_LT177521RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150168_LT178307RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150169_LT188161LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150170_LT194990RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150171_LT198741LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150172_LT231101RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150173_LT231373LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150174_LT280560LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150175_LT280646RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150176_LT286300LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150177_LT295133LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150178_LT002501RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150179_LT002902RU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150180_LT007259RU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150181_LT008331RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150182_LT017275LL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150183_LT020259LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150184_LT020426LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150185_LT024106RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150186_LT024460RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150187_LT025997RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150188_LT028044RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150189_LT028427LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150190_LT030151RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150191_LT033422RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150192_LT034070LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150193_LT034821RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150194_LT035239LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150195_LT035774RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150196_LT039091RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150197_LT041723RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150198_LT042151RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150199_LT042552RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150200_LT043343LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150201_LT043798LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150202_LT057312LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150203_LT057972LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150204_LT058691LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150205_LT059736LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150206_LT059975LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150207_LT061106RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150208_LT062141RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150209_LT067836RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150210_LT070403LL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150211_LT072387LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150212_LT072808RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150213_LT075462RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150214_LT076181LI_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150215_LT076617LL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150216_LT077082RU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150217_LT077317LI_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150218_LT078404RM_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150219_LT078696LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150220_LT080176RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150221_LT080836RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150222_LT082092RU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150223_LT083706RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150224_LT083759RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150225_LT084406RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150226_LT084808LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150227_LT087663RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150228_LT089723LL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150229_LT094217RM_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150230_LT094532RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150231_LT098394RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150232_LT100707RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150233_LT103266RU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150234_LT109231RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150235_LT111643RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150236_LT112563LL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150237_LT112597RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150238_LT113005RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150239_LT115251RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150240_LT118064RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150241_LT118801RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150242_LT122336LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150243_LT126327LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150244_LT130861RU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150245_LT134279LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150246_LT134719RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150247_LT134829RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150248_LT136415RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150249_LT137832LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150250_LT138418LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150251_LT139051LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150252_LT139601RU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150253_LT140046RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150254_LT140471RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150255_LT148377LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150256_LT148511LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150257_LT151255LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150258_LT151920RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150259_LT151949RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150260_LT152615RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150261_LT152653LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150262_LT154785RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150263_LT156041LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150264_LT156276RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150265_LT157177RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150266_LT158647RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150267_LT161434RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150268_LT162479RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150269_LT163771RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150270_LT165736LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150271_LT167064RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150272_LT168128RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150273_LT170158LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150274_LT175949LL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150275_LT176562LL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150276_LT177956LL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150277_LT178790LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150278_LT178929RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150279_LT178967RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150280_LT180781RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150281_LT182636RU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150282_LT184241RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150283_LT184772RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150284_LT185970RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150285_LT186521RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150286_LT188524RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150287_LT189721RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150288_LT190004RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150289_LT191087RM_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150290_LT192758RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150291_LT194473RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150292_LT195188RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150293_LT195871RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150294_LT197511LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150295_LT198062LL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150296_LT198134LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150297_LT198612RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150298_LT199384RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150299_LT199987LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150300_LT203231RM_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150301_LT203541RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150302_LT206005RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150303_LT208505LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150304_LT208778RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150305_LT210463LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150306_LT211379RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150307_LT212777RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150308_LT213352LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150309_LT213735RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150310_LT214473RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150311_LT216419RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150312_LT220968RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150313_LT223474RM_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150314_LT228241RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150315_LT230415RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150316_LT233620RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150317_LT236710RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150318_LT238531RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150319_LT239116RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150321_LT242119LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150331_LT242530RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150332_LT243058RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150334_LT244480LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150336_LT245031LL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150338_LT245084RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150339_LT245840RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150341_LT246702RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150343_LT249917LL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150344_LT255244RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150346_LT255718RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150347_LT256532LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150349_LT257433RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150351_LT261141RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150352_LT262371RM_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150353_LT263636RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150354_LT266802RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150355_LT268509LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150357_LT270247RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150358_LT271100LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150359_LT273284LL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150361_LT277002LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150362_LT286056RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150363_LT287158LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150364_LT298520RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150365_LT000216LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150366_LT000379LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150367_LT002410RM_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150368_LT005256RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150369_LT005419RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150370_LT006946RM_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150371_LT011501RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150372_LT012933RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150373_LT013011LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150374_LT017495RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150375_LT017533RM_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150376_LT017811RM_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150377_LT019699RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150378_LT021461RM_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150379_LT021748RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150380_LT022251RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150381_LT022271LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150382_LT022562LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150383_LT024967LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150384_LT026534RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150385_LT030347RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150386_LT030662LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150387_LT036383LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150388_LT037710RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150389_LT041389RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150390_LT046539RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150391_LT047152LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150392_LT050079RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150393_LT053283RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150394_LT058319LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150395_LT059721LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150396_LT060717LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150397_LT062121LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150398_LT067200LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150399_LT069585RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150400_LT076421LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150401_LT077264RU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150402_LT078347LL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150403_LT079487LL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150404_LT080750LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150405_LT081282RM_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150406_LT081498RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150407_LT082461RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150408_LT083950RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150409_LT084038RM_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150410_LT087826LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150411_LT090666LI_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150412_LT091552LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150413_LT093297LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150414_LT095342LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150415_LT099879RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150416_LT100821RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150417_LT102131RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150418_LT102695LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150419_LT108067RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150420_LT111916LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150421_LT116004RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150422_LT118629RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150423_LT119682RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150424_LT123131RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150425_LT123552RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150426_LT124161RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150427_LT126767LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150428_LT128191LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150429_LT130603LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150430_LT134121RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150431_LT134776LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150432_LT135390LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150433_LT139649RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150434_LT139691RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150435_LT142159RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150436_LT143944LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150437_LT144769RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150438_LT145196LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150439_LT147610LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150440_LT151370RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150441_LT151513LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150442_LT155318RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150443_LT156171LL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150444_LT156481LL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150445_LT157856LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150446_LT158795LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150447_LT159753LL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150448_LT162096RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150449_LT163384LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150450_LT165114RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150451_LT166111RU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150452_LT166240RM_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150453_LT167891LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150454_LT167906LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150455_LT168094RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150456_LT168902RM_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150457_LT171097RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150458_LT172093RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150459_LT173597LL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150460_LT173946RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150461_LT175399RU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150462_LT176510LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150463_LT180102RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150464_LT184423LL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150465_LT184901RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150466_LT185396RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150467_LT186388LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150468_LT190870RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150469_LT191618LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150470_LT191675RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150471_LT195011RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150472_LT195207LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150473_LT195484RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150474_LT195522RU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150475_LT196309RU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150476_LT196677RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150477_LT197381LI_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150478_LT197821RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150479_LT200930RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150480_LT201348LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150481_LT201831RU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150482_LT204935LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150483_LT206871LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150484_LT207073RU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150485_LT213606RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150486_LT215341RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150487_LT220661RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150488_LT221381RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150489_LT221687RM_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150490_LT221782LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150491_LT221983RM_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150492_LT223106RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150493_LT227135RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150494_LT228772LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150495_LT228897LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150496_LT229669RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150497_LT232073LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150498_LT232107RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150499_LT233821RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150500_LT234205RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150501_LT234755LL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150502_LT234774LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150503_LT235441RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150504_LT236045LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150505_LT236519LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150506_LT236557RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150507_LT237439RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150508_LT238765RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150509_LT241811LL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150510_LT242161RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150511_LT243794RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150512_LT244399LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150513_LT244824RU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150514_LT245983LU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150515_LT246349LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150516_LT246774RM_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150517_LT247728RL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150518_LT248906LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150519_LT249481LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150520_LT249811RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150521_LT251693LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150522_LT251947LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150523_LT253131RU_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150524_LT253371RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150525_LT253677RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150526_LT256221LL_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150527_LT256920RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150528_LT259072LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150529_LT264283RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150530_LT266817LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150531_LT270821RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150532_LT277811RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150533_LT279828RU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150534_LT280282RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150535_LT280851LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150536_LT282601LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150537_LT285031LU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150538_LT285671LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150539_LT285906LL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150540_LT286644RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150541_LT287196LL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150542_LT288719RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150543_LT290677RU_CTRL.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150544_LT291449RL_COPD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150545_LT295717RL_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150546_LT297451LU_ILD.txt.gz 
+Read /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE47460/GSM1150547_LT299181LU_ILD.txt.gz 
 Array 1 corrected
 Array 2 corrected
 Array 3 corrected
@@ -1225,64 +1225,64 @@ This is not Affymetrix or Agilent
 [1] 117
 This is an Affymetrix array
 Platform design info loaded.
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210004.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210005.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210006.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210007.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210008.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210009.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210010.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210011.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210012.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210014.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210015.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210071.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210087.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210090.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210188.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210192.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210193.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210194.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210196.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210978.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210979.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210992.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210993.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210994.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM211007.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM211008.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM211009.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM211010.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM211865.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM211872.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212067.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212068.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212069.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212070.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212074.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212075.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212787.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212788.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212789.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212790.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212809.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212810.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212811.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212848.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212849.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212850.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212852.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212853.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212854.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212855.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM213017.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM213018.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM213019.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM213020.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM213034.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM213035.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM213036.CEL.gz
-Reading in : /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM213037.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210004.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210005.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210006.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210007.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210008.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210009.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210010.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210011.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210012.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210014.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210015.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210071.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210087.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210090.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210188.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210192.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210193.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210194.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210196.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210978.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210979.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210992.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210993.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM210994.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM211007.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM211008.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM211009.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM211010.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM211865.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM211872.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212067.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212068.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212069.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212070.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212074.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212075.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212787.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212788.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212789.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212790.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212809.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212810.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212811.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212848.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212849.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212850.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212852.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212853.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212854.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM212855.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM213017.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM213018.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM213019.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM213020.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM213034.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM213035.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM213036.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE8581/GSM213037.CEL.gz
 Background correcting
 Normalizing
 Calculating Expression
@@ -1290,10 +1290,199 @@ Calculating Expression
 [1] 31
 This is an Affymetrix array
 Loading required package: pd.hg.u133a
-Attempting to obtain 'pd.hg.u133a' from BioConductor website.
-Checking to see if your internet connection works...
-You do not have write access to '/cm/shared/apps/r/4.0.1-studio/lib64/R/library'.
-Error in read.celfiles(celfiles) : 
-  The annotation package, pd.hg.u133a, could not be loaded.
-Calls: sapply -> sapply -> lapply -> FUN -> read.celfiles
-Execution halted
+Platform design info loaded.
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28357.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28358.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28359.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28360.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28361.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28362.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28363.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28364.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28365.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28366.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28367.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28368.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28369.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28370.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28371.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28372.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28373.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28374.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28375.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28376.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28377.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28378.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28379.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28380.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28381.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28382.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28383.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28384.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28385.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1650/GSM28386.CEL.gz
+Background correcting
+Normalizing
+Calculating Expression
+[1] "GSE1122"
+[1] 16
+This is an Affymetrix array
+Loading required package: pd.hu6800
+Platform design info loaded.
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSM18403.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSM18404.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSM18405.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSM18406.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSM18407.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSM18408.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSM18409.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSM18410.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSM18411.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSM18412.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSM18413.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSM18414.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSM18415.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSM18416.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE1122/GSM18417.CEL.gz
+Background correcting
+Normalizing
+Calculating Expression
+[1] "GSE119040"
+No Supplementary files found
+This is not Affymetrix or Agilent
+[1] "GSE103174"
+[1] 55
+This is an Affymetrix array
+Loading required package: pd.hg.u219
+Platform design info loaded.
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756569_Tx100_190116_H03.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756570_TX20_140116_H11.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756571_Tx21_190116_C04.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756572_Tx22_190116_C06.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756573_TX25_190116_C10.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756574_Tx27_190116_C12.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756575_Tx28_190116_D02.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756576_Tx29_190116_D04.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756577_Tx31_190116_D07.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756578_Tx32_190116_D09.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756579_Tx33_2_VERMELL_190116_D11.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756580_Tx34_190116_D12.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756581_Tx36_190116_E03.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756582_Tx37_190116_E05.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756583_Tx38_190116_E07.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756584_TX39_190116_E09.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756585_Tx40_190116_E11.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756586_Tx42_190116_F01.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756587_TX43_190116_F03.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756588_Tx44_190116_F04.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756589_Tx45_190116_F06.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756590_Tx46_190116_F08.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756591_Tx48_190116_F10.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756592_Tx49_190116_F12.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756593_Tx50_190116_G01.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756594_Tx52_190116_G04.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756595_Tx55_140116_A04.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756596_Tx56_140116_A07.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756597_TX57_190116_G07.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756598_Tx58_140116_A10.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756599_TX61_140116_B02.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756600_TX63_140116_B04.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756601_Tx66_140116_B05.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756602_TX67_140116_B07.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756603_TX69_140116_B10.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756604_TX71_140116_C01.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756605_TX72_140116_C02.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756606_TX73_140116_C03.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756607_TX77_140116_D09.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756608_TX78_140116_C11.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756609_TX79_140116_D02.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756610_TX83_140116_E02.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756611_TX84_140116_E05.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756612_Tx86_140116_E11.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756613_Tx88_140116_F05.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756614_Tx89_140116_F08.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756615_TX_90_140116_F11.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756616_Tx91_140116_G02.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756617_Tx92_140116_G05.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756618_Tx93_190116_G09.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756619_Tx96_190116_G11.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756620_Tx97_140116_H02.CEL.gz
+Reading in : /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE103174/GSM2756621_Tx99_140116_H05.CEL.gz
+Background correcting
+Normalizing
+Calculating Expression
+[1] "GSE124180"
+This is not Affymetrix or Agilent
+> saveRDS(geo_norm,OUTPUT(c(TODAY,"_normData.xz")),compress = "xz")
+> 
+> sessionInfo()
+R version 4.0.2 (2020-06-22)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 20.04 LTS
+
+Matrix products: default
+BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3
+LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/liblapack.so.3
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=it_IT.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=it_IT.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=it_IT.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=it_IT.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats4    parallel  stats     graphics  grDevices utils     datasets 
+[8] methods   base     
+
+other attached packages:
+ [1] pd.hg.u219_3.12.0        pd.hu6800_3.12.0         pd.hg.u133a_3.12.0      
+ [4] pd.hg.u133.plus.2_3.12.0 pd.huex.1.0.st.v2_3.14.1 DBI_1.1.0               
+ [7] RSQLite_2.2.0            forcats_0.5.0            dplyr_1.0.2             
+[10] purrr_0.3.4              readr_1.3.1              tidyr_1.1.2             
+[13] tibble_3.0.3             ggplot2_3.3.2            tidyverse_1.3.0         
+[16] oligo_1.52.1             Biostrings_2.56.0        XVector_0.28.0          
+[19] IRanges_2.22.2           S4Vectors_0.26.1         Biobase_2.48.0          
+[22] oligoClasses_1.50.4      BiocGenerics_0.34.0      limma_3.44.3            
+[25] stringr_1.4.0           
+
+loaded via a namespace (and not attached):
+ [1] bitops_1.0-6                matrixStats_0.56.0         
+ [3] fs_1.5.0                    lubridate_1.7.9            
+ [5] bit64_4.0.5                 httr_1.4.2                 
+ [7] rprojroot_1.3-2             GenomeInfoDb_1.24.2        
+ [9] tools_4.0.2                 backports_1.1.9            
+[11] R6_2.4.1                    affyio_1.58.0              
+[13] colorspace_1.4-1            withr_2.2.0                
+[15] tidyselect_1.1.0            bit_4.0.4                  
+[17] compiler_4.0.2              preprocessCore_1.50.0      
+[19] cli_2.0.2                   rvest_0.3.6                
+[21] xml2_1.3.2                  DelayedArray_0.14.1        
+[23] scales_1.1.1                digest_0.6.25              
+[25] pkgconfig_2.0.3             dbplyr_1.4.4               
+[27] rlang_0.4.7                 readxl_1.3.1               
+[29] rstudioapi_0.11             generics_0.0.2             
+[31] jsonlite_1.7.1              RCurl_1.98-1.2             
+[33] magrittr_1.5                GenomeInfoDbData_1.2.3     
+[35] Matrix_1.2-18               Rcpp_1.0.5                 
+[37] munsell_0.5.0               fansi_0.4.1                
+[39] lifecycle_0.2.0             stringi_1.5.3              
+[41] SummarizedExperiment_1.18.2 zlibbioc_1.34.0            
+[43] grid_4.0.2                  affxparser_1.60.0          
+[45] blob_1.2.1                  crayon_1.3.4               
+[47] lattice_0.20-41             haven_2.3.1                
+[49] splines_4.0.2               hms_0.5.3                  
+[51] pillar_1.4.6                GenomicRanges_1.40.0       
+[53] codetools_0.2-16            reprex_0.3.0               
+[55] glue_1.4.2                  BiocManager_1.30.10        
+[57] modelr_0.1.8                vctrs_0.3.4                
+[59] foreach_1.5.0               cellranger_1.1.0           
+[61] gtable_0.3.0                assertthat_0.2.1           
+[63] broom_0.7.0                 ff_4.0.2                   
+[65] iterators_1.0.12            memoise_1.1.0              
+[67] ellipsis_0.3.1              here_0.1                   
+> 
+> proc.time()
+   user  system elapsed 
+951.980  27.294 989.345 

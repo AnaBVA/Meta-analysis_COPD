@@ -2275,3 +2275,9 @@ label: unnamed-chunk-2
 
   |                                                                              |........................................................              |  80%
 label: unnamed-chunk-3
+Quitting from lines 191-193 (2-normalizing-data.RMD) 
+Error in read.celfiles(celfiles) : 
+  The annotation package, pd.hg.u133a, could not be loaded.
+Calls: <Anonymous> ... eval -> sapply -> sapply -> lapply -> FUN -> read.celfiles
+
+Execution halted
