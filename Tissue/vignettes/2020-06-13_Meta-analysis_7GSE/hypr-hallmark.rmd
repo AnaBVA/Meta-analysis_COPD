@@ -1,0 +1,60 @@
+---
+title: 'Workflow Report'
+subtitle: ''
+author: ''
+output:
+  html_document:
+    theme: united
+    toc: true
+    toc_float: true
+    code_folding: hide
+    toc_depth: 1
+    df_print: paged
+---
+
+**Generated with hypeR**: v`r packageVersion('hypeR')`  
+**Date Generated**: `r Sys.Date()`
+
+***
+
+
+```{r setup, echo=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
+library(kableExtra)
+```
+
+
+# Results
+##  {.tabset .tabset-fade}
+
+
+###   
+```{r 1, fig.width=8.25, fig.align='center'}
+hyp_obj <- tabsets[['Results']][[' ']] 
+
+hyp_obj %>%
+hyp_dots(top=15,val='fdr')
+
+
+df <- hyp_obj$as.data.frame()
+df$label.abrv <- substr(df$label, 1, 30) 
+col_ix <- match(c('pval', 'fdr', 'label.abrv'), colnames(df))
+df <- df[, c(col_ix, (1:ncol(df))[-col_ix])]
+df$label <- NULL
+rownames(df) <- NULL
+df
+
+
+hyp_obj %>%
+hyp_emap(top=25,val='fdr',similarity_metric='jaccard_similarity',similarity_cutoff=0.2)
+
+
+
+info <- hyp_obj$info
+mat <- matrix(c(names(hyp_obj$info), as.character(hyp_obj$info)), ncol=2)
+df <- as.data.frame(mat)
+colnames(df) <- NULL
+df
+
+```
+

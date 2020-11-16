@@ -1,0 +1,161 @@
+---
+title: "5-merge-data.RMD"
+author: Ana BVA
+date: "`r BiocStyle::doc_date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
+
+## Introduction
+
+<div class="alert alert-info">
+  <strong>Aim:</strong> To merge data from individual DE analysis
+</div>
+
+We previously had run the following scripts:
+
+- 0: Data selection `/0-Data-selection.RMD`
+
+- 1: Dowload RAW data `/1-download_raw-data.RMD`
+
+- 2: Normalizing data `/2-normalizing-data.RMD`
+
+- 3: Curating data `/3-curatig-data.RMD`
+
+- 4: Differential gene expression analysis  `/4-DE.RMD`
+
+
+## Input
+
+This script needs the following files:
+
+<div class="alert alert-warning">
+  <strong>Data:</strong> Tables of DE results in a `csv` files  
+</div>
+
+## Analysis
+
+### Setup
+
+For running the script, type:
+
+```{bash, eval = F}
+ssh -X aaltamirano@dna.lavis.unam.mx
+qrsh
+cd /mnt/Genoma/amedina/DataDNA/R-projects/Meta-analysis_COPD/output_data/.out
+ module load r/4.0.1 
+
+## OR
+ssh ana@10.200.0.42
+cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/output_data/.out
+
+nohup R -e "rmarkdown::render(here::here('vignettes/5-merge-data.RMD'))" > 5-merge-data.RMD.out &
+```
+
+The script can be found in: `r getwd() `. And the directories were set using
+`R/setup.R` (e.i. DATA, OUPUT, DOWNLOAD) as a small functions that will paste the names into complete paths.
+
+
+```{r setup}
+knitr::opts_knit$set(root.dir = here::here())
+source(here::here("R/setup.R"))
+```
+
+And this analysis is run in: `r getwd() `
+
+
+### Libraries
+
+```{r libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+
+### Import data
+
+We will import DE results from all experiments. 
+
+```{r}
+files <- list.files(OUTPUT("DE"), full.names = T)
+files <- gtools::mixedsort(files)[-10]
+data <- files %>% map(read_csv)
+```
+
+
+### Merge data
+
+We will use a function to select columns we already curated 
+
+Using `column_selection` function, we can subset columns that has Gene symbol,
+logFC, adjsted p-value, and confidence intervals with unique id. 
+
+```{r column_selection, class.source="bg-info",class.output="bg-info" }
+
+column_selection <- function(df){
+  # Compete column name (i.e "Gene.Symbol_GSE1122")
+  GeneS <- str_subset(colnames(df),"GENE[.]SYMBOL")
+  logFC <- str_subset(colnames(df),"logFC")
+  adjP <- str_subset(colnames(df),"adj.P.Val|padj")
+  CI.L <- str_subset(colnames(df),"CI.L")
+  CI.R <- str_subset(colnames(df),"CI.R")
+  
+  selectedColumns <- c(GeneS,logFC,adjP,CI.L,CI.R)
+  #Return subset of dataframe to only keep the first duplicate
+  DF <- df[!duplicated(df[,GeneS]),selectedColumns] %>%
+    rename(GENE.SYMBOL=GeneS)
+  
+  return(DF)
+}
+
+
+```
+
+
+Join all data into one dataset!
+
+```{r merge}
+full_tables <- data %>% 
+  map(column_selection)%>% 
+  purrr::reduce(full_join, by = "GENE.SYMBOL") 
+
+full_tables  
+
+## Select genes with at least 3 experiments with data information
+genes <- full_tables %>% 
+  select(GENE.SYMBOL,str_subset(colnames(full_tables),"logFC")) %>%
+  filter(rowSums(is.na(.)) < 9 ) %>% # at least 3 experiments with logFC (9/12 NA)
+  select(GENE.SYMBOL)
+
+full_tables <- filter(full_tables, GENE.SYMBOL %in% genes$GENE.SYMBOL)
+full_tables <- full_tables[which(!is.na(full_tables$GENE.SYMBOL)),]
+
+full_tables
+
+## Save data 
+write_csv(full_tables, path= OUTPUT(c(TODAY,"_Step5_Full_Tables.csv")))
+```
+
+
+## Output
+
+This script produces the following data, and can be found in `r getwd() ` 
+
+<div class="alert alert-success">
+  <strong>Table:</strong> All DE joined using the same gene ID  `r OUTPUT(c(TODAY,"_Step5_Full_Tables.csv"))`  
+</div>
+
+## Session Info
+
+```{r sessionInfo}
+sessionInfo()
+```
+
+
+
+
+

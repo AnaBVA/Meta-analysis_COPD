@@ -1,0 +1,267 @@
+---
+title: "7-enrichment-analysis.RMD"
+author: Ana BVA
+date: "`r BiocStyle::doc_date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
+
+## Introduction
+
+<div class="alert alert-info">
+  <strong>Aim:</strong> To merge data from individual DE analysis
+</div>
+
+We previously had run the following scripts:
+
+- 0: Data selection `/0-Data-selection.RMD`
+
+- 1: Dowload RAW data `/1-download_raw-data.RMD`
+
+- 2: Normalizing data `/2-normalizing-data.RMD`
+
+- 3: Curating data `/3-curatig-data.RMD`
+
+- 4: Differential gene expression analysis  `/4-DE.RMD`
+
+- 5: Merging data `/5-merge-data.RMD`
+
+- 6: Merging data `/6-meta-analysis.RMD`
+
+
+
+
+## Input
+
+This script needs the following files:
+
+<div class="alert alert-warning">
+  <strong>Data:</strong> Meta-analysis results in `csv` files  
+</div>
+
+## Analysis
+
+### Setup
+
+For running the script, type:
+
+```{bash, eval = F}
+ssh -X aaltamirano@dna.lavis.unam.mx
+qrsh
+cd /mnt/Genoma/amedina/DataDNA/R-projects/Meta-analysis_COPD/output_data/.out
+ module load r/4.0.1 
+
+## OR
+ssh ana@10.200.0.42
+cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/output_data/.out
+
+nohup R -e "rmarkdown::render(here::here('vignettes/8-enrichment-pathways.RMD'))" > 8-enrichment-pathways.RMD.out &
+```
+
+The script can be found in: `r getwd() `. And the directories were set using
+`R/setup.R` (e.i. DATA, OUPUT, DOWNLOAD) as a small functions that will paste the names into complete paths.
+
+
+```{r setup}
+knitr::opts_knit$set(root.dir = here::here())
+source(here::here("R/setup.R"))
+```
+
+And this analysis is run in: `r getwd() `
+
+
+### Libraries
+
+```{r libraries, message=FALSE, warning=FALSE}
+library(hypeR)
+library(WGCNA)
+library(tidyverse)
+library(reactable)
+```
+
+
+### Import data
+
+We will import DE results from all experiments. 
+
+```{r}
+meta <- read_csv(OUTPUT("2020-10-16_Step6_meta-analysis.csv"))[,-1]
+meta
+```
+
+
+
+### Ranking and weighted values
+
+```{r , class.source="bg-info",class.output="bg-info" }
+qval_cutoff <- 0.5
+
+df <- meta %>%
+  filter(qval <= qval_cutoff) %>%
+  dplyr::arrange(desc(estimate))
+
+signature <- as.vector(df$qval)
+names(signature) <- df$genes
+head(signature)
+```
+
+### Enrichment analysis
+
+We will use a function to generate plots from different databases
+
+```{r}
+
+enrich <- function(DB){
+  # Ranked Signature using the estimator from the meta analysis (FC)
+  hyp_obj <- hypeR(names(signature),DB, test="hypergeometric", background=nrow(meta), fdr=0.5, plotting=TRUE)
+  hyp_obj$plots[[1]]
+  hyp_obj
+  
+  # Weighted Signature using as ranking the estimator and the weighted the qvalue
+  hyp_obj <- hypeR(signature, DB, test="kstest", background=nrow(meta),fdr=0.5, plotting=TRUE)
+  hyp_obj$plots[[1]]
+  hyp_obj
+  
+  # Show interactive table
+  #hyp_show(hyp_obj)
+  
+  # Plot dots plot
+  hyp_dots(hyp_obj) + theme_minimal()
+  
+  # Plot enrichment map
+  #hyp_emap(hyp_obj)
+  
+  # Plot hiearchy map
+  #hyp_hmap(hyp_obj)
+  
+  # Generate markdown report
+  #hyp_to_rmd(hyp_obj,"hypr-KEGG-genesets.rmd")
+  #hyp_to_rmd(hyp_obj,"hypr-TRANSFAC_and_JASPAR_PWMs.rmd")
+}
+
+```
+
+Then we will check KEGG, REACTOME and some databases from EnrichR
+
+
+```{r, eval=FALSE}
+# KEGG
+KEGG <- hyperdb_rgsets("KEGG", "92.0")
+enrich(KEGG)
+
+#HALLMARL
+HALLMARK <- msigdb_gsets(species="Homo sapiens", category="H",clean = T)
+enrich(HALLMARK)
+
+#ENRICHR
+TF_TJ <- enrichr_gsets("TRANSFAC_and_JASPAR_PWMs")
+enrich(TF_TJ)
+
+enrichR<- enrichr_gsets("Jensen_DISEASES")
+enrich(enrichR)
+
+enrichR<- enrichr_gsets("Jensen_TISSUES")
+enrich(enrichR)
+
+enrichR<- enrichr_gsets("Chromosome_Location")
+enrich(enrichR)
+
+enrichR<- enrichr_gsets("WikiPathways_2019_Human")
+enrich(enrichR)
+
+
+enrichR<- enrichr_gsets("ClinVar_2019")
+enrich(enrichR)
+
+```
+
+
+
+```{r}
+HALLMARK <- msigdb_gsets(species="Homo sapiens", category="H",clean = T)
+DB <- HALLMARK
+  # Ranked Signature using the estimator from the meta analysis (FC)
+  hyp_obj <- hypeR(names(signature),DB, test="hypergeometric", background=nrow(meta), fdr=0.5, plotting=TRUE)
+  hyp_obj$plots[[1]]
+  hyp_obj
+  
+  # Weighted Signature using as ranking the estimator and the weighted the qvalue
+  hyp_obj <- hypeR(signature, DB, test="kstest", background=nrow(meta),fdr=0.5, plotting=TRUE)
+  hyp_obj$plots[[1]]
+  hyp_obj
+  
+  # Show interactive table
+  #hyp_show(hyp_obj)
+  
+  # Plot dots plot
+  hyp_dots(hyp_obj) + theme_minimal()
+  
+  # Plot enrichment map
+  #hyp_emap(hyp_obj)
+  
+  # Plot hiearchy map
+  #hyp_hmap(hyp_obj)
+  
+  # Generate markdown report
+  #hyp_to_rmd(hyp_obj,"hypr-KEGG-genesets.rmd")
+  #hyp_to_rmd(hyp_obj,"hypr-TRANSFAC_and_JASPAR_PWMs.rmd")
+```
+
+
+```{r}
+TF_TJ <- enrichr_gsets("TRANSFAC_and_JASPAR_PWMs")
+DB <- TF_TJ
+  # Ranked Signature using the estimator from the meta analysis (FC)
+  hyp_obj <- hypeR(names(signature),DB, test="hypergeometric", background=nrow(meta), fdr=0.5, plotting=TRUE)
+  hyp_obj$plots[[1]]
+  hyp_obj
+  
+  # Weighted Signature using as ranking the estimator and the weighted the qvalue
+  hyp_obj <- hypeR(signature, DB, test="kstest", background=nrow(meta),fdr=0.5, plotting=TRUE)
+  hyp_obj$plots[[1]]
+  hyp_obj
+  
+  # Show interactive table
+  #hyp_show(hyp_obj)
+  
+  # Plot dots plot
+  hyp_dots(hyp_obj) + theme_minimal()
+  
+  # Plot enrichment map
+  #hyp_emap(hyp_obj)
+  
+  # Plot hiearchy map
+  #hyp_hmap(hyp_obj)
+  
+  # Generate markdown report
+  #hyp_to_rmd(hyp_obj,"hypr-KEGG-genesets.rmd")
+  #hyp_to_rmd(hyp_obj,"hypr-TRANSFAC_and_JASPAR_PWMs.rmd")
+```
+
+
+
+
+
+## Output
+
+This script produces the following data, and can be found in `r getwd() ` 
+
+<div class="alert alert-success">
+  <strong>Figures in the vignette:</strong> Enrichment analysis with plots
+</div>
+
+## Session Info
+
+```{r sessionInfo}
+sessionInfo()
+```
+
+
+
+
+

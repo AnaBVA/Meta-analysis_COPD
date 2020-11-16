@@ -1,0 +1,388 @@
+---
+title: "4-Differential Geneexpression analysis.RMD"
+author: Ana BVA
+date: "`r BiocStyle::doc_date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
+
+## Introduction
+
+<div class="alert alert-info">
+  <strong>Aim:</strong> To perform differential expression analysis in COPD experiments, contransting COPD vs Control group
+</div>
+
+We previously had run the following scripts:
+
+- 0: Data selection `/0-Data-selection.RMD`
+
+- 1: Dowload RAW data `/1-download_raw-data.RMD`
+
+- 2: Normalizing data `/2-normalizing-data.RMD`
+
+- 3: Curating data `/3-curatig-data.RMD`
+
+
+## Input
+
+This script needs the following files, which were obtained by step 3 `/3-curatig-data.RMD`:
+
+<div class="alert alert-warning">
+  <strong>Table:</strong> GSE summary `2020-10-05_GSE_Summary.csv`   
+  <strong>Data 2:</strong> ExpressionSet objects with normalized and curated data `2020-10-05_GSE_LungTissue-CURATED.RDS`    
+</div>
+
+
+## Setup
+
+For running the script, type:
+
+```{bash, eval = F}
+ssh -X aaltamirano@dna.lavis.unam.mx
+qrsh
+cd /mnt/Genoma/amedina/DataDNA/R-projects/Meta-analysis_COPD/output_data/.out
+ module load r/4.0.1 
+
+## OR
+ssh ana@10.200.0.42
+cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/output_data/.out
+
+nohup R -e "rmarkdown::render(here::here('vignettes/4-DE.RMD'))" > 4-DE.RMD.out &
+```
+
+The script can be found in: `r getwd() `. And the directories were set using
+`R/setup.R` (e.i. DATA, OUPUT, DOWNLOAD) as a small functions that will paste the names into complete paths.
+
+
+```{r setup}
+knitr::opts_knit$set(root.dir = here::here())
+source(here::here("R/setup.R"))
+```
+
+And this analysis is run in: `r getwd() `
+
+### Libraries
+
+```{r libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(knitr)
+library(DESeq2)
+library(limma)
+library(oligo)
+library(vsn)
+```
+
+
+### Experiments
+
+We selected experiments from lung samples of COPD patients 
+and that also have a control group to compare. These experiments are described 
+in the following table:
+
+
+```{r experiments}
+gse_table <- read.csv(OUTPUT("2020-10-07_Step3_Summary.csv"), row.names = 1)
+kable(gse_table, caption = "GSE information") %>%
+  kableExtra::scroll_box(width = "100%", height = "100px")
+```
+
+
+## Local functions
+
+### **DE**: Differential expression analysis
+
+Using this funtion, we get a table with differential expression gene results using
+`limma` package for fitting a linear model to get genes deferentially expressed
+between a "Control" and a "COPD" group. 
+
+<div class="alert alert-warning">
+  <strong>Input:</strong> GSE ID, optional: *colCOPD* is the column name in which 
+  the information of disease status can be found, *coeff* will show results of 
+  contrast with coeffitient found in possiton 2   
+  <strong>Output:</strong> Table of differential expression results with all
+  genes 
+</div>
+
+
+```{r DE}
+DE <- function(ExpressionSet,colCOPD="DISEASE",coeff= "DISEASECOPD"){
+     # it creates the design matrix and performs limma
+     fit <- lmFit(ExpressionSet, model.matrix(as.formula(paste("~ 1 +", colCOPD)),
+                                              data = pData(ExpressionSet)))
+     # eBayes in lmFit model
+     ebf <- eBayes(fit)
+     print(colnames(coef(fit)))
+     # It gets the genes with the p-values
+     volcanoplot(ebf,coef = coeff,highlight=20, pch=20)
+     res <- topTable(ebf, number = Inf, p.value = 1, coef = coeff,confint=T)
+     # It formats in a tibble
+     res <- as_tibble(res,rownames="rownames")
+}
+
+```
+
+
+For microarray experiments, all the following steps are the same, so we will 
+wrap the following code into one function.
+
+<div class="alert alert-warning">
+  <strong>Input:</strong> Position of the GSE id inside of `geo` list (e.i. 1,2..)       
+  <strong>Output:</strong> Table with DE results and a `.csv`
+  genes 
+</div>
+
+
+```{r}
+
+save_DE <- function(i){
+  
+g <- geo[[i]][[1]]
+message("plotting data")
+boxplot(g)
+hist(g)
+
+# DE using a local function. DISEASE is a column with disease status information
+message("DE analysis")
+de <- DE(g,colCOPD = "DISEASE")
+
+# renaming colnames with the GSE id
+message("Renaming colnames with GSE id")
+colnames(de) <- str_c(colnames(de),"_",names(geo)[i])
+colnames(de)
+
+# saving the results in a csv
+message("Saving data into csv")
+write_csv(de,path= OUTPUT(c("DE/",TODAY,"_Step4_TableGenes_",i,"_",names(geo[i]),".csv")))
+
+# saving the results to later combine all the information 
+ return(de)
+}
+
+```
+
+## Analysis
+
+### DATA
+
+
+```{r, class.source="bg-info",class.output="bg-info"}
+geo <- readRDS(OUTPUT("2020-10-07_Step3_LungTissue-CURATED.RDS"))
+names(geo)
+```
+
+
+## Differential expression analysis
+
+Using `DE()` function (described above), we performed a lineal regression model 
+to calculate the logarithm fold change of all genes between a "Control" and a
+"COPD" group. We also rename colnames adding the GSE ID at the end and finally, 
+we save the output in a `.CSV` file. 
+
+
+### `r names(geo)[1] `
+
+```{r}
+i <- 1
+de1 <- save_DE(i)
+```
+
+
+### `r names(geo)[2] `
+
+```{r}
+i <- 2
+de1 <- save_DE(i)
+```
+
+
+### `r names(geo)[3] `
+
+```{r}
+i <- 3
+de3 <- save_DE(i)
+```
+
+
+
+### `r names(geo)[4] `
+
+This experiment is RNAseq, the data will be download from Recount2. I’m following Recount2 vignette
+Using `DESeq2`package we calculated DEG.  
+
+```{r}
+## Specify design and switch to DESeq2 format
+i <- 4
+rse <-  geo[[i]][[1]]
+
+ dds <- DESeqDataSet(rse, ~ DISEASE)
+ 
+ ## Perform DE analysis
+ dds <- DESeq(dds)
+ boxplot(log10(assays(dds)[["cooks"]]), range=0, las=2)
+ 
+ ntd <- normTransform(dds)
+ meanSdPlot(assay(ntd))
+ 
+ res <- results(dds)
+ plotMA(res, ylim=c(-2,2))
+ 
+ # Calculates de CI
+ res$error <- qnorm(0.975)*res$lfcSE
+ res$CI.L <- res$log2FoldChange-res$error
+ res$CI.R <- res$log2FoldChange+res$error
+ 
+ res
+ 
+ 
+r <- as_tibble(res, rownames="rownames")
+r <- full_join(r,as.data.frame(rowData(geo[[i]][[1]])), by=c("rownames"="gene_id")) 
+r$logFC <- r$log2FoldChange
+
+colnames(r) <- str_c(colnames(r),"_",names(geo[i]))
+colnames(r)
+r <- r[,-12]
+colnames(r)
+
+write_csv(r,path= OUTPUT(c("DE/",TODAY,"_Step4_TableGenes_",i,"_",names(geo[i]),".csv")))
+
+
+de4 <- r
+```
+
+
+
+### `r names(geo)[5] `
+
+```{r}
+i <- 5
+de5 <- save_DE(i)
+```
+
+
+### `r names(geo)[6] `
+
+```{r}
+i <- 6
+de6 <- save_DE(i)
+```
+
+### `r names(geo)[7] `
+
+```{r}
+i <- 7
+de7 <- save_DE(i)
+```
+
+### `r names(geo)[8] `
+
+```{r}
+i <- 8
+de8 <- save_DE(i)
+```
+
+### `r names(geo)[9] `
+
+```{r}
+i <- 9
+de9 <- save_DE(i)
+```
+
+
+
+### `r names(geo)[10] `
+
+```{r}
+i <- 10
+de10 <- save_DE(i)
+```
+
+
+
+### `r names(geo)[11] `
+
+```{r}
+i <- 11
+de11 <- save_DE(i)
+```
+
+
+
+### `r names(geo)[12] `
+
+```{r }
+i <- 12
+rse <-  geo[[i]][[1]]
+
+counts <- t(apply(exprs(rse), 1,as.numeric))
+colnames(counts) <- colnames(rse)
+colData <- pData(rse)
+
+rse <- SummarizedExperiment(assays=list(counts=counts), colData=colData)
+rowData(rse) <- fData(geo[[i]][[1]])
+
+ dds <- DESeqDataSet(rse, ~ DISEASE)
+ 
+ ## Perform DE analysis
+ dds <- DESeq(dds)
+ boxplot(log10(assays(dds)[["cooks"]]), range=0, las=2)
+ 
+ ntd <- normTransform(dds)
+ meanSdPlot(assay(ntd))
+ 
+ res <- results(dds)
+ plotMA(res, ylim=c(-2,2))
+ 
+ # Calculates de CI
+ res$error <- qnorm(0.975)*res$lfcSE
+ res$CI.L <- res$log2FoldChange-res$error
+ res$CI.R <- res$log2FoldChange+res$error
+ 
+ res
+
+r <- as_tibble(res, rownames="rownames")
+r <- full_join(r,as.data.frame(rowData(rse)), by=c("rownames"="GENEID")) 
+r$logFC <- r$log2FoldChange
+
+colnames(r) <- str_c(colnames(r),"_",names(geo[i]))
+colnames(r)
+
+
+write_csv(r,path= OUTPUT(c("DE/",TODAY,"_Step4_TableGenes_",i,"_",names(geo[i]),".csv")))
+
+# saving the results to later combine all the information 
+de12 <- r
+```
+
+
+
+
+
+
+
+
+
+## Output
+
+This script produces the following data, and can be found in `r getwd() ` 
+
+<div class="alert alert-success">
+  <strong>Tables with DE results:</strong> Tables with log fold change and p-values 
+  calculated per experiment and saved in `csv` files   
+</div>
+
+
+## Session Info
+
+```{r sessionInfo}
+sessionInfo()
+```
+
+
+
+
+

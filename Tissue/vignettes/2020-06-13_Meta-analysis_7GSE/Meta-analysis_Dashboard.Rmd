@@ -1,0 +1,143 @@
+---
+title: "Untitled"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: scroll
+    navbar:
+      - { title: "About", href: "https://example.com/about", align: left }
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(knitr)
+library(kableExtra)
+library(tidyverse)
+library(RColorBrewer)
+library(metafor)
+# devtools::install_github("klaukh/d3heatmap",force = T)
+library(d3heatmap)
+library(DT)
+
+knitr::opts_knit$set(root.dir = "..")
+```
+
+    
+Row
+-------------------------------------
+    
+### Experiments in the Meta-analysis
+
+    
+```{r}
+gse_table <- read.csv(here::here("data/GSE_table.csv"), row.names = 1)
+kable(gse_table, caption = "GSE information") %>%
+   kable_styling()
+```
+
+   
+Row {.tabset .tabset-fade}
+-------------------------------------
+
+### Heatmap {data-height=1200}
+
+
+```{r}
+numericInput("cutoff", "Q-value cutoff:", value = 0.001,
+              min = 0, max = 1, step = 0.001)
+```
+
+
+```{r}
+# Data
+full_tables <- read_csv(here::here("output_data/Full_Tables_2020-07-13.csv"))
+colnames(full_tables)[colnames(full_tables) == 'log2FoldChange_GSE57148'] <- 'logFC_GSE57148'
+
+meta <- read_csv(here::here("output_data/meta-analysis_preprocessData-2020-08-13.csv"))[,-1]
+
+FC <- str_subset(colnames(full_tables),"logFC")
+
+# Heatmap
+genesqval <-  reactive({
+  meta[meta$qval <= input$cutoff,]
+  #genesqval[order(genesqval$qval),]
+})
+
+topgenes <- reactive({
+  data.frame(full_tables[which(full_tables$Gene.Symbol %in% genesqval()$genes),FC], 
+                   row.names = genesqval()$genes)
+})
+
+
+#rownames(topgenes) <- genesqval$genes
+  
+renderD3heatmap({
+  d3heatmap(topgenes(),
+            col = rev(brewer.pal(3,"RdBu")),
+            na.color = "#cfcccc")
+})
+```
+
+
+### P-values
+
+  
+```{r}
+par(mfrow=c(1,2))
+hist(meta$pval, main= "Histogram of all Meta-analysis p-values")
+hist(meta$qval, main= "Histogram of all Meta-analysis q-values")
+```
+
+
+### Table of genes {data-height=800}
+
+```{r}
+
+output$gen <- DT::renderDataTable(
+genesqval(),
+selection = 'single'
+)
+DT::dataTableOutput('gen')
+
+```
+
+
+### Forest plot {data-height=800}
+
+
+```{r}
+
+CI.R <- str_subset(colnames(full_tables),"CI.R")
+CI.L <- str_subset(colnames(full_tables),"CI.L")
+
+for(i in 1:length(CI.R)) {
+  full_tables[str_c("SE_",gsub(".*_","",CI.R))] <- (full_tables[,CI.R]-full_tables[,CI.L]) /(2*1.96)
+}
+
+SE <- str_subset(colnames(full_tables),"SE_")
+GSE <- gsub(".*_","",FC)
+
+meta.plot <- function(gs){
+gene <-  full_tables[full_tables$Gene.Symbol == gs,]
+#gene <-  na.omit(full_tables[full_tables$Gene.Symbol == gs,])
+gene <- gene[!is.na(gene$Gene.Symbol),]
+
+yi <- as.numeric(gene[,FC])
+sei <- as.numeric(gene[,SE])
+
+# meta analysis in the simplest way
+res <- metafor::rma(yi, sei=sei)
+par(mfrow=c(2,1))
+forest(res,slab = GSE, main=unique(gene$Gene.Symbol),psize = 1.8,cex = 1.8)
+funnel(res,psize = 1.8,cex = 1.8)
+}
+
+renderPlot({
+  gene =  as.character(genesqval()[input$gen_rows_selected,"genes"])
+  meta.plot(gene)
+})
+
+```
+
+

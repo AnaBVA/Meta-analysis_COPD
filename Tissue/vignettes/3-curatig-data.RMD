@@ -1,0 +1,965 @@
+---
+title: "3-curating-data.RMD"
+author: Ana BVA
+date: "`r BiocStyle::doc_date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
+
+## Introduction
+
+<div class="alert alert-info">
+  <strong>Aim:</strong> To manually curate sample information and to join meta data with normalized data
+</div>
+
+We previously had run the following scripts:
+
+- 0: Data selection `/0-Data-selection.RMD`
+
+- 1: Dowload RAW data `/1-download_raw-data.RMD`
+
+- 2: Normalizing data `/2-normalizing-data.RMD`
+
+## Input
+
+This script needs the following files:
+
+<div class="alert alert-warning">
+  <strong>Data 1:</strong> Data information from geo 2020-09-12_GEOquery-download.RDS     
+  <strong>Data 2:</strong> Matrix of normalized experiments 2020-09-24_normData.xz  
+</div>
+
+
+
+## Setup
+
+For running the script, type:
+
+```{bash, eval = F}
+ssh -X aaltamirano@dna.lavis.unam.mx
+qrsh
+cd /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/output_data/.out
+ module load r/4.0.1 
+
+## OR
+ssh ana@10.200.0.42
+cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/output_data/.out
+
+nohup R -e "rmarkdown::render(here::here('vignettes/3-curatig-data.RMD'))" > 3-curatig-data.RMD.out &
+```
+
+The script can be found in: `r getwd() `. And the directories were set using
+`R/setup.R` (e.i. DATA, OUPUT, DOWNLOAD) as a small functions that will paste the names into complete paths.
+
+```{r setup}
+knitr::opts_knit$set(root.dir = here::here())
+source(here::here("R/setup.R"))
+```
+
+And this analysis is run in: `r getwd() `
+
+### Libraries
+
+```{r libraries, message=FALSE, warning=FALSE}
+library(GEOquery)
+library(mgsub)
+library(annotate)
+library(hugene10sttranscriptcluster.db)
+library(EnsDb.Hsapiens.v79)
+library(tidyverse)
+library(gsubfn)
+```
+
+
+## Curation
+
+### STEP 1: Import data
+
+We read GEOquery data for all the experiments, it has the 
+
+```{r}
+geo <- readRDS(OUTPUT("2020-09-12_GEOquery-download.RDS"))
+norm <- readRDS(OUTPUT("2020-09-24_normData.xz"))
+
+names(geo)
+names(norm)
+```
+
+
+### STEP 2: Curate information
+
+
+**NEW COLUMN and CONTROLED VOCABULARY!!**
+
+We will add a new column and use controlled vocabulary, so we will change the 
+description that each authors used to describe COPD or Control samples.
+
+In addition, we will create a new table summarizing data from all experiments, 
+it will contain number of COPD samples, controls, experiment publication date, etc. 
+
+```{r}
+######## SUMMARY TABLE
+## Summary information about the experiment
+df <- tibble("GSE"= NA,
+             "CONTROL" = NA,
+             "COPD" = NA,
+             "COUNTRY" = NA,
+             "SUBMISSION_DATE" = NA,
+             "PLATFORM" = NA,
+             "NUM_GENES" = NA,
+             "AGE_MEAN" = NA,
+             "AGE_MEDIAN" = NA,
+             "AGE_RANGE" = NA,
+             "SEX_F" = NA,
+             "SEX_M" = NA,
+             "SMOKING_STATUS" = NA,
+             "PACKYEAR" = NA
+                 )
+
+```
+
+
+## `r names(geo)[1] `
+
+```{r}
+########################################### 
+## 1
+# Select the experiment
+i <- 1
+p <- pData(geo[[i]][[1]])
+head(p)
+dis <- "copd status:ch1" 
+
+######### DISEASE information
+table(p[,dis])
+
+# identify the way authors described COPD or CONTROLS
+old_labels <- c("0","1")
+
+new_labels <- c("CONTROL","COPD")
+
+# rename 
+p$DISEASE <- mgsub(p[,dis],old_labels,new_labels)
+table(p$DISEASE)
+
+
+# other infromation
+p$PATIENT <- p$`patient:ch1`
+p$AGE <- p$`age:ch1`
+p$SEX <- p$`Sex:ch1`
+p$PACKYEAR <- p$`pack years:ch1`
+
+
+# add it to the expression object
+pData(geo[[i]][[1]]) <- p
+
+########### Gene.Symbol
+# We also add a new column with Gene.Symbol annotation
+f <- fData(geo[[i]][[1]])
+head(f)
+
+# Parse column to have Gene.Symbol
+ff <- dplyr::mutate(f,
+                   geneInfo = strsplit(gene_assignment, " /// "),
+                   gene1 = sapply(geneInfo, `[`, 1),
+                   GENE.SYMBOL = sapply(strsplit(gene1, " // "), `[`, 2)
+)
+
+rownames(ff) <- rownames(f)
+f <- dplyr::select(ff,ID,GB_LIST,GENE.SYMBOL)
+
+length(f$GENE.SYMBOL)
+length(unique(f$GENE.SYMBOL))
+fData(geo[[i]][[1]]) <- f
+
+### Adding normalized data 
+colnames(norm[[i]]) <- gsub("\\..*","",colnames(norm[[i]]))
+exprs(geo[[i]][[1]]) <- exprs(norm[[i]])
+
+
+########### Summary
+df <- df %>% add_row(
+        "GSE" = names(geo)[i],
+        "CONTROL" = table(p$DISEASE)[1],
+        "COPD" = table(p$DISEASE)[2],
+        "COUNTRY" = unique(p$contact_country),
+        "SUBMISSION_DATE" = paste(unique(p$submission_date),collapse = ","),
+        "PLATFORM" = unique(p$platform_id),
+        "NUM_GENES" = length(unique(f$GENE.SYMBOL)),
+        "AGE_MEAN" = mean(as.numeric(p$AGE)),
+        "AGE_MEDIAN" = median(as.numeric(p$AGE)),
+        "AGE_RANGE" = paste(as.character(range(as.numeric(p$AGE))),collapse= "-"),
+        "SEX_F" = table(p$SEX)[1],
+        "SEX_M" = table(p$SEX)[2],
+        "SMOKING_STATUS" = NA,
+        "PACKYEAR" = median(na.omit(as.numeric(p$PACKYEAR)))        
+)
+
+df <- df[-1,]
+```
+
+
+## `r names(geo)[2] `
+
+```{r}
+########################################### 
+i <- 2
+p <- pData(geo[[i]][[1]])
+head(p)
+dis <- "source_name_ch1"
+
+######### DISEASE information
+table(p[,dis])
+
+# identify the way authors described COPD or CONTROLS
+old_labels <- c("tumor-free tissue of non-smoker",
+                "tumor-free tissue of ex-smoker with COPD",
+                "tumor-free tissue of smoker with COPD")
+
+new_labels <- c("CONTROL","COPD","COPD")
+
+# rename 
+p$DISEASE <- mgsub(p[,dis],old_labels,new_labels)
+table(p$DISEASE)
+
+# other infromation
+p$AGE <- p$`age:ch1`
+p$SEX <- p$`gender:ch1`
+p$SMOKING_STATUS <- mgsub(p[,dis],old_labels,c("NON-SMOKER","EX-SMOKER","SMOKER"))
+
+# add it to the expression object
+pData(geo[[i]][[1]]) <- p
+
+########### Gene.Symbol
+# We also add a new column with Gene.Symbol annotation
+f <- fData(geo[[i]][[1]])
+head(f)
+f$GENE.SYMBOL <- f$GENE_SYMBOL
+length(f$GENE.SYMBOL)
+length(unique(f$GENE.SYMBOL))
+fData(geo[[i]][[1]]) <- f
+
+### Adding normalized data 
+colnames(norm[[i]]) <- str_extract(colnames(norm[[i]]),regex("GSM[0-9]*"))
+rownames(norm[[i]]) <- norm[[i]]$genes$ProbeName
+
+uni <- unique(norm[[i]]$genes$ProbeName)
+uni <- uni[uni %in% rownames(geo[[i]][[1]])]
+
+
+exprs(geo[[i]][[1]]) <- norm[[i]][uni,]$E
+
+
+########### Summary
+df <- df %>% add_row(
+        "GSE" = names(geo)[i],
+        "CONTROL" = table(p$DISEASE)[1],
+        "COPD" = table(p$DISEASE)[2],
+        "COUNTRY" = unique(p$contact_country),
+        "SUBMISSION_DATE" = paste(unique(p$submission_date),collapse = ","),
+        "PLATFORM" = unique(p$platform_id),
+        "NUM_GENES" = length(unique(f$GENE.SYMBOL)),
+        "AGE_MEAN" = mean(as.numeric(p$AGE)),
+        "AGE_MEDIAN" = median(as.numeric(p$AGE)),
+        "AGE_RANGE" = paste(as.character(range(as.numeric(p$AGE))),collapse= "-"),
+        "SEX_F" = table(p$SEX)[1],
+        "SEX_M" = table(p$SEX)[2],
+        "SMOKING_STATUS" = NA,
+        "PACKYEAR" = median(na.omit(as.numeric(p$PACKYEAR)))        
+)
+
+
+```
+
+
+## `r names(geo)[3] `
+
+```{r}
+########################################### 
+## 3
+# Select the experiment
+i <- 3
+p <- pData(geo[[i]][[1]])
+head(p)
+dis <- "characteristics_ch1.1"
+
+######### DISEASE information
+table(p[,dis])
+
+# identify the way authors described COPD or CONTROLS
+old_labels <- c("phenotype: healthy smoker","phenotype: Nonsmoker","phenotype: moderate COPD")
+
+new_labels <- c("CONTROL","CONTROL","COPD")
+
+# rename 
+p$DISEASE <- mgsub(p[,dis],old_labels,new_labels)
+table(p$DISEASE)
+
+# other infromation
+p$SMOKING_STATUS <- mgsub(p[,dis],old_labels,c("SMOKER","NON-SMOKER",NA))
+
+
+# add it to the expression object
+pData(geo[[i]][[1]]) <- p
+
+########### Gene.Symbol
+# We also add a new column with Gene.Symbol annotation
+f <- fData(geo[[i]][[1]])
+head(f)
+f$GENE.SYMBOL <- f$`Gene Symbol`
+length(f$GENE.SYMBOL)
+length(unique(f$GENE.SYMBOL))
+fData(geo[[i]][[1]]) <- f
+
+### Adding normalized data 
+colnames(norm[[i]]) <- str_extract(colnames(norm[[i]]),regex("GSM[0-9]*"))
+
+exprs(geo[[i]][[1]]) <- exprs(norm[[i]])
+
+########### Summary
+df <- df %>% add_row(
+        "GSE" = names(geo)[i],
+        "CONTROL" = table(p$DISEASE)[1],
+        "COPD" = table(p$DISEASE)[2],
+        "COUNTRY" = unique(p$contact_country),
+        "SUBMISSION_DATE" = paste(unique(p$submission_date),collapse = ","),
+        "PLATFORM" = unique(p$platform_id),
+        "NUM_GENES" = length(unique(f$GENE.SYMBOL))
+)
+
+
+```
+
+
+## `r names(geo)[4] `
+
+```{r}
+library(recount)
+## 4
+# Select the experiment
+i <- 4
+
+## Download data from Recount2
+# download_study('SRP041538',outdir = OUTPUT("SRP041538"))
+load(file.path(OUTPUT("SRP041538"), 'rse_gene.Rdata'))
+
+## Scale counts by taking into account the total coverage per sample
+rse <- scale_counts(rse_gene)
+rse
+
+# saving the geoquery object 
+geo[[i]][[2]] <- geo[[i]][[1]]
+
+## adding recount2 data to the list 
+geo[[i]][[1]] <- rse
+
+### 
+p <- colData(geo[[i]][[1]])
+head(p)
+dis <- "characteristics"
+
+######### DISEASE information
+table(unlist(p[,dis]))
+ss <- sapply(p[,dis],unlist)
+ss <- ss[1,]
+
+# identify the way authors described COPD or CONTROLS
+old_labels <- c("disease state: Normal","disease state: COPD")
+new_labels <- c("CONTROL","COPD")
+
+# rename 
+p$DISEASE <- mgsub(ss,old_labels,new_labels)
+table(p$DISEASE)
+
+# other infromation
+
+# add it to the expression object
+colData(geo[[i]][[1]]) <- p
+
+########### Gene.Symbol
+# We also add a new column with Gene.Symbol annotation
+f <- rowData(geo[[i]][[1]])
+head(f)
+f$GENE.SYMBOL <- as.character(as.data.frame(f)$symbol)
+length(f$GENE.SYMBOL)
+length(unique(f$GENE.SYMBOL))
+rowData(geo[[i]][[1]]) <- f
+
+########### Summary
+pp <- pData(geo[[i]][[2]])
+df <- df %>% add_row(
+        "GSE" = names(geo)[i],
+        "CONTROL" = table(p$DISEASE)[1],
+        "COPD" = table(p$DISEASE)[2],
+        "COUNTRY" = unique(pp$contact_country),
+        "SUBMISSION_DATE" = paste(unique(pp$submission_date),collapse = ","),
+        "PLATFORM" = unique(pp$platform_id),
+        "NUM_GENES" = length(unique(f$GENE.SYMBOL))
+)
+
+```
+
+## `r names(geo)[5] `
+
+```{r}
+########################################### 
+## 5
+# Select the experiment
+i <- 5
+p <- pData(geo[[i]][[1]])
+head(p)
+dis <- "disease state:ch1" 
+
+######### DISEASE information
+table(p[,dis])
+
+# identify the way authors described COPD or CONTROLS
+old_labels <- c("Control",
+                "Chronic Obstructive Lung Disease")
+new_labels <- c("CONTROL","COPD")
+
+# rename 
+p$DISEASE <- mgsub(p[,dis],old_labels,new_labels)
+table(p$DISEASE)
+
+# other infromation
+p$AGE <- p$`age:ch1`
+p$SMOKING_STATUS <- p$`smoker?:ch1`
+
+# add it to the expression object
+pData(geo[[i]][[1]]) <- p
+
+########### Gene.Symbol
+# We also add a new column with Gene.Symbol annotation
+f <- fData(geo[[i]][[1]])
+head(f)
+f$GENE.SYMBOL <- f$GENE_SYMBOL
+length(f$GENE.SYMBOL)
+length(unique(f$GENE.SYMBOL))
+fData(geo[[i]][[1]]) <- f
+
+### Adding normalized data 
+colnames(norm[[i]]) <- str_extract(colnames(norm[[i]]),regex("GSM[0-9]*"))
+rownames(norm[[i]]) <- norm[[i]]$genes$ProbeName
+
+uni <- unique(norm[[i]]$genes$ProbeName)
+uni <- uni[uni %in% rownames(geo[[i]][[1]])]
+
+exprs(geo[[i]][[1]]) <- norm[[i]][uni,]$E
+
+
+########### Summary
+df <- df %>% add_row(
+        "GSE" = names(geo)[i],
+        "COPD" = table(p$DISEASE)[2],
+        "COUNTRY" = unique(p$contact_country),
+        "SUBMISSION_DATE" = paste(unique(p$submission_date),collapse = ","),
+        "PLATFORM" = unique(p$platform_id),
+        "NUM_GENES" = length(unique(f$GENE.SYMBOL)),
+        "AGE_MEAN" = mean(as.numeric(p$AGE)),
+        "AGE_MEDIAN" = median(as.numeric(p$AGE)),
+        "AGE_RANGE" = paste(as.character(range(as.numeric(p$AGE))),collapse= "-"),
+        "SMOKING_STATUS" = toString(c(names(table(p$SMOKING_STATUS)),table(p$SMOKING_STATUS))),
+        "PACKYEAR" = NA     
+)
+
+
+```
+
+## `r names(geo)[6] `
+
+```{r}
+########################################### 
+## 6
+# Select the experiment
+i <- 6
+p <- pData(geo[[i]][[1]])
+head(p)
+dis <- "diagnosis:ch1" 
+
+######### DISEASE information
+table(p[,dis])
+
+# identify the way authors described COPD or CONTROLS
+old_labels <- c("Normal",
+                "COPD")
+new_labels <- c("CONTROL","COPD")
+
+# rename 
+p$DISEASE <- mgsub(p[,dis],old_labels,new_labels)
+table(p$DISEASE)
+
+# other infromation
+p$AGE <- p$`age:ch1`
+p$SEX <- p$`gender (1=male, 2=female):ch1`
+p$PACKYEAR <- p$`pkyrs:ch1`
+p$SMOKING_STATUS <- rep("SMOKER",nrow(p))
+
+# add it to the expression object
+pData(geo[[i]][[1]]) <- p
+
+########### Gene.Symbol
+# We also add a new column with Gene.Symbol annotation
+f <- fData(geo[[i]][[1]])
+head(f)
+f$GENE.SYMBOL <- f$GENE_SYMBOL
+length(f$GENE.SYMBOL)
+length(unique(f$GENE.SYMBOL))
+fData(geo[[i]][[1]]) <- f
+
+
+########### Summary
+df <- df %>% add_row(
+        "GSE" = names(geo)[i],
+        "CONTROL" = table(p$DISEASE)[1],
+        "COPD" = table(p$DISEASE)[2],
+        "COUNTRY" = unique(p$contact_country),
+        "SUBMISSION_DATE" = paste(unique(p$submission_date),collapse = ","),
+        "PLATFORM" = unique(p$platform_id),
+        "NUM_GENES" = length(unique(f$GENE.SYMBOL)),
+        "AGE_MEAN" = mean(as.numeric(p$AGE),na.rm = T),
+        "AGE_MEDIAN" = median(as.numeric(p$AGE),na.rm = T),
+        "AGE_RANGE" = paste(as.character(range(as.numeric(p$AGE),na.rm = T)),collapse= "-"),
+        "SMOKING_STATUS" = toString(c(names(table(p$SMOKING_STATUS)),table(p$SMOKING_STATUS))),
+        "PACKYEAR" =  median(na.omit(as.numeric(p$PACKYEAR)))
+)
+
+```
+
+## `r names(geo)[7] `
+
+```{r}
+########################################### 
+## 7
+# Select the experiment
+i <- 7
+p <- pData(geo[[i]][[1]])
+head(p)
+
+table(gsub('[0-9]+', '', p$title))
+p$DISEASE <- "CONTROL"
+p$DISEASE[grep("COPD",p$title)] <- "COPD"
+p$DISEASE[grep("Unclassified",p$title)] <- "Unclassified"
+table(p$DISEASE)
+
+
+# other infromation
+pp <- p$characteristics_ch1
+
+p$AGE <- strapplyc(pp, "Age:.[0-9]*", simplify = TRUE)
+p$AGE <- gsub("[^0-9.-]", "", p$AGE)
+
+p$SEX <- strapplyc(pp, "Gender:.[A-Z]*", simplify = TRUE)
+p$SEX <-  gsub("[^M|F.-]", "", p$SEX)
+
+# add it to the expression object
+pData(geo[[i]][[1]]) <- p
+
+########### Gene.Symbol
+# We also add a new column with Gene.Symbol annotation
+f <- fData(geo[[i]][[1]])
+head(f)
+f$GENE.SYMBOL <- f$`Gene Symbol`
+length(f$GENE.SYMBOL)
+length(unique(f$GENE.SYMBOL))
+fData(geo[[i]][[1]]) <- f
+
+### Adding normalized data 
+colnames(norm[[i]]) <- str_extract(colnames(norm[[i]]),regex("GSM[0-9]*"))
+
+exprs(geo[[i]][[1]]) <- exprs(norm[[i]])
+
+########### Summary
+df <- df %>% add_row(
+        "GSE" = names(geo)[i],
+        "CONTROL" = table(p$DISEASE)[1],
+        "COPD" = table(p$DISEASE)[2],
+        "COUNTRY" = unique(p$contact_country),
+        "SUBMISSION_DATE" = paste(unique(p$submission_date),collapse = ","),
+        "PLATFORM" = unique(p$platform_id),
+        "NUM_GENES" = length(unique(f$GENE.SYMBOL)),
+        "AGE_MEAN" = mean(as.numeric(p$AGE),na.rm = T),
+        "AGE_MEDIAN" = median(as.numeric(p$AGE),na.rm = T),
+        "AGE_RANGE" = paste(as.character(range(as.numeric(p$AGE),na.rm = T)),collapse= "-"),
+        "SMOKING_STATUS" = toString(c(names(table(p$SMOKING_STATUS)),table(p$SMOKING_STATUS))),
+        "PACKYEAR" =  median(na.omit(as.numeric(p$PACKYEAR)))
+)
+
+
+```
+
+## `r names(geo)[8] `
+
+```{r}
+########################################### 
+## 8
+# Select the experiment
+i <- 8
+p <- pData(geo[[i]][[1]])
+head(p)
+p$MOD_title <- stringr::str_count(as.character(p$title,"L"))
+dis <- "MOD_title" 
+
+######### DISEASE information
+table(p[,dis])
+
+# identify the way authors described COPD or CONTROLS
+old_labels <- c("3",
+                "2")
+new_labels <- c("CONTROL","COPD")
+
+# rename 
+p$DISEASE <- mgsub(p[,dis],old_labels,new_labels)
+table(p$DISEASE)
+
+# other infromation
+
+# add it to the expression object
+pData(geo[[i]][[1]]) <- p
+
+########### Gene.Symbol
+# We also add a new column with Gene.Symbol annotation
+f <- fData(geo[[i]][[1]])
+head(f)
+f$GENE.SYMBOL <- f$`Gene Symbol`
+length(f$GENE.SYMBOL)
+length(unique(f$GENE.SYMBOL))
+fData(geo[[i]][[1]]) <- f
+
+
+### Adding normalized data 
+colnames(norm[[i]]) <- str_extract(colnames(norm[[i]]),regex("GSM[0-9]*"))
+exprs(geo[[i]][[1]]) <- exprs(norm[[i]])
+
+########### Summary
+df <- df %>% add_row(
+        "GSE" = names(geo)[i],
+        "CONTROL" = table(p$DISEASE)[1],
+        "COPD" = table(p$DISEASE)[2],
+        "COUNTRY" = unique(p$contact_country),
+        "SUBMISSION_DATE" = paste(unique(p$submission_date),collapse = ","),
+        "PLATFORM" = unique(p$platform_id),
+        "NUM_GENES" = length(unique(f$GENE.SYMBOL))
+)
+
+```
+
+## `r names(geo)[9] `
+
+```{r}
+########################################### 
+## 9
+# Select the experiment
+i <- 9
+p <- pData(geo[[i]][[1]])
+head(p)
+dis <- "description" 
+
+######### DISEASE information
+table(p[,dis])
+
+# identify the way authors described COPD or CONTROLS
+old_labels <- c("Normal lung",
+                "'usual' emphysemic lung",
+                "Alpha-1 Antitrypsin Deficiency-related emphysemic lung")
+new_labels <- c("CONTROL","COPD","COPD")
+
+# rename 
+p$DISEASE <- mgsub(p[,dis],old_labels,new_labels)
+table(p$DISEASE)
+
+# other infromation
+
+# add it to the expression object
+pData(geo[[i]][[1]]) <- p
+
+########### Gene.Symbol
+# We also add a new column with Gene.Symbol annotation
+f <- fData(geo[[i]][[1]])
+head(f)
+f$GENE.SYMBOL <- f$`Gene Symbol`
+length(f$GENE.SYMBOL)
+length(unique(f$GENE.SYMBOL))
+fData(geo[[i]][[1]]) <- f
+
+
+### Adding normalized data 
+colnames(norm[[i]]) <- str_extract(colnames(norm[[i]]),regex("GSM[0-9]*"))
+exprs(geo[[i]][[1]]) <- exprs(norm[[i]])
+
+########### Summary
+df <- df %>% add_row(
+        "GSE" = names(geo)[i],
+        "CONTROL" = table(p$DISEASE)[1],
+        "COPD" = table(p$DISEASE)[2],
+        "COUNTRY" = unique(p$contact_country),
+        "SUBMISSION_DATE" = paste(unique(p$submission_date),collapse = ","),
+        "PLATFORM" = unique(p$platform_id),
+        "NUM_GENES" = length(unique(f$GENE.SYMBOL))
+)
+
+```
+
+## `r names(geo)[10] `
+
+
+```{r}
+########################################### 
+## 10
+# Select the experiment
+i <- 10
+p <- pData(geo[[i]][[1]])
+head(p)
+dis <- "disease state:ch1" 
+
+######### DISEASE information
+table(p[,dis])
+
+# identify the way authors described COPD or CONTROLS
+old_labels <- c("non-emphysema","emphysema")
+new_labels <- c("CONTROL","COPD")
+
+# rename 
+p$DISEASE <- mgsub(p[,dis],old_labels,new_labels)
+table(p$DISEASE)
+
+# other infromation
+
+# add it to the expression object
+pData(geo[[i]][[1]]) <- p
+
+########### Gene.Symbol
+# We also add a new column with Gene.Symbol annotation
+f <- fData(geo[[i]][[1]])
+head(f)
+f$GENE.SYMBOL <- f$`Gene Symbol`
+length(f$GENE.SYMBOL)
+length(unique(f$GENE.SYMBOL))
+fData(geo[[i]][[1]]) <- f
+
+
+########### Summary
+df <- df %>% add_row(
+        "GSE" = names(geo)[i],
+        "CONTROL" = table(p$DISEASE)[1],
+        "COPD" = table(p$DISEASE)[2],
+        "COUNTRY" = unique(p$contact_country),
+        "SUBMISSION_DATE" = paste(unique(p$submission_date),collapse = ","),
+        "PLATFORM" = unique(p$platform_id),
+        "NUM_GENES" = length(unique(f$GENE.SYMBOL))
+)
+
+```
+
+
+
+## `r names(geo)[11] `
+
+
+```{r}
+########################################### 
+## 11
+# Select the experiment
+i <- 11
+p <- pData(geo[[i]][[1]])
+head(p)
+dis <- "copd:ch1" 
+
+######### DISEASE information
+table(p[,dis])
+
+# identify the way authors described COPD or CONTROLS
+old_labels <- c("no",
+                "yes")
+new_labels <- c("CONTROL","COPD")
+
+# rename 
+p$DISEASE <- mgsub(p[,dis],old_labels,new_labels)
+table(p$DISEASE)
+
+# other infromation
+p$AGE <- p$`age:ch1`
+p$SEX <- p$`Sex:ch1`
+p$PACKYEAR <- p$`pack years:ch1`
+p$SMOKING_STATUS <- p$`smoking:ch1`
+
+# add it to the expression object
+pData(geo[[i]][[1]]) <- p
+
+########### Gene.Symbol
+# We also add a new column with Gene.Symbol annotation
+f <- fData(geo[[i]][[1]])
+head(f)
+f$GENE.SYMBOL <- f$`Gene Symbol`
+length(f$GENE.SYMBOL)
+length(unique(f$GENE.SYMBOL))
+fData(geo[[i]][[1]]) <- f
+
+
+### Adding normalized data 
+colnames(norm[[i]]) <- str_extract(colnames(norm[[i]]),regex("GSM[0-9]*"))
+
+ff <- exprs(norm[[i]])
+ff <-  ff[rownames(ff) %in% rownames(f),]
+dim(ff)
+
+exprs(geo[[i]][[1]]) <- ff
+
+
+########### Summary
+df <- df %>% add_row(
+        "GSE" = names(geo)[i],
+        "CONTROL" = table(p$DISEASE)[1],
+        "COPD" = table(p$DISEASE)[2],
+        "COUNTRY" = unique(p$contact_country),
+        "SUBMISSION_DATE" = paste(unique(p$submission_date),collapse = ","),
+        "PLATFORM" = unique(p$platform_id),
+        "NUM_GENES" = length(unique(f$GENE.SYMBOL)),
+        "AGE_MEAN" = mean(as.numeric(p$AGE),na.rm = T),
+        "AGE_MEDIAN" = median(as.numeric(p$AGE),na.rm = T),
+        "AGE_RANGE" = paste(as.character(range(as.numeric(p$AGE),na.rm = T)),collapse= "-"),
+        "SMOKING_STATUS" = toString(c(names(table(p$SMOKING_STATUS)),table(p$SMOKING_STATUS))),
+        "PACKYEAR" =  median(na.omit(as.numeric(p$PACKYEAR)))
+)
+
+
+```
+
+## `r names(geo)[12] `
+
+```{r}
+########################################### 
+## 12
+# Select the experiment
+i <- 12
+p <- pData(geo[[i]][[1]])
+
+############ Get gene counts
+#getGEOSuppFiles(names(geo)[i])
+pp <- read.csv(list.files(OUTPUT("GSE124180"),full.names = T),sep = "\t")
+rownames(pp) <- pp$ENSEMBL_GENEID
+pp <- pp[,which(colnames(pp)!="X" & colnames(pp)!= "ENSEMBL_GENEID")]
+colnames(pp[,p$title])
+
+# check order of colnames 
+identical(colnames(pp),p$title)
+
+#rename colnames of gene counts df
+colnames(pp) <- p$geo_accession
+
+#Create the annotation
+phenoData <- new("AnnotatedDataFrame",
+                 data=pData(geo[[i]][[1]]))
+
+# Get gene annotation
+gs <- AnnotationDbi::select(EnsDb.Hsapiens.v79, 
+             rownames(pp),
+             c("GENEID","GENENAME","SEQNAME","GENESEQSTART","GENESEQEND"), "GENEID")
+
+rownames(gs) <- gs$GENEID
+fData <- new("AnnotatedDataFrame",
+             data=gs)
+
+# Select genes with annotation
+pp <- pp[which(rownames(pp) %in% gs$GENEID),]
+
+#Create the object expressionSet
+geo[[i]][[1]] <- ExpressionSet(assayData=as.matrix(pp),
+                               phenoData=phenoData,
+                               featureData = fData)
+
+#### Subset data to  have only lung tissue
+p <- pData(geo[[i]][[1]])
+table(p$`cell type:ch1`)
+geo[[i]][[1]] <- geo[[i]][[1]][,which(p$`cell type:ch1` == "bronchial epithelium")]
+
+p <- pData(geo[[i]][[1]])
+head(p)
+dis <- "copd:ch1" 
+
+######### DISEASE information
+table(p[,dis])
+
+# identify the way authors described COPD or CONTROLS
+old_labels <- c("cont",
+                "case")
+new_labels <- c("CONTROL","COPD")
+
+# rename 
+p$DISEASE <- mgsub(p[,dis],old_labels,new_labels)
+table(p$DISEASE)
+
+# other infromation
+p$AGE <- p$`age:ch1`
+p$SEX <- p$`Sex:ch1`
+p$PACKYEAR <- p$`pack years:ch1`
+p$SMOKING_STATUS <- p$`smoke:ch1`
+
+# add it to the expression object
+pData(geo[[i]][[1]]) <- p
+
+########### Gene.Symbol
+# We also add a new column with Gene.Symbol annotation
+f <- fData(geo[[i]][[1]])
+head(f)
+f$GENE.SYMBOL <- f$GENENAME
+length(f$GENE.SYMBOL)
+length(unique(f$GENE.SYMBOL))
+fData(geo[[i]][[1]]) <- f
+
+
+########### Summary
+
+########### Summary
+df <- df %>% add_row(
+        "GSE" = names(geo)[i],
+        "CONTROL" = table(p$DISEASE)[1],
+        "COPD" = table(p$DISEASE)[2],
+        "COUNTRY" = unique(p$contact_country),
+        "SUBMISSION_DATE" = paste(unique(p$submission_date),collapse = ","),
+        "PLATFORM" = unique(p$platform_id),
+        "NUM_GENES" = length(unique(f$GENE.SYMBOL)),
+        "AGE_MEAN" = mean(as.numeric(p$AGE),na.rm = T),
+        "AGE_MEDIAN" = median(as.numeric(p$AGE),na.rm = T),
+        "AGE_RANGE" = paste(as.character(range(as.numeric(p$AGE),na.rm = T)),collapse= "-"),
+        "SMOKING_STATUS" = toString(c(names(table(p$SMOKING_STATUS)),table(p$SMOKING_STATUS)))
+)
+
+```
+
+
+## Output
+
+This script produces the following data, and can be found in `r getwd() ` 
+
+<div class="alert alert-success">
+  <strong>RDS:</strong> ExpressionSet for each experiment with information of samples  
+  <strong>Table:</strong> Table of experiment with info summarization
+</div>
+
+```{r}
+
+##############################################################
+saveRDS(geo,OUTPUT(c(TODAY,"_Step3_LungTissue-CURATED.RDS")))
+
+write_csv(df,OUTPUT(c(TODAY,"_Step3_Summary.csv")))
+
+```
+
+
+
+## Session Info
+
+```{r sessionInfo}
+sessionInfo()
+```
+
+
+
+
+
