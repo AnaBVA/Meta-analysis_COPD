@@ -4,9 +4,13 @@
 
 This repository was created to perform a meta-analysis from COPD patients using public data.
 
-All data was downloaded into the computer `DNA.lavis.unam.mx` and `10.200.0.42`(restricted access) and raw data downloaded and normalized (e.i. RMA).
+It is divided into :
 
-We followed this steps, and script can be found in `/vignettes`:
+- `Tissue/`
+
+- `Blood/`
+
+Each folder has followed this steps, and script can be found in `/vignettes`:
 
 - 0: Data selection `/0-Data-selection.RMD`
 
@@ -30,9 +34,19 @@ We followed this steps, and script can be found in `/vignettes`:
 Additional files that can be found in:
 https://drive.google.com/drive/folders/1Lw57iquTxWMonUanZPo5G-Yb0QZDDVdP?usp=sharing
 
+All data was downloaded into the computer `DNA.lavis.unam.mx` and `10.200.0.42`(restricted access) and raw data downloaded and normalized (e.i. RMA).
+
 For running the dashboard app you can:
+
+- Access by: 
+
+ https://anabva.shinyapps.io/8-Meta-analysis_Dashboard/
+
+- Install locally_
+
 ```{r}
-rmarkdown::run("vignettes/2020-06-13_Meta-analysis_7GSE/Meta-analysis_Dashboard.Rmd")
+setwd("Dashboard")
+rmarkdown::run("8-Meta-analysis_Dashboard.Rmd")
 ```
 
 

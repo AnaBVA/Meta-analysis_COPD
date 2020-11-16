@@ -20,8 +20,6 @@ library(metafor)
 # devtools::install_github("klaukh/d3heatmap",force = T)
 library(d3heatmap)
 library(DT)
-
-knitr::opts_knit$set(root.dir = "..")
 ```
 
 
@@ -54,7 +52,7 @@ Row
 
     
 ```{r}
-gse_table <- read.csv(here::here("output_data/2020-10-07_Step3_Summary.csv"), row.names = 1)
+gse_table <- read.csv("2020-10-07_Step3_Summary.csv", row.names = 1)
 kable(gse_table, caption = "GSE information") %>%
    kable_styling()
 ```
@@ -68,8 +66,8 @@ Row {.tabset .tabset-fade}
 
 ```{r}
 # Data
-full_tables <- read_csv(here::here("output_data/2020-10-08_Step5_Full_Tables.csv"))
-meta <- read_csv(here::here("output_data/2020-10-16_Step6_meta-analysis.csv"))[,-1]
+full_tables <- read_csv("2020-10-08_Step5_Full_Tables.csv")
+meta <- read_csv("2020-10-16_Step6_meta-analysis.csv")[,-1]
 # View(meta %>% filter(qval < 0.5,I2 < 40,num_exp > 5))
 
 
