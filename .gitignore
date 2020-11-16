@@ -4,6 +4,6 @@
 .Ruserdata
 .DS
 fig
-download
-output_data
+Tissue/download
+Tissue/output_data
 .httr-oauth
