@@ -1,5 +1,5 @@
 ---
-title: "1: Dowload RAW data"
+title: "1 Blood: Dowload RAW data"
 author: Ana BVA
 date: "`r BiocStyle::doc_date()`"
 output:
@@ -38,10 +38,10 @@ For running the script, type:
 ```{bash, eval = F}
 ssh -X aaltamirano@dna.lavis.unam.mx
 qrsh
-cd /mnt/Genoma/amedina/aaltamirano/COPD/Meta-analysis_COPD/output_data/.out
+cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/Blood/output_data/.out
  module load r/4.0.1 
 
-nohup R -e "rmarkdown::render(here::here('vignettes/1-download_raw-data.RMD'))" > 1-download_raw-data.out &
+nohup R -e "rmarkdown::render(here::here('Blood/vignettes/1--Blood-download_raw-data.RMD'))" > 1-Blood-download_raw-data.out &
 ```
 
 
@@ -69,11 +69,11 @@ library(GEOquery)
 We need the GSE IDs to download raw files, the IDs are stored in a separate file named `GSE_IDs.txt`, we used `getGEOSuppFiles()` for download raw data. We do it using GSE ids from tissue:
 
 ```{r , class.source="bg-info",class.output="bg-info" }
-tissue <- scan(DATA("tissue_GSE_IDs.txt"),
+blood <- scan(DATA("blood_GSE_IDs.txt"),
                character(), 
                sep = ",")
 
-sapply(tissue,getGEOSuppFiles,baseDir = here::here("GEOquery"))
+sapply(blood,getGEOSuppFiles,baseDir = here::here("GEOquery"))
 ```
 
 ## Download GEOquery data
@@ -81,7 +81,7 @@ sapply(tissue,getGEOSuppFiles,baseDir = here::here("GEOquery"))
 We download GEOquery data for the experiments 
 
 ```{r}
-geo <- sapply(tissue,getGEO,destdir = here::here("GEOquery"))
+geo <- sapply(blood,getGEO,destdir = here::here("GEOquery"))
 ```
 
 Some GSE ids have more than one platform and samples that we will not use, so we delete them or do some modifications. 
@@ -95,16 +95,6 @@ saveRDS(geo,OUTPUT(c(TODAY,"_GEOquery-download.RDS")))
 ```
 
 
-```{bash, eval =F}
-cd GEOquery/GSE27597/
-rm GSM6844*
-rm GSM6845*
-
-# Divide samples from differnt platforms
-find . -size -3000k -type f | wc -l
-find . -size -3000k -type f -exec mv "{}" 153_samples/ \;
-
-```
 
 
 ## Output
