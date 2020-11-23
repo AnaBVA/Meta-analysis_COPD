@@ -153,7 +153,7 @@ Gene {data-orientation=rows}
 ```{r}
 
 output$gen <- DT::renderDataTable(
-genesqval(),
+meta,
 selection = 'single'
 )
 DT::dataTableOutput('gen')
@@ -194,7 +194,7 @@ funnel(res,psize = 1.8,cex = 1.8)
 }
 
 renderPlot({
-  gene =  as.character(genesqval()[input$gen_rows_selected,"genes"])
+  gene =  as.character(meta[input$gen_rows_selected,"genes"])
   meta.plot(gene)
 })
 
