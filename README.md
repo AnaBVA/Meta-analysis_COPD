@@ -36,6 +36,8 @@ https://drive.google.com/drive/folders/1Lw57iquTxWMonUanZPo5G-Yb0QZDDVdP?usp=sha
 
 All data was downloaded into the computer `DNA.lavis.unam.mx` and `10.200.0.42`(restricted access) and raw data downloaded and normalized (e.i. RMA).
 
+# Dashboard
+
 For running the dashboard app you can:
 
 - Access by: 
