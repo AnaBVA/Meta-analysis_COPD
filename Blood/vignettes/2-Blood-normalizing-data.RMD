@@ -1,5 +1,5 @@
 ---
-title: "2: Normalizing data"
+title: "2 Blood: Normalizing data"
 author: Ana BVA
 date: "`r BiocStyle::doc_date()`"
 output:
@@ -40,15 +40,11 @@ For running the script, type:
 
 ```{bash, eval = F}
 ssh -X aaltamirano@dna.lavis.unam.mx
-qrsh 
-cd /mnt/Genoma/amedina/amedinalab/DataDNA/R-projects/Meta-analysis_COPD
+qrsh
+cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/Blood/output_data/.out
  module load r/4.0.1 
 
-## OR
-ssh ana@10.200.0.42
-cd /home/ana/R-projects/Meta-analysis_COPD/output_data/.out
-
-nohup R -e "rmarkdown::render(here::here('vignettes/2-normalizing-data.RMD'))" > output_data/.out/2-normalizing-data.out &
+nohup R -e "rmarkdown::render(here::here('Blood/vignettes/2-Blood-normalizing-data.RMD'))" > 2-Blood-normalizing-data.out &
 
 ```
 
@@ -57,22 +53,15 @@ The script can be found in: `r getwd() `. And the directories were set using
 
 ```{r setup,}
 knitr::opts_knit$set(root.dir = here::here())
-source(here::here("R/setup.R"))
+source(here::here("Blood/R/setup.R"))
 ```
 
 And this analysis is run in: `r getwd() `
 
-For memmory reasons, we run the normalization using an Rscript 
-
-```{bash,eval = F}
-## For running R script
-nohup R CMD BATCH R/2-normalizing-data.R &
-```
-
 
 ### Libraries
 
-```{r libraries, message=FALSE, warning=FALSE,eval = F}
+```{r libraries, message=FALSE, warning=FALSE,eval = T}
 library(limma)
 library(oligo)
 library(tidyverse)
@@ -100,7 +89,7 @@ In this function you need:
 </div>
 
 
-```{r rawCEL_normCEL,eval = F}
+```{r rawCEL_normCEL,eval = T}
 rawCEL_normCEL <- function(gse){
   
   # select and untar files
@@ -129,8 +118,8 @@ rawCEL_normCEL <- function(gse){
     #### Figures of raw data
     #pdf(str_c("raw_",gse,"_boxplot",TODAY,".pdf"))
     ## plots of raw data
-    #boxplot(rawData,target="core")
-    #hist(rawData,target="core")
+    boxplot(rawData,target="core")
+    hist(rawData,target="core")
     #dev.off()
     ## RMA normalization
     normData <- rma(rawData)
@@ -153,8 +142,8 @@ rawCEL_normCEL <- function(gse){
      # read agilent files
     RG <- read.maimages(files,source = "agilent.median",green.only=T)
     #plots: raw data
-    # boxplot(RG$E)
-    # hist(RG$E)
+     boxplot(RG$E)
+     hist(RG$E)
     # normalizing data
     RG <- limma::backgroundCorrect(RG, method="normexp", offset=1)
     RG$E <- normalizeBetweenArrays(RG$E, method="quantile")
@@ -187,16 +176,17 @@ We had selected this experiments and downloaded raw data using srcripts:
 
 
 ```{r}
-gse_table <- read_tsv(DATA("2-Table_GSE-info.txt"))
-knitr::kable(gse_table, caption = "GSE information")
+blood <- scan(DATA("blood_GSE_IDs.txt"),
+               character(), 
+               sep = ",")
 ```
 
 ### STEP 1: Normalizing raw data
 
 Normalize raw data
 
-```{r,eval = F}
-geo_norm <- sapply(gse_table$Accession,rawCEL_normCEL)
+```{r,eval = T}
+geo_norm <- sapply(blood,rawCEL_normCEL)
 saveRDS(geo_norm,OUTPUT(c(TODAY,"_normData.xz")),compress = "xz")
 ```
 
