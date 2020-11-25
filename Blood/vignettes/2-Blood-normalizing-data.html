@@ -299,7 +299,7 @@ qrsh
 cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/Blood/output_data/.out
  module load r/4.0.1 
 
-nohup R -e &quot;rmarkdown::render(here::here(&#39;Blood/vignettes/2-Blood-normalizing-data.RMD&#39;))&quot; &gt; 2-Blood-normalizing-data.out &amp;
+nohup R -e &quot;rmarkdown::render(here::here(&#39;Blood/vignettes/2-Blood-normalizing-data.RMD&#39;),output_options = c(&#39;self_contained = TRUE&#39;))&quot; &gt; 2-Blood-normalizing-data.out &amp;
 </code></pre>
 <p>The script can be found in: /home/ana/DataDNA/R-projects/Meta-analysis_COPD/Blood/vignettes. And the directories were set using <code>R/setup.R</code> (e.i. DATA, OUPUT, DOWNLOAD) as a small functions that will paste the names into complete paths.</p>
 <pre class="r"><code>knitr::opts_knit$set(root.dir = here::here())
