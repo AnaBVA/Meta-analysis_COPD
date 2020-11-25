@@ -7,6 +7,9 @@ fig
 Tissue/download
 Tissue/output_data
 .httr-oauth
-
 Blood/download
-Blood/output_data
+Blood/output_data/
+GEOquery/
+Tissue/2020-Nov-output_data.zip
+Tissue/output_data.tar.gz
+
