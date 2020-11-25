@@ -1,5 +1,5 @@
 ---
-title: "3-curating-data.RMD"
+title: "3-Blood-curating-data.RMD"
 author: Ana BVA
 date: "`r BiocStyle::doc_date()`"
 output:
@@ -36,15 +36,13 @@ This script needs the following files:
 
 ## Setup
 
-For running the script, type:
-
 ```{bash, eval = F}
 ssh -X aaltamirano@dna.lavis.unam.mx
 qrsh
 cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/Blood/output_data/.out
  module load r/4.0.1 
 
-nohup R -e "rmarkdown::render(here::here('vignettes/3-Blood-curatig-data.RMD'))" > 3-Blood-curatig-data.RMD.out &
+nohup R -e "rmarkdown::render(here::here('Blood/vignettes/3-Blood-curatig-data.RMD'))" > 3-Blood-curatig-data.RMD.out &
 
 ```
 
@@ -64,10 +62,10 @@ And this analysis is run in: `r getwd() `
 library(GEOquery)
 library(mgsub)
 library(annotate)
-library(EnsDb.Hsapiens.v79)
 library(hgu133plus2.db)
 library(tidyverse)
 library(gsubfn)
+library(oligo)
 ```
 
 
