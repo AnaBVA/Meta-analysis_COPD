@@ -180,7 +180,7 @@ exprs(geo[[i]]) <- exprs(norm[[i]])
 
 ########### Summary
 df <- df %>% add_row(
-        "GSE" = names(geo)[i],
+        "GSE" = names(norm)[i],
         "CONTROL" = table(p$DISEASE)[1],
         "COPD" = table(p$DISEASE)[2],
         "COUNTRY" = unique(p$contact_country),
@@ -258,7 +258,7 @@ exprs(geo[[i]]) <- exprs(norm[[i]])
 
 ########### Summary
 df <- df %>% add_row(
-        "GSE" = names(geo)[i],
+        "GSE" = names(norm)[i],
         "CONTROL" = table(p$DISEASE)[1],
         "COPD" = table(p$DISEASE)[2],
         "COUNTRY" = unique(p$contact_country),
@@ -313,7 +313,7 @@ geo[[i]] <- norm[[i]]
 
 ########### Summary
 df <- df %>% add_row(
-        "GSE" = names(geo)[i],
+        "GSE" = names(norm)[i],
         "CONTROL" = table(p$DISEASE)[1],
         "COPD" = table(p$DISEASE)[2],
         "COUNTRY" = unique(p$contact_country),
@@ -373,7 +373,7 @@ exprs(geo[[i]]) <- norm[[i]]$E
 
 ########### Summary
 df <- df %>% add_row(
-        "GSE" = names(geo)[i],
+        "GSE" = names(norm)[i],
         "COPD" = table(p$DISEASE)[2],
         "COUNTRY" = unique(p$contact_country),
         "SUBMISSION_DATE" = paste(unique(p$submission_date),collapse = ","),
@@ -423,7 +423,7 @@ fData(geo[[i]]) <- f
 
 ########### Summary
 df <- df %>% add_row(
-        "GSE" = names(geo)[i],
+        "GSE" = names(norm)[i],
         "CONTROL" = table(p$DISEASE)[1],
         "COPD" = table(p$DISEASE)[2],
         "COUNTRY" = unique(p$contact_country),
