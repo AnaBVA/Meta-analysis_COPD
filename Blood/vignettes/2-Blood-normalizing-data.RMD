@@ -44,7 +44,7 @@ qrsh
 cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/Blood/output_data/.out
  module load r/4.0.1 
 
-nohup R -e "rmarkdown::render(here::here('Blood/vignettes/2-Blood-normalizing-data.RMD'),output_options = c("self_contained = TRUE"))" > 2-Blood-normalizing-data.out &
+nohup R -e "rmarkdown::render(here::here('Blood/vignettes/2-Blood-normalizing-data.RMD'),output_options = c('self_contained = TRUE'))" > 2-Blood-normalizing-data.out &
 
 ```
 
