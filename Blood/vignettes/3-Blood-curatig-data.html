@@ -12,7 +12,7 @@
 <meta name="author" content="Ana BVA" />
 
 
-<title>1 Blood: Dowload RAW data</title>
+<title>3-Blood-curating-data.RMD</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1593,9 +1593,9 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">1 Blood: Dowload RAW data</h1>
+<h1 class="title toc-ignore">3-Blood-curating-data.RMD</h1>
 <h4 class="author">Ana BVA</h4>
-<h4 class="date">24 novembre 2020</h4>
+<h4 class="date">25 novembre 2020</h4>
 
 </div>
 
@@ -1603,179 +1603,1204 @@ div.tocify {
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <div class="alert alert-info">
-<p><strong>Aim:</strong> Download raw data using GEOquery</p>
+<p><strong>Aim:</strong> To manually curate sample information and to join meta data with normalized data</p>
 </div>
-<div id="background" class="section level3">
-<h3>Background</h3>
-<p>We are going to download raw data and meta information from <a href="https://www.ncbi.nlm.nih.gov/geo/">GEO</a> using <code>GEOquery</code> package.</p>
-</div>
+<p>We previously had run the following scripts:</p>
+<ul>
+<li><p>1: Dowload RAW data <code>/1-Blood-download_raw-data.RMD</code></p></li>
+<li><p>2: Normalizing data <code>/2-Blood-normalizing-data.RMD</code></p></li>
+</ul>
 </div>
 <div id="input" class="section level2">
 <h2>Input</h2>
 <p>This script needs the following files:</p>
 <div class="alert alert-warning">
-<p><strong>GSE list:</strong> GSE IDs from the experiments</p>
+<p><strong>Data 1:</strong> Data information from geo Blood_2020-11-24_GEOquery-download.RDS<br />
+<strong>Data 2:</strong> Matrix of normalized experiments Blood_2020-11-24_normData.xz</p>
 </div>
 </div>
 <div id="setup" class="section level2">
 <h2>Setup</h2>
-<p>For running the script, type:</p>
 <pre class="bash"><code>ssh -X aaltamirano@dna.lavis.unam.mx
 qrsh
 cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/Blood/output_data/.out
  module load r/4.0.1 
 
-nohup R -e &quot;rmarkdown::render(here::here(&#39;Blood/vignettes/1-Blood-download_raw-data.RMD&#39;))&quot; &gt; 1-Blood-download_raw-data.out &amp;</code></pre>
+nohup R -e &quot;rmarkdown::render(here::here(&#39;Blood/vignettes/3-Blood-curatig-data.RMD&#39;))&quot; &gt; 3-Blood-curatig-data.RMD.out &amp;
+</code></pre>
 <p>The script can be found in: /home/ana/DataDNA/R-projects/Meta-analysis_COPD/Blood/vignettes. And the directories were set using <code>R/setup.R</code> (e.i. DATA, OUPUT, DOWNLOAD) as a small functions that will paste the names into complete paths.</p>
 <pre class="r"><code>knitr::opts_knit$set(root.dir = here::here())
 source(here::here(&quot;Blood/R/setup.R&quot;))</code></pre>
 <p>And this analysis is run in: /home/ana/DataDNA/R-projects/Meta-analysis_COPD</p>
 <div id="libraries" class="section level3">
 <h3>Libraries</h3>
-<pre class="r"><code>library(GEOquery)</code></pre>
+<pre class="r"><code>library(GEOquery)
+library(mgsub)
+library(annotate)
+library(hgu133plus2.db)
+library(tidyverse)
+library(gsubfn)
+library(affycoretools)</code></pre>
 </div>
 </div>
-<div id="download-raw-data" class="section level2">
-<h2>Download raw data</h2>
-<p>We need the GSE IDs to download raw files, the IDs are stored in a separate file named <code>GSE_IDs.txt</code>, we used <code>getGEOSuppFiles()</code> for download raw data. We do it using GSE ids from tissue:</p>
-<pre class="r bg-info"><code>blood &lt;- scan(DATA(&quot;blood_GSE_IDs.txt&quot;),
-               character(), 
-               sep = &quot;,&quot;)
+<div id="curation" class="section level2">
+<h2>Curation</h2>
+<div id="step-1-import-data" class="section level3">
+<h3>STEP 1: Import data</h3>
+<p>We read GEOquery data for all the experiments, it has the</p>
+<pre class="r"><code>geo &lt;- readRDS(OUTPUT(&quot;2020-11-24_GEOquery-download.RDS&quot;))
+norm &lt;- readRDS(OUTPUT(&quot;2020-11-24_normData.xz&quot;))
 
-sapply(blood,getGEOSuppFiles,baseDir = here::here(&quot;GEOquery&quot;))</code></pre>
-<pre class="bg-info"><code>##        GSE112811  GSE56766   GSE42057   GSE94916   GSE76705   
-## size   321556480  1021562880 606228480  176117760  Numeric,3  
-## isdir  FALSE      FALSE      FALSE      FALSE      Logical,3  
-## mode   436        436        436        436        Integer,3  
-## mtime  1606276096 1606276126 1606276150 1606276158 Numeric,3  
-## ctime  1606276096 1606276126 1606276150 1606276158 Numeric,3  
-## atime  1606252089 1606252147 1606252539 1606252643 Numeric,3  
-## uid    1000       1000       1000       1000       Integer,3  
-## gid    1000       1000       1000       1000       Integer,3  
-## uname  &quot;ana&quot;      &quot;ana&quot;      &quot;ana&quot;      &quot;ana&quot;      Character,3
-## grname &quot;ana&quot;      &quot;ana&quot;      &quot;ana&quot;      &quot;ana&quot;      Character,3</code></pre>
+names(geo)</code></pre>
+<pre><code>## [1] &quot;GSE112811.GSE112811_series_matrix.txt.gz&quot;
+## [2] &quot;GSE56766.GSE56766_series_matrix.txt.gz&quot;  
+## [3] &quot;GSE42057.GSE42057_series_matrix.txt.gz&quot;  
+## [4] &quot;GSE94916.GSE94916_series_matrix.txt.gz&quot;  
+## [5] &quot;GSE76705.GSE76705_series_matrix.txt.gz&quot;</code></pre>
+<pre class="r"><code>names(norm)</code></pre>
+<pre><code>## [1] &quot;GSE112811&quot; &quot;GSE56766&quot;  &quot;GSE42057&quot;  &quot;GSE94916&quot;  &quot;GSE76705&quot;</code></pre>
 </div>
-<div id="download-geoquery-data" class="section level2">
-<h2>Download GEOquery data</h2>
-<p>We download GEOquery data for the experiments</p>
-<pre class="r"><code>geo &lt;- sapply(blood,getGEO,destdir = here::here(&quot;GEOquery&quot;))</code></pre>
-<pre><code>## Found 1 file(s)</code></pre>
-<pre><code>## GSE112811_series_matrix.txt.gz</code></pre>
-<pre><code>## Using locally cached version: /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE112811_series_matrix.txt.gz</code></pre>
+<div id="step-2-curate-information" class="section level3">
+<h3>STEP 2: Curate information</h3>
+<p><strong>NEW COLUMN and CONTROLED VOCABULARY!!</strong></p>
+<p>We will add a new column and use controlled vocabulary, so we will change the description that each authors used to describe COPD or Control samples.</p>
+<p>In addition, we will create a new table summarizing data from all experiments, it will contain number of COPD samples, controls, experiment publication date, etc.</p>
+<pre class="r"><code>######## SUMMARY TABLE
+## Summary information about the experiment
+df &lt;- tibble(&quot;GSE&quot;= NA,
+             &quot;CONTROL&quot; = NA,
+             &quot;COPD&quot; = NA,
+             &quot;COUNTRY&quot; = NA,
+             &quot;SUBMISSION_DATE&quot; = NA,
+             &quot;PLATFORM&quot; = NA,
+             &quot;NUM_GENES&quot; = NA,
+             &quot;AGE_MEAN&quot; = NA,
+             &quot;AGE_MEDIAN&quot; = NA,
+             &quot;AGE_RANGE&quot; = NA,
+             &quot;SEX_F&quot; = NA,
+             &quot;SEX_M&quot; = NA,
+             &quot;SMOKING_STATUS&quot; = NA,
+             &quot;PACKYEAR&quot; = NA
+                 )</code></pre>
+</div>
+</div>
+<div id="gse112811" class="section level2">
+<h2>GSE112811</h2>
+<p>This experiment has healthy volunteers (HV) with pre and post inhaled lipopolysaccharide (LPS) treatment, in this analysis we will only use pre treatment as a control group.</p>
+<pre class="r"><code>########################################### 
+## 1
+# Select the experiment
+i &lt;- 1
+p &lt;- pData(geo[[i]])
+head(p)</code></pre>
+<pre><code>##                title geo_accession                status submission_date
+## GSM3084091 COPD_2002    GSM3084091 Public on Dec 31 2018     Apr 06 2018
+## GSM3084092 COPD_2003    GSM3084092 Public on Dec 31 2018     Apr 06 2018
+## GSM3084093 COPD_2005    GSM3084093 Public on Dec 31 2018     Apr 06 2018
+## GSM3084094 COPD_2012    GSM3084094 Public on Dec 31 2018     Apr 06 2018
+## GSM3084095 COPD_2013    GSM3084095 Public on Dec 31 2018     Apr 06 2018
+## GSM3084096 COPD_2014    GSM3084096 Public on Dec 31 2018     Apr 06 2018
+##            last_update_date type channel_count               source_name_ch1
+## GSM3084091      Dec 31 2018  RNA             1 Whole Blood from COPD subject
+## GSM3084092      Dec 31 2018  RNA             1 Whole Blood from COPD subject
+## GSM3084093      Dec 31 2018  RNA             1 Whole Blood from COPD subject
+## GSM3084094      Dec 31 2018  RNA             1 Whole Blood from COPD subject
+## GSM3084095      Dec 31 2018  RNA             1 Whole Blood from COPD subject
+## GSM3084096      Dec 31 2018  RNA             1 Whole Blood from COPD subject
+##            organism_ch1 characteristics_ch1 characteristics_ch1.1
+## GSM3084091 Homo sapiens       challenge: NA         disease: COPD
+## GSM3084092 Homo sapiens       challenge: NA         disease: COPD
+## GSM3084093 Homo sapiens       challenge: NA         disease: COPD
+## GSM3084094 Homo sapiens       challenge: NA         disease: COPD
+## GSM3084095 Homo sapiens       challenge: NA         disease: COPD
+## GSM3084096 Homo sapiens       challenge: NA         disease: COPD
+##               characteristics_ch1.2 treatment_protocol_ch1 growth_protocol_ch1
+## GSM3084091 challenge_time_point: NA             intranasal                 n/a
+## GSM3084092 challenge_time_point: NA             intranasal                 n/a
+## GSM3084093 challenge_time_point: NA             intranasal                 n/a
+## GSM3084094 challenge_time_point: NA             intranasal                 n/a
+## GSM3084095 challenge_time_point: NA             intranasal                 n/a
+## GSM3084096 challenge_time_point: NA             intranasal                 n/a
+##            molecule_ch1                              extract_protocol_ch1
+## GSM3084091    total RNA WT-Ovation Pico RNA Amplification System (NuGen).
+## GSM3084092    total RNA WT-Ovation Pico RNA Amplification System (NuGen).
+## GSM3084093    total RNA WT-Ovation Pico RNA Amplification System (NuGen).
+## GSM3084094    total RNA WT-Ovation Pico RNA Amplification System (NuGen).
+## GSM3084095    total RNA WT-Ovation Pico RNA Amplification System (NuGen).
+## GSM3084096    total RNA WT-Ovation Pico RNA Amplification System (NuGen).
+##            label_ch1                            label_protocol_ch1 taxid_ch1
+## GSM3084091    Biotin FL-Ovation cDNA Biotin Module V2 kit (NuGen).      9606
+## GSM3084092    Biotin FL-Ovation cDNA Biotin Module V2 kit (NuGen).      9606
+## GSM3084093    Biotin FL-Ovation cDNA Biotin Module V2 kit (NuGen).      9606
+## GSM3084094    Biotin FL-Ovation cDNA Biotin Module V2 kit (NuGen).      9606
+## GSM3084095    Biotin FL-Ovation cDNA Biotin Module V2 kit (NuGen).      9606
+## GSM3084096    Biotin FL-Ovation cDNA Biotin Module V2 kit (NuGen).      9606
+##                                                                                                     hyb_protocol
+## GSM3084091 Labelled cDNA was hybridized onto Mouse Genome 430 2.0  GeneChip oligonucleotide arrays (Affymetrix).
+## GSM3084092 Labelled cDNA was hybridized onto Mouse Genome 430 2.0  GeneChip oligonucleotide arrays (Affymetrix).
+## GSM3084093 Labelled cDNA was hybridized onto Mouse Genome 430 2.0  GeneChip oligonucleotide arrays (Affymetrix).
+## GSM3084094 Labelled cDNA was hybridized onto Mouse Genome 430 2.0  GeneChip oligonucleotide arrays (Affymetrix).
+## GSM3084095 Labelled cDNA was hybridized onto Mouse Genome 430 2.0  GeneChip oligonucleotide arrays (Affymetrix).
+## GSM3084096 Labelled cDNA was hybridized onto Mouse Genome 430 2.0  GeneChip oligonucleotide arrays (Affymetrix).
+##                 scan_protocol                      description
+## GSM3084091 Standard protocols Gene expression data whole blood
+## GSM3084092 Standard protocols Gene expression data whole blood
+## GSM3084093 Standard protocols Gene expression data whole blood
+## GSM3084094 Standard protocols Gene expression data whole blood
+## GSM3084095 Standard protocols Gene expression data whole blood
+## GSM3084096 Standard protocols Gene expression data whole blood
+##                                                    data_processing platform_id
+## GSM3084091 Data were analysed in R/Bioconductor, normalised by RMA      GPL570
+## GSM3084092 Data were analysed in R/Bioconductor, normalised by RMA      GPL570
+## GSM3084093 Data were analysed in R/Bioconductor, normalised by RMA      GPL570
+## GSM3084094 Data were analysed in R/Bioconductor, normalised by RMA      GPL570
+## GSM3084095 Data were analysed in R/Bioconductor, normalised by RMA      GPL570
+## GSM3084096 Data were analysed in R/Bioconductor, normalised by RMA      GPL570
+##             contact_name          contact_email    contact_department
+## GSM3084091 Glyn,,Bradley glyn.x.bradley@gsk.com Computational Biology
+## GSM3084092 Glyn,,Bradley glyn.x.bradley@gsk.com Computational Biology
+## GSM3084093 Glyn,,Bradley glyn.x.bradley@gsk.com Computational Biology
+## GSM3084094 Glyn,,Bradley glyn.x.bradley@gsk.com Computational Biology
+## GSM3084095 Glyn,,Bradley glyn.x.bradley@gsk.com Computational Biology
+## GSM3084096 Glyn,,Bradley glyn.x.bradley@gsk.com Computational Biology
+##            contact_institute           contact_address contact_city
+## GSM3084091               GSK Medicines Research Centre    Stevenage
+## GSM3084092               GSK Medicines Research Centre    Stevenage
+## GSM3084093               GSK Medicines Research Centre    Stevenage
+## GSM3084094               GSK Medicines Research Centre    Stevenage
+## GSM3084095               GSK Medicines Research Centre    Stevenage
+## GSM3084096               GSK Medicines Research Centre    Stevenage
+##            contact_zip/postal_code contact_country
+## GSM3084091                 SG1 2NY  United Kingdom
+## GSM3084092                 SG1 2NY  United Kingdom
+## GSM3084093                 SG1 2NY  United Kingdom
+## GSM3084094                 SG1 2NY  United Kingdom
+## GSM3084095                 SG1 2NY  United Kingdom
+## GSM3084096                 SG1 2NY  United Kingdom
+##                                                                                                    supplementary_file
+## GSM3084091 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3084nnn/GSM3084091/suppl/GSM3084091_COPD_2002_-180_MIN_C3.CEL.gz
+## GSM3084092 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3084nnn/GSM3084092/suppl/GSM3084092_COPD_2003_-180_MIN_D3.CEL.gz
+## GSM3084093 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3084nnn/GSM3084093/suppl/GSM3084093_COPD_2005_-180_MIN_E3.CEL.gz
+## GSM3084094 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3084nnn/GSM3084094/suppl/GSM3084094_COPD_2012_-180_MIN_B2.CEL.gz
+## GSM3084095 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3084nnn/GSM3084095/suppl/GSM3084095_COPD_2013_-180_MIN_F4.CEL.gz
+## GSM3084096 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3084nnn/GSM3084096/suppl/GSM3084096_COPD_2014_-180_MIN_C2.CEL.gz
+##            data_row_count challenge_time_point:ch1 challenge:ch1 disease:ch1
+## GSM3084091          54675                       NA            NA        COPD
+## GSM3084092          54675                       NA            NA        COPD
+## GSM3084093          54675                       NA            NA        COPD
+## GSM3084094          54675                       NA            NA        COPD
+## GSM3084095          54675                       NA            NA        COPD
+## GSM3084096          54675                       NA            NA        COPD</code></pre>
+<pre class="r"><code>dis &lt;- &quot;disease:ch1&quot; 
+tre &lt;- &quot;challenge_time_point:ch1&quot;
+
+######### DISEASE information
+table(p[,dis])</code></pre>
 <pre><code>## 
-## ── Column specification ────────────────────────────────────────────────────────
-## cols(
-##   .default = col_double(),
-##   ID_REF = col_character()
-## )
-## ℹ Use `spec()` for the full column specifications.</code></pre>
-<pre><code>## Using locally cached version of GPL570 found here:
-## /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GPL570.soft</code></pre>
-<pre><code>## Warning: 62 parsing failures.
-##   row     col           expected    actual         file
-## 54614 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54615 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54616 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54617 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54618 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## ..... ....... .................. ......... ............
-## See problems(...) for more details.</code></pre>
-<pre><code>## Found 1 file(s)</code></pre>
-<pre><code>## GSE56766_series_matrix.txt.gz</code></pre>
-<pre><code>## Using locally cached version: /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE56766_series_matrix.txt.gz</code></pre>
+## COPD  HVT 
+##   20   44</code></pre>
+<pre class="r"><code>table(p[,tre])</code></pre>
 <pre><code>## 
-## ── Column specification ────────────────────────────────────────────────────────
-## cols(
-##   .default = col_double(),
-##   ID_REF = col_character()
-## )
-## ℹ Use `spec()` for the full column specifications.</code></pre>
-<pre><code>## Using locally cached version of GPL570 found here:
-## /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GPL570.soft</code></pre>
-<pre><code>## Warning: 62 parsing failures.
-##   row     col           expected    actual         file
-## 54614 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54615 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54616 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54617 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54618 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## ..... ....... .................. ......... ............
-## See problems(...) for more details.</code></pre>
-<pre><code>## Found 1 file(s)</code></pre>
-<pre><code>## GSE42057_series_matrix.txt.gz</code></pre>
-<pre><code>## Using locally cached version: /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE42057_series_matrix.txt.gz</code></pre>
+##   NA post  pre 
+##   20   22   22</code></pre>
+<pre class="r"><code># identify the way authors described COPD or CONTROLS
+old_labels &lt;- c(&quot;HVT&quot;,&quot;COPD&quot;)
+new_labels &lt;- c(&quot;CONTROL&quot;,&quot;COPD&quot;)
+
+# rename 
+p$DISEASE &lt;- mgsub(p[,dis],old_labels,new_labels)
+# identifying controls post treatment
+p$DISEASE[grep(&quot;pre&quot;,p[,tre])] &lt;- &quot;post-LPS-CONTROL&quot;
+
+table(p$DISEASE)</code></pre>
 <pre><code>## 
-## ── Column specification ────────────────────────────────────────────────────────
-## cols(
-##   .default = col_double(),
-##   ID_REF = col_character()
-## )
-## ℹ Use `spec()` for the full column specifications.</code></pre>
-<pre><code>## Using locally cached version of GPL570 found here:
-## /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GPL570.soft</code></pre>
-<pre><code>## Warning: 62 parsing failures.
-##   row     col           expected    actual         file
-## 54614 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54615 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54616 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54617 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54618 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## ..... ....... .................. ......... ............
-## See problems(...) for more details.</code></pre>
-<pre><code>## Found 1 file(s)</code></pre>
-<pre><code>## GSE94916_series_matrix.txt.gz</code></pre>
-<pre><code>## Using locally cached version: /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE94916_series_matrix.txt.gz</code></pre>
+##          CONTROL             COPD post-LPS-CONTROL 
+##               22               20               22</code></pre>
+<pre class="r"><code># other infromation
+NA</code></pre>
+<pre><code>## [1] NA</code></pre>
+<pre class="r"><code># add it to the expression object
+pData(geo[[i]]) &lt;- p
+
+########### Gene.Symbol
+# We also add a new column with Gene.Symbol annotation
+f &lt;- fData(geo[[i]])
+f[1,]</code></pre>
+<pre><code>##                  ID GB_ACC SPOT_ID Species Scientific Name Annotation Date
+## 1007_s_at 1007_s_at U48705      NA            Homo sapiens     Oct 6, 2014
+##               Sequence Type                 Sequence Source
+## 1007_s_at Exemplar sequence Affymetrix Proprietary Database
+##                                                                                        Target Description
+## 1007_s_at U48705 /FEATURE=mRNA /DEFINITION=HSU48705 Human receptor tyrosine kinase DDR gene, complete cds
+##           Representative Public ID
+## 1007_s_at                   U48705
+##                                                              Gene Title
+## 1007_s_at discoidin domain receptor tyrosine kinase 1 /// microRNA 4640
+##                Gene Symbol    ENTREZ_GENE_ID
+## 1007_s_at DDR1 /// MIR4640 780 /// 100616237
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        RefSeq Transcript ID
+## 1007_s_at NM_001202521 /// NM_001202522 /// NM_001202523 /// NM_001954 /// NM_013993 /// NM_013994 /// NR_039783 /// XM_005249385 /// XM_005249386 /// XM_005249387 /// XM_005249389 /// XM_005272873 /// XM_005272874 /// XM_005272875 /// XM_005272877 /// XM_005275027 /// XM_005275028 /// XM_005275030 /// XM_005275031 /// XM_005275162 /// XM_005275163 /// XM_005275164 /// XM_005275166 /// XM_005275457 /// XM_005275458 /// XM_005275459 /// XM_005275461 /// XM_006715185 /// XM_006715186 /// XM_006715187 /// XM_006715188 /// XM_006715189 /// XM_006715190 /// XM_006725501 /// XM_006725502 /// XM_006725503 /// XM_006725504 /// XM_006725505 /// XM_006725506 /// XM_006725714 /// XM_006725715 /// XM_006725716 /// XM_006725717 /// XM_006725718 /// XM_006725719 /// XM_006725720 /// XM_006725721 /// XM_006725722 /// XM_006725827 /// XM_006725828 /// XM_006725829 /// XM_006725830 /// XM_006725831 /// XM_006725832 /// XM_006726017 /// XM_006726018 /// XM_006726019 /// XM_006726020 /// XM_006726021 /// XM_006726022 /// XR_427836 /// XR_430858 /// XR_430938 /// XR_430974 /// XR_431015
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Gene Ontology Biological Process
+## 1007_s_at 0001558 // regulation of cell growth // inferred from electronic annotation /// 0001952 // regulation of cell-matrix adhesion // inferred from electronic annotation /// 0006468 // protein phosphorylation // inferred from electronic annotation /// 0007155 // cell adhesion // traceable author statement /// 0007169 // transmembrane receptor protein tyrosine kinase signaling pathway // inferred from electronic annotation /// 0007565 // female pregnancy // inferred from electronic annotation /// 0007566 // embryo implantation // inferred from electronic annotation /// 0007595 // lactation // inferred from electronic annotation /// 0008285 // negative regulation of cell proliferation // inferred from electronic annotation /// 0010715 // regulation of extracellular matrix disassembly // inferred from mutant phenotype /// 0014909 // smooth muscle cell migration // inferred from mutant phenotype /// 0016310 // phosphorylation // inferred from electronic annotation /// 0018108 // peptidyl-tyrosine phosphorylation // inferred from electronic annotation /// 0030198 // extracellular matrix organization // traceable author statement /// 0038063 // collagen-activated tyrosine kinase receptor signaling pathway // inferred from direct assay /// 0038063 // collagen-activated tyrosine kinase receptor signaling pathway // inferred from mutant phenotype /// 0038083 // peptidyl-tyrosine autophosphorylation // inferred from direct assay /// 0043583 // ear development // inferred from electronic annotation /// 0044319 // wound healing, spreading of cells // inferred from mutant phenotype /// 0046777 // protein autophosphorylation // inferred from direct assay /// 0060444 // branching involved in mammary gland duct morphogenesis // inferred from electronic annotation /// 0060749 // mammary gland alveolus development // inferred from electronic annotation /// 0061302 // smooth muscle cell-matrix adhesion // inferred from mutant phenotype
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 Gene Ontology Cellular Component
+## 1007_s_at 0005576 // extracellular region // inferred from electronic annotation /// 0005615 // extracellular space // inferred from direct assay /// 0005886 // plasma membrane // traceable author statement /// 0005887 // integral component of plasma membrane // traceable author statement /// 0016020 // membrane // inferred from electronic annotation /// 0016021 // integral component of membrane // inferred from electronic annotation /// 0043235 // receptor complex // inferred from direct assay /// 0070062 // extracellular vesicular exosome // inferred from direct assay
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Gene Ontology Molecular Function
+## 1007_s_at 0000166 // nucleotide binding // inferred from electronic annotation /// 0004672 // protein kinase activity // inferred from electronic annotation /// 0004713 // protein tyrosine kinase activity // inferred from electronic annotation /// 0004714 // transmembrane receptor protein tyrosine kinase activity // traceable author statement /// 0005515 // protein binding // inferred from physical interaction /// 0005518 // collagen binding // inferred from direct assay /// 0005518 // collagen binding // inferred from mutant phenotype /// 0005524 // ATP binding // inferred from electronic annotation /// 0016301 // kinase activity // inferred from electronic annotation /// 0016740 // transferase activity // inferred from electronic annotation /// 0016772 // transferase activity, transferring phosphorus-containing groups // inferred from electronic annotation /// 0038062 // protein tyrosine kinase collagen receptor activity // inferred from direct assay /// 0046872 // metal ion binding // inferred from electronic annotation</code></pre>
+<pre class="r"><code># Parse column to have Gene.Symbol
+ff &lt;- dplyr::mutate(f,
+                   geneInfo = strsplit(`Gene Symbol`, &quot; /// &quot;),
+                   GENE.SYMBOL = sapply(geneInfo, `[`, 1),
+)
+
+rownames(ff) &lt;- rownames(f)
+f &lt;- dplyr::select(ff,ID,GB_ACC,ENTREZ_GENE_ID,GENE.SYMBOL)
+
+length(f$GENE.SYMBOL)</code></pre>
+<pre><code>## [1] 54675</code></pre>
+<pre class="r"><code>length(unique(f$GENE.SYMBOL))</code></pre>
+<pre><code>## [1] 22881</code></pre>
+<pre class="r"><code>fData(geo[[i]]) &lt;- f
+
+### Adding normalized data 
+colnames(norm[[i]]) &lt;- gsub(&quot;_..*&quot;,&quot;&quot;,colnames(norm[[i]]))
+exprs(geo[[i]]) &lt;- exprs(norm[[i]])
+
+
+########### Summary
+df &lt;- df %&gt;% add_row(
+        &quot;GSE&quot; = names(norm)[i],
+        &quot;CONTROL&quot; = table(p$DISEASE)[1],
+        &quot;COPD&quot; = table(p$DISEASE)[2],
+        &quot;COUNTRY&quot; = unique(p$contact_country),
+        &quot;SUBMISSION_DATE&quot; = paste(unique(p$submission_date),collapse = &quot;,&quot;),
+        &quot;PLATFORM&quot; = unique(p$platform_id),
+        &quot;NUM_GENES&quot; = length(unique(f$GENE.SYMBOL))
+)
+
+df &lt;- df[-1,]</code></pre>
+</div>
+<div id="gse56766" class="section level2">
+<h2>GSE56766</h2>
+<p>This experiment has anti-CD3/anti-CD28 treatment but in this analysis those samples were not use.</p>
+<pre class="r"><code>########################################### 
+i &lt;- 2
+p &lt;- pData(geo[[i]])
+head(p)</code></pre>
+<pre><code>##                    title geo_accession                status submission_date
+## GSM1368372 whole blood_1    GSM1368372 Public on Apr 15 2016     Apr 14 2014
+## GSM1368373 whole blood_2    GSM1368373 Public on Apr 15 2016     Apr 14 2014
+## GSM1368374 whole blood_3    GSM1368374 Public on Apr 15 2016     Apr 14 2014
+## GSM1368375 whole blood_4    GSM1368375 Public on Apr 15 2016     Apr 14 2014
+## GSM1368376 whole blood_5    GSM1368376 Public on Apr 15 2016     Apr 14 2014
+## GSM1368377 whole blood_6    GSM1368377 Public on Apr 15 2016     Apr 14 2014
+##            last_update_date type channel_count source_name_ch1 organism_ch1
+## GSM1368372      Apr 15 2016  RNA             1     whole blood Homo sapiens
+## GSM1368373      Apr 15 2016  RNA             1     whole blood Homo sapiens
+## GSM1368374      Apr 15 2016  RNA             1     whole blood Homo sapiens
+## GSM1368375      Apr 15 2016  RNA             1     whole blood Homo sapiens
+## GSM1368376      Apr 15 2016  RNA             1     whole blood Homo sapiens
+## GSM1368377      Apr 15 2016  RNA             1     whole blood Homo sapiens
+##            characteristics_ch1 characteristics_ch1.1 characteristics_ch1.2
+## GSM1368372 tissue: whole blood       diagnosis: COPD                      
+## GSM1368373 tissue: whole blood       diagnosis: COPD                      
+## GSM1368374 tissue: whole blood     diagnosis: Smoker                      
+## GSM1368375 tissue: whole blood     diagnosis: Smoker                      
+## GSM1368376 tissue: whole blood     diagnosis: Smoker                      
+## GSM1368377 tissue: whole blood       diagnosis: COPD                      
+##                                                                                                         treatment_protocol_ch1
+## GSM1368372 unstimulated whole blood and whole blood stimulated with anti-CD3 and anti-CD28 using the TruCulture ex-vivo method
+## GSM1368373 unstimulated whole blood and whole blood stimulated with anti-CD3 and anti-CD28 using the TruCulture ex-vivo method
+## GSM1368374 unstimulated whole blood and whole blood stimulated with anti-CD3 and anti-CD28 using the TruCulture ex-vivo method
+## GSM1368375 unstimulated whole blood and whole blood stimulated with anti-CD3 and anti-CD28 using the TruCulture ex-vivo method
+## GSM1368376 unstimulated whole blood and whole blood stimulated with anti-CD3 and anti-CD28 using the TruCulture ex-vivo method
+## GSM1368377 unstimulated whole blood and whole blood stimulated with anti-CD3 and anti-CD28 using the TruCulture ex-vivo method
+##            molecule_ch1
+## GSM1368372    total RNA
+## GSM1368373    total RNA
+## GSM1368374    total RNA
+## GSM1368375    total RNA
+## GSM1368376    total RNA
+## GSM1368377    total RNA
+##                                                                                                  extract_protocol_ch1
+## GSM1368372 PAXgene Blood RNA  Kit extraction of total RNA was performed according to the manufacturer&#39;s instructions.
+## GSM1368373 PAXgene Blood RNA  Kit extraction of total RNA was performed according to the manufacturer&#39;s instructions.
+## GSM1368374 PAXgene Blood RNA  Kit extraction of total RNA was performed according to the manufacturer&#39;s instructions.
+## GSM1368375 PAXgene Blood RNA  Kit extraction of total RNA was performed according to the manufacturer&#39;s instructions.
+## GSM1368376 PAXgene Blood RNA  Kit extraction of total RNA was performed according to the manufacturer&#39;s instructions.
+## GSM1368377 PAXgene Blood RNA  Kit extraction of total RNA was performed according to the manufacturer&#39;s instructions.
+##            label_ch1
+## GSM1368372    biotin
+## GSM1368373    biotin
+## GSM1368374    biotin
+## GSM1368375    biotin
+## GSM1368376    biotin
+## GSM1368377    biotin
+##                                                                                                                                                     label_protocol_ch1
+## GSM1368372 Biotinylated cRNA were prepared according to the standard Affymetrix protocol from 2 ug total RNA (Expression Analysis Technical Manual, 2001, Affymetrix).
+## GSM1368373 Biotinylated cRNA were prepared according to the standard Affymetrix protocol from 2 ug total RNA (Expression Analysis Technical Manual, 2001, Affymetrix).
+## GSM1368374 Biotinylated cRNA were prepared according to the standard Affymetrix protocol from 2 ug total RNA (Expression Analysis Technical Manual, 2001, Affymetrix).
+## GSM1368375 Biotinylated cRNA were prepared according to the standard Affymetrix protocol from 2 ug total RNA (Expression Analysis Technical Manual, 2001, Affymetrix).
+## GSM1368376 Biotinylated cRNA were prepared according to the standard Affymetrix protocol from 2 ug total RNA (Expression Analysis Technical Manual, 2001, Affymetrix).
+## GSM1368377 Biotinylated cRNA were prepared according to the standard Affymetrix protocol from 2 ug total RNA (Expression Analysis Technical Manual, 2001, Affymetrix).
+##            taxid_ch1
+## GSM1368372      9606
+## GSM1368373      9606
+## GSM1368374      9606
+## GSM1368375      9606
+## GSM1368376      9606
+## GSM1368377      9606
+##                                                                                                                                                                          hyb_protocol
+## GSM1368372 Following fragmentation, 10 ug of cRNA were hybridized for 16 hr at 45C on HGU133 Plus 2.0 Array. GeneChips were washed and stained in an Affymetrix Fluidics Station 450.
+## GSM1368373 Following fragmentation, 10 ug of cRNA were hybridized for 16 hr at 45C on HGU133 Plus 2.0 Array. GeneChips were washed and stained in an Affymetrix Fluidics Station 450.
+## GSM1368374 Following fragmentation, 10 ug of cRNA were hybridized for 16 hr at 45C on HGU133 Plus 2.0 Array. GeneChips were washed and stained in an Affymetrix Fluidics Station 450.
+## GSM1368375 Following fragmentation, 10 ug of cRNA were hybridized for 16 hr at 45C on HGU133 Plus 2.0 Array. GeneChips were washed and stained in an Affymetrix Fluidics Station 450.
+## GSM1368376 Following fragmentation, 10 ug of cRNA were hybridized for 16 hr at 45C on HGU133 Plus 2.0 Array. GeneChips were washed and stained in an Affymetrix Fluidics Station 450.
+## GSM1368377 Following fragmentation, 10 ug of cRNA were hybridized for 16 hr at 45C on HGU133 Plus 2.0 Array. GeneChips were washed and stained in an Affymetrix Fluidics Station 450.
+##                                                                    scan_protocol
+## GSM1368372 GeneChips were scanned using the Affymetrix GeneChip Scanner 3000 7G.
+## GSM1368373 GeneChips were scanned using the Affymetrix GeneChip Scanner 3000 7G.
+## GSM1368374 GeneChips were scanned using the Affymetrix GeneChip Scanner 3000 7G.
+## GSM1368375 GeneChips were scanned using the Affymetrix GeneChip Scanner 3000 7G.
+## GSM1368376 GeneChips were scanned using the Affymetrix GeneChip Scanner 3000 7G.
+## GSM1368377 GeneChips were scanned using the Affymetrix GeneChip Scanner 3000 7G.
+##                       description                         data_processing
+## GSM1368372 HGU133 Plus array data The data were analyzed ArrayAssist Lite
+## GSM1368373 HGU133 Plus array data The data were analyzed ArrayAssist Lite
+## GSM1368374 HGU133 Plus array data The data were analyzed ArrayAssist Lite
+## GSM1368375 HGU133 Plus array data The data were analyzed ArrayAssist Lite
+## GSM1368376 HGU133 Plus array data The data were analyzed ArrayAssist Lite
+## GSM1368377 HGU133 Plus array data The data were analyzed ArrayAssist Lite
+##            platform_id      contact_name contact_institute   contact_address
+## GSM1368372      GPL570 Mustimbo,,Roberts         MedImmune One MedImmune Way
+## GSM1368373      GPL570 Mustimbo,,Roberts         MedImmune One MedImmune Way
+## GSM1368374      GPL570 Mustimbo,,Roberts         MedImmune One MedImmune Way
+## GSM1368375      GPL570 Mustimbo,,Roberts         MedImmune One MedImmune Way
+## GSM1368376      GPL570 Mustimbo,,Roberts         MedImmune One MedImmune Way
+## GSM1368377      GPL570 Mustimbo,,Roberts         MedImmune One MedImmune Way
+##            contact_city contact_state contact_zip/postal_code contact_country
+## GSM1368372 Gaithersburg            MD                   20904             USA
+## GSM1368373 Gaithersburg            MD                   20904             USA
+## GSM1368374 Gaithersburg            MD                   20904             USA
+## GSM1368375 Gaithersburg            MD                   20904             USA
+## GSM1368376 Gaithersburg            MD                   20904             USA
+## GSM1368377 Gaithersburg            MD                   20904             USA
+##                                                                                              supplementary_file
+## GSM1368372 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1368nnn/GSM1368372/suppl/GSM1368372_RE593-76-10056H.CEL.gz
+## GSM1368373 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1368nnn/GSM1368373/suppl/GSM1368373_RE593-67-10062C.CEL.gz
+## GSM1368374 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1368nnn/GSM1368374/suppl/GSM1368374_RE593-25-10102O.CEL.gz
+## GSM1368375 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1368nnn/GSM1368375/suppl/GSM1368375_RE593-23-10165M.CEL.gz
+## GSM1368376  ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1368nnn/GSM1368376/suppl/GSM1368376_RE593-8-10403C.CEL.gz
+## GSM1368377 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1368nnn/GSM1368377/suppl/GSM1368377_RE593-34-10709A.CEL.gz
+##            data_row_count diagnosis:ch1 stimulus:ch1  tissue:ch1
+## GSM1368372          54675          COPD         &lt;NA&gt; whole blood
+## GSM1368373          54675          COPD         &lt;NA&gt; whole blood
+## GSM1368374          54675        Smoker         &lt;NA&gt; whole blood
+## GSM1368375          54675        Smoker         &lt;NA&gt; whole blood
+## GSM1368376          54675        Smoker         &lt;NA&gt; whole blood
+## GSM1368377          54675          COPD         &lt;NA&gt; whole blood</code></pre>
+<pre class="r"><code>dis &lt;- &quot;diagnosis:ch1&quot;
+
+# Identify stimulated samples
+p$Tre &lt;- gsub(&#39;_[0-9]+&#39;, &#39;&#39;, p$title)
+
+######### DISEASE information
+table(p[,dis])</code></pre>
 <pre><code>## 
-## ── Column specification ────────────────────────────────────────────────────────
-## cols(
-##   .default = col_double()
-## )
-## ℹ Use `spec()` for the full column specifications.</code></pre>
-<pre><code>## Using locally cached version of GPL20844 found here:
-## /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GPL20844.soft</code></pre>
-<pre><code>## Warning: Duplicated column names deduplicated: &#39;SPOT_ID&#39; =&gt; &#39;SPOT_ID_1&#39; [21]</code></pre>
-<pre><code>## Found 1 file(s)</code></pre>
-<pre><code>## GSE76705_series_matrix.txt.gz</code></pre>
-<pre><code>## Using locally cached version: /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GSE76705_series_matrix.txt.gz</code></pre>
+##         COPD Never Smoker  Screen-fail       Smoker 
+##          137            5            2           62</code></pre>
+<pre class="r"><code>table(p$Tre)</code></pre>
 <pre><code>## 
-## ── Column specification ────────────────────────────────────────────────────────
-## cols(
-##   .default = col_double(),
-##   ID_REF = col_character()
-## )
-## ℹ Use `spec()` for the full column specifications.</code></pre>
-<pre><code>## Using locally cached version of GPL570 found here:
-## /home/ana/DataDNA/R-projects/Meta-analysis_COPD/GEOquery/GPL570.soft</code></pre>
-<pre><code>## Warning: 62 parsing failures.
-##   row     col           expected    actual         file
-## 54614 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54615 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54616 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54617 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## 54618 SPOT_ID 1/0/T/F/TRUE/FALSE --Control literal data
-## ..... ....... .................. ......... ............
-## See problems(...) for more details.</code></pre>
-<p>Some GSE ids have more than one platform and samples that we will not use, so we delete them or do some modifications.</p>
-<pre class="r"><code>sapply(geo,length)</code></pre>
-<pre><code>## GSE112811.GSE112811_series_matrix.txt.gz 
-##                                        1 
-##   GSE56766.GSE56766_series_matrix.txt.gz 
-##                                        1 
-##   GSE42057.GSE42057_series_matrix.txt.gz 
-##                                        1 
-##   GSE94916.GSE94916_series_matrix.txt.gz 
-##                                        1 
-##   GSE76705.GSE76705_series_matrix.txt.gz 
-##                                        1</code></pre>
-<pre class="r"><code>saveRDS(geo,OUTPUT(c(TODAY,&quot;_GEOquery-download.RDS&quot;)))</code></pre>
+## stimulated whole blood            whole blood 
+##                    126                     80</code></pre>
+<pre class="r"><code># identify the way authors described COPD or CONTROLS
+old_labels &lt;- c(&quot;Never Smoker&quot;,
+                &quot;Smoker&quot;,
+                &quot;COPD&quot;,
+                &quot;Screen-fail&quot;)
+
+new_labels &lt;- c(&quot;CONTROL&quot;,&quot;CONTROL&quot;,&quot;COPD&quot;,&quot;Screen-fail&quot;)
+
+# rename 
+p$DISEASE &lt;- mgsub(p[,dis],old_labels,new_labels)
+
+# changing label for stimulated samples
+p$DISEASE[grep(&quot;stimulated whole blood&quot;,p$Tre)] &lt;- &quot;stimulated-SAMPLES&quot;
+table(p$DISEASE)</code></pre>
+<pre><code>## 
+##            CONTROL               COPD        Screen-fail stimulated-SAMPLES 
+##                 29                 49                  2                126</code></pre>
+<pre class="r"><code># other infromation
+p$SMOKING_STATUS &lt;- mgsub(p[,dis],old_labels,c(&quot;NON-SMOKER&quot;,&quot;SMOKER&quot;,&quot;NA&quot;,&quot;NA&quot;))
+table(p$SMOKING_STATUS)</code></pre>
+<pre><code>## 
+##         NA NON-SMOKER     SMOKER 
+##        139          5         62</code></pre>
+<pre class="r"><code># add it to the expression object
+pData(geo[[i]]) &lt;- p
+
+########### Gene.Symbol
+# We also add a new column with Gene.Symbol annotation
+f &lt;- fData(geo[[i]])
+f[1,]</code></pre>
+<pre><code>##                  ID GB_ACC SPOT_ID Species Scientific Name Annotation Date
+## 1007_s_at 1007_s_at U48705      NA            Homo sapiens     Oct 6, 2014
+##               Sequence Type                 Sequence Source
+## 1007_s_at Exemplar sequence Affymetrix Proprietary Database
+##                                                                                        Target Description
+## 1007_s_at U48705 /FEATURE=mRNA /DEFINITION=HSU48705 Human receptor tyrosine kinase DDR gene, complete cds
+##           Representative Public ID
+## 1007_s_at                   U48705
+##                                                              Gene Title
+## 1007_s_at discoidin domain receptor tyrosine kinase 1 /// microRNA 4640
+##                Gene Symbol    ENTREZ_GENE_ID
+## 1007_s_at DDR1 /// MIR4640 780 /// 100616237
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        RefSeq Transcript ID
+## 1007_s_at NM_001202521 /// NM_001202522 /// NM_001202523 /// NM_001954 /// NM_013993 /// NM_013994 /// NR_039783 /// XM_005249385 /// XM_005249386 /// XM_005249387 /// XM_005249389 /// XM_005272873 /// XM_005272874 /// XM_005272875 /// XM_005272877 /// XM_005275027 /// XM_005275028 /// XM_005275030 /// XM_005275031 /// XM_005275162 /// XM_005275163 /// XM_005275164 /// XM_005275166 /// XM_005275457 /// XM_005275458 /// XM_005275459 /// XM_005275461 /// XM_006715185 /// XM_006715186 /// XM_006715187 /// XM_006715188 /// XM_006715189 /// XM_006715190 /// XM_006725501 /// XM_006725502 /// XM_006725503 /// XM_006725504 /// XM_006725505 /// XM_006725506 /// XM_006725714 /// XM_006725715 /// XM_006725716 /// XM_006725717 /// XM_006725718 /// XM_006725719 /// XM_006725720 /// XM_006725721 /// XM_006725722 /// XM_006725827 /// XM_006725828 /// XM_006725829 /// XM_006725830 /// XM_006725831 /// XM_006725832 /// XM_006726017 /// XM_006726018 /// XM_006726019 /// XM_006726020 /// XM_006726021 /// XM_006726022 /// XR_427836 /// XR_430858 /// XR_430938 /// XR_430974 /// XR_431015
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Gene Ontology Biological Process
+## 1007_s_at 0001558 // regulation of cell growth // inferred from electronic annotation /// 0001952 // regulation of cell-matrix adhesion // inferred from electronic annotation /// 0006468 // protein phosphorylation // inferred from electronic annotation /// 0007155 // cell adhesion // traceable author statement /// 0007169 // transmembrane receptor protein tyrosine kinase signaling pathway // inferred from electronic annotation /// 0007565 // female pregnancy // inferred from electronic annotation /// 0007566 // embryo implantation // inferred from electronic annotation /// 0007595 // lactation // inferred from electronic annotation /// 0008285 // negative regulation of cell proliferation // inferred from electronic annotation /// 0010715 // regulation of extracellular matrix disassembly // inferred from mutant phenotype /// 0014909 // smooth muscle cell migration // inferred from mutant phenotype /// 0016310 // phosphorylation // inferred from electronic annotation /// 0018108 // peptidyl-tyrosine phosphorylation // inferred from electronic annotation /// 0030198 // extracellular matrix organization // traceable author statement /// 0038063 // collagen-activated tyrosine kinase receptor signaling pathway // inferred from direct assay /// 0038063 // collagen-activated tyrosine kinase receptor signaling pathway // inferred from mutant phenotype /// 0038083 // peptidyl-tyrosine autophosphorylation // inferred from direct assay /// 0043583 // ear development // inferred from electronic annotation /// 0044319 // wound healing, spreading of cells // inferred from mutant phenotype /// 0046777 // protein autophosphorylation // inferred from direct assay /// 0060444 // branching involved in mammary gland duct morphogenesis // inferred from electronic annotation /// 0060749 // mammary gland alveolus development // inferred from electronic annotation /// 0061302 // smooth muscle cell-matrix adhesion // inferred from mutant phenotype
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 Gene Ontology Cellular Component
+## 1007_s_at 0005576 // extracellular region // inferred from electronic annotation /// 0005615 // extracellular space // inferred from direct assay /// 0005886 // plasma membrane // traceable author statement /// 0005887 // integral component of plasma membrane // traceable author statement /// 0016020 // membrane // inferred from electronic annotation /// 0016021 // integral component of membrane // inferred from electronic annotation /// 0043235 // receptor complex // inferred from direct assay /// 0070062 // extracellular vesicular exosome // inferred from direct assay
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Gene Ontology Molecular Function
+## 1007_s_at 0000166 // nucleotide binding // inferred from electronic annotation /// 0004672 // protein kinase activity // inferred from electronic annotation /// 0004713 // protein tyrosine kinase activity // inferred from electronic annotation /// 0004714 // transmembrane receptor protein tyrosine kinase activity // traceable author statement /// 0005515 // protein binding // inferred from physical interaction /// 0005518 // collagen binding // inferred from direct assay /// 0005518 // collagen binding // inferred from mutant phenotype /// 0005524 // ATP binding // inferred from electronic annotation /// 0016301 // kinase activity // inferred from electronic annotation /// 0016740 // transferase activity // inferred from electronic annotation /// 0016772 // transferase activity, transferring phosphorus-containing groups // inferred from electronic annotation /// 0038062 // protein tyrosine kinase collagen receptor activity // inferred from direct assay /// 0046872 // metal ion binding // inferred from electronic annotation</code></pre>
+<pre class="r"><code># Parse column to have Gene.Symbol
+ff &lt;- dplyr::mutate(f,
+                   geneInfo = strsplit(`Gene Symbol`, &quot; /// &quot;),
+                   GENE.SYMBOL = sapply(geneInfo, `[`, 1),
+)
+
+rownames(ff) &lt;- rownames(f)
+f &lt;- dplyr::select(ff,ID,GB_ACC,ENTREZ_GENE_ID,GENE.SYMBOL)
+
+length(f$GENE.SYMBOL)</code></pre>
+<pre><code>## [1] 54675</code></pre>
+<pre class="r"><code>length(unique(f$GENE.SYMBOL))</code></pre>
+<pre><code>## [1] 22881</code></pre>
+<pre class="r"><code>fData(geo[[i]]) &lt;- f
+
+### Adding normalized data 
+colnames(norm[[i]]) &lt;- gsub(&quot;_..*&quot;,&quot;&quot;,colnames(norm[[i]]))
+exprs(geo[[i]]) &lt;- exprs(norm[[i]])
+
+########### Summary
+df &lt;- df %&gt;% add_row(
+        &quot;GSE&quot; = names(norm)[i],
+        &quot;CONTROL&quot; = table(p$DISEASE)[1],
+        &quot;COPD&quot; = table(p$DISEASE)[2],
+        &quot;COUNTRY&quot; = unique(p$contact_country),
+        &quot;SUBMISSION_DATE&quot; = paste(unique(p$submission_date),collapse = &quot;,&quot;),
+        &quot;PLATFORM&quot; = unique(p$platform_id),
+        &quot;NUM_GENES&quot; = length(unique(f$GENE.SYMBOL)),
+        &quot;SMOKING_STATUS&quot; = toString(c(names(table(p$SMOKING_STATUS)),table(p$SMOKING_STATUS)))
+)</code></pre>
+</div>
+<div id="gse42057" class="section level2">
+<h2>GSE42057</h2>
+<pre class="r"><code>########################################### 
+## 3
+# Select the experiment
+i &lt;- 3
+p &lt;- pData(geo[[i]])
+head(p)</code></pre>
+<pre><code>##                               title geo_accession                status
+## GSM1031549    COPD subject (10062C)    GSM1031549 Public on May 06 2013
+## GSM1031550    COPD subject (10071D)    GSM1031550 Public on May 06 2013
+## GSM1031551    COPD subject (10087S)    GSM1031551 Public on May 06 2013
+## GSM1031552    COPD subject (10097V)    GSM1031552 Public on May 06 2013
+## GSM1031553 Control subject (10102O)    GSM1031553 Public on May 06 2013
+## GSM1031554 Control subject (10104S)    GSM1031554 Public on May 06 2013
+##            submission_date last_update_date type channel_count
+## GSM1031549     Nov 06 2012      Nov 14 2018  RNA             1
+## GSM1031550     Nov 06 2012      Nov 14 2018  RNA             1
+## GSM1031551     Nov 06 2012      Nov 14 2018  RNA             1
+## GSM1031552     Nov 06 2012      Nov 14 2018  RNA             1
+## GSM1031553     Nov 06 2012      Nov 14 2018  RNA             1
+## GSM1031554     Nov 06 2012      Nov 14 2018  RNA             1
+##                 source_name_ch1 organism_ch1 characteristics_ch1
+## GSM1031549    COPD subject PBMC Homo sapiens        tissue: PBMC
+## GSM1031550    COPD subject PBMC Homo sapiens        tissue: PBMC
+## GSM1031551    COPD subject PBMC Homo sapiens        tissue: PBMC
+## GSM1031552    COPD subject PBMC Homo sapiens        tissue: PBMC
+## GSM1031553 Control subject PBMC Homo sapiens        tissue: PBMC
+## GSM1031554 Control subject PBMC Homo sapiens        tissue: PBMC
+##            characteristics_ch1.1 characteristics_ch1.2 characteristics_ch1.3
+## GSM1031549      distwalked: 1600             gender: 1            bmi: 27.71
+## GSM1031550      distwalked: 1805             gender: 1            bmi: 32.64
+## GSM1031551      distwalked: 1620             gender: 0            bmi: 26.58
+## GSM1031552      distwalked: 1010             gender: 0            bmi: 23.62
+## GSM1031553      distwalked: 1641             gender: 1            bmi: 30.82
+## GSM1031554      distwalked: 1460             gender: 0            bmi: 26.87
+##            characteristics_ch1.4 characteristics_ch1.5 characteristics_ch1.6
+## GSM1031549       parentalcopd: 1      age_enroll: 64.7         smokcignow: 0
+## GSM1031550       parentalcopd: 2      age_enroll: 66.2         smokcignow: 0
+## GSM1031551       parentalcopd: 0      age_enroll: 65.5         smokcignow: 0
+## GSM1031552       parentalcopd: 0      age_enroll: 75.8         smokcignow: 0
+## GSM1031553       parentalcopd: 1      age_enroll: 61.2         smokcignow: 0
+## GSM1031554       parentalcopd: 2      age_enroll: 50.6         smokcignow: 1
+##            characteristics_ch1.7   characteristics_ch1.8
+## GSM1031549     ats_packyears: 38      pctemph_slicer: NA
+## GSM1031550     ats_packyears: 18      pctemph_slicer: NA
+## GSM1031551     ats_packyears: 63      pctemph_slicer: NA
+## GSM1031552     ats_packyears: 41      pctemph_slicer: NA
+## GSM1031553     ats_packyears: 39 pctemph_slicer: 1.58281
+## GSM1031554   ats_packyears: 34.6      pctemph_slicer: NA
+##                 characteristics_ch1.9 characteristics_ch1.10
+## GSM1031549      pctgastrap_slicer: NA           finalgold: 3
+## GSM1031550      pctgastrap_slicer: NA           finalgold: 2
+## GSM1031551      pctgastrap_slicer: NA           finalgold: 2
+## GSM1031552      pctgastrap_slicer: NA           finalgold: 3
+## GSM1031553 pctgastrap_slicer: 19.1088           finalgold: 0
+## GSM1031554      pctgastrap_slicer: NA           finalgold: 0
+##            characteristics_ch1.11 characteristics_ch1.12 molecule_ch1
+## GSM1031549        fev1pp_utah: 37    fev1_fvc_utah: 0.46    total RNA
+## GSM1031550        fev1pp_utah: 54    fev1_fvc_utah: 0.65    total RNA
+## GSM1031551        fev1pp_utah: 53    fev1_fvc_utah: 0.49    total RNA
+## GSM1031552        fev1pp_utah: 32    fev1_fvc_utah: 0.43    total RNA
+## GSM1031553        fev1pp_utah: 94    fev1_fvc_utah: 0.78    total RNA
+## GSM1031554        fev1pp_utah: 96    fev1_fvc_utah: 0.76    total RNA
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        extract_protocol_ch1
+## GSM1031549 A minimum of 50 ml of blood was drawn from either the arm or the hand. Peripheral blood was drawn into a BD Vacutainer Cell Preparation Tube, which was processed within 60 minutes according to the manufacturer’s instructions. Upon centrifugation, lymphocytes and other mononuclear cells appeared in a distinct band and were isolated from the supernatant. RNA isolation was performed using Qiagen RNeasy RNA isolation spin-column kits and protocol combined with the fully-automated Qiagen QIAcube.
+## GSM1031550 A minimum of 50 ml of blood was drawn from either the arm or the hand. Peripheral blood was drawn into a BD Vacutainer Cell Preparation Tube, which was processed within 60 minutes according to the manufacturer’s instructions. Upon centrifugation, lymphocytes and other mononuclear cells appeared in a distinct band and were isolated from the supernatant. RNA isolation was performed using Qiagen RNeasy RNA isolation spin-column kits and protocol combined with the fully-automated Qiagen QIAcube.
+## GSM1031551 A minimum of 50 ml of blood was drawn from either the arm or the hand. Peripheral blood was drawn into a BD Vacutainer Cell Preparation Tube, which was processed within 60 minutes according to the manufacturer’s instructions. Upon centrifugation, lymphocytes and other mononuclear cells appeared in a distinct band and were isolated from the supernatant. RNA isolation was performed using Qiagen RNeasy RNA isolation spin-column kits and protocol combined with the fully-automated Qiagen QIAcube.
+## GSM1031552 A minimum of 50 ml of blood was drawn from either the arm or the hand. Peripheral blood was drawn into a BD Vacutainer Cell Preparation Tube, which was processed within 60 minutes according to the manufacturer’s instructions. Upon centrifugation, lymphocytes and other mononuclear cells appeared in a distinct band and were isolated from the supernatant. RNA isolation was performed using Qiagen RNeasy RNA isolation spin-column kits and protocol combined with the fully-automated Qiagen QIAcube.
+## GSM1031553 A minimum of 50 ml of blood was drawn from either the arm or the hand. Peripheral blood was drawn into a BD Vacutainer Cell Preparation Tube, which was processed within 60 minutes according to the manufacturer’s instructions. Upon centrifugation, lymphocytes and other mononuclear cells appeared in a distinct band and were isolated from the supernatant. RNA isolation was performed using Qiagen RNeasy RNA isolation spin-column kits and protocol combined with the fully-automated Qiagen QIAcube.
+## GSM1031554 A minimum of 50 ml of blood was drawn from either the arm or the hand. Peripheral blood was drawn into a BD Vacutainer Cell Preparation Tube, which was processed within 60 minutes according to the manufacturer’s instructions. Upon centrifugation, lymphocytes and other mononuclear cells appeared in a distinct band and were isolated from the supernatant. RNA isolation was performed using Qiagen RNeasy RNA isolation spin-column kits and protocol combined with the fully-automated Qiagen QIAcube.
+##            label_ch1
+## GSM1031549    biotin
+## GSM1031550    biotin
+## GSM1031551    biotin
+## GSM1031552    biotin
+## GSM1031553    biotin
+## GSM1031554    biotin
+##                                                                                                                                           label_protocol_ch1
+## GSM1031549 RNA samples were hybridized in three separate batches using standard Affymetrix protocols. The batches were balanced with respect to GOLD stages.
+## GSM1031550 RNA samples were hybridized in three separate batches using standard Affymetrix protocols. The batches were balanced with respect to GOLD stages.
+## GSM1031551 RNA samples were hybridized in three separate batches using standard Affymetrix protocols. The batches were balanced with respect to GOLD stages.
+## GSM1031552 RNA samples were hybridized in three separate batches using standard Affymetrix protocols. The batches were balanced with respect to GOLD stages.
+## GSM1031553 RNA samples were hybridized in three separate batches using standard Affymetrix protocols. The batches were balanced with respect to GOLD stages.
+## GSM1031554 RNA samples were hybridized in three separate batches using standard Affymetrix protocols. The batches were balanced with respect to GOLD stages.
+##            taxid_ch1
+## GSM1031549      9606
+## GSM1031550      9606
+## GSM1031551      9606
+## GSM1031552      9606
+## GSM1031553      9606
+## GSM1031554      9606
+##                                                                                                    hyb_protocol
+## GSM1031549 Expression of 54,675 transcripts was measured using Affymetrix Human Genome U133 plus 2.0 Gene Array
+## GSM1031550 Expression of 54,675 transcripts was measured using Affymetrix Human Genome U133 plus 2.0 Gene Array
+## GSM1031551 Expression of 54,675 transcripts was measured using Affymetrix Human Genome U133 plus 2.0 Gene Array
+## GSM1031552 Expression of 54,675 transcripts was measured using Affymetrix Human Genome U133 plus 2.0 Gene Array
+## GSM1031553 Expression of 54,675 transcripts was measured using Affymetrix Human Genome U133 plus 2.0 Gene Array
+## GSM1031554 Expression of 54,675 transcripts was measured using Affymetrix Human Genome U133 plus 2.0 Gene Array
+##                                                                                                                                                                                                                                                                                                                           scan_protocol
+## GSM1031549 RNA purity was assessed using the Thermo Scientific NanoDrop instrument.  As recommended by Affymetrix, only samples with A260/A280 absorbance ratios between 1.8 and 2.1 were considered acceptable.  RNA integrity was also assessed using an Agilent ioanalyzer. Only samples with an integrity number above 7 were used.
+## GSM1031550 RNA purity was assessed using the Thermo Scientific NanoDrop instrument.  As recommended by Affymetrix, only samples with A260/A280 absorbance ratios between 1.8 and 2.1 were considered acceptable.  RNA integrity was also assessed using an Agilent ioanalyzer. Only samples with an integrity number above 7 were used.
+## GSM1031551 RNA purity was assessed using the Thermo Scientific NanoDrop instrument.  As recommended by Affymetrix, only samples with A260/A280 absorbance ratios between 1.8 and 2.1 were considered acceptable.  RNA integrity was also assessed using an Agilent ioanalyzer. Only samples with an integrity number above 7 were used.
+## GSM1031552 RNA purity was assessed using the Thermo Scientific NanoDrop instrument.  As recommended by Affymetrix, only samples with A260/A280 absorbance ratios between 1.8 and 2.1 were considered acceptable.  RNA integrity was also assessed using an Agilent ioanalyzer. Only samples with an integrity number above 7 were used.
+## GSM1031553 RNA purity was assessed using the Thermo Scientific NanoDrop instrument.  As recommended by Affymetrix, only samples with A260/A280 absorbance ratios between 1.8 and 2.1 were considered acceptable.  RNA integrity was also assessed using an Agilent ioanalyzer. Only samples with an integrity number above 7 were used.
+## GSM1031554 RNA purity was assessed using the Thermo Scientific NanoDrop instrument.  As recommended by Affymetrix, only samples with A260/A280 absorbance ratios between 1.8 and 2.1 were considered acceptable.  RNA integrity was also assessed using an Agilent ioanalyzer. Only samples with an integrity number above 7 were used.
+##                                                                                                                                                                                                                                                                                                                                                                              data_processing
+## GSM1031549 Data quality assessment was conducted using the affyPLM package within the R statistical computing environment.  Data were filtered for present/absent frequency (only probe sets with present calls in all samples were used) and normalized using the RMA algorithm.  ComBat, an empirical Bayes batch effect adjustment algorithm, was implemented on the normalized data set.
+## GSM1031550 Data quality assessment was conducted using the affyPLM package within the R statistical computing environment.  Data were filtered for present/absent frequency (only probe sets with present calls in all samples were used) and normalized using the RMA algorithm.  ComBat, an empirical Bayes batch effect adjustment algorithm, was implemented on the normalized data set.
+## GSM1031551 Data quality assessment was conducted using the affyPLM package within the R statistical computing environment.  Data were filtered for present/absent frequency (only probe sets with present calls in all samples were used) and normalized using the RMA algorithm.  ComBat, an empirical Bayes batch effect adjustment algorithm, was implemented on the normalized data set.
+## GSM1031552 Data quality assessment was conducted using the affyPLM package within the R statistical computing environment.  Data were filtered for present/absent frequency (only probe sets with present calls in all samples were used) and normalized using the RMA algorithm.  ComBat, an empirical Bayes batch effect adjustment algorithm, was implemented on the normalized data set.
+## GSM1031553 Data quality assessment was conducted using the affyPLM package within the R statistical computing environment.  Data were filtered for present/absent frequency (only probe sets with present calls in all samples were used) and normalized using the RMA algorithm.  ComBat, an empirical Bayes batch effect adjustment algorithm, was implemented on the normalized data set.
+## GSM1031554 Data quality assessment was conducted using the affyPLM package within the R statistical computing environment.  Data were filtered for present/absent frequency (only probe sets with present calls in all samples were used) and normalized using the RMA algorithm.  ComBat, an empirical Bayes batch effect adjustment algorithm, was implemented on the normalized data set.
+##            platform_id  contact_name             contact_email
+## GSM1031549      GPL570 Grant,,Hughes grant.hughes@ucdenver.edu
+## GSM1031550      GPL570 Grant,,Hughes grant.hughes@ucdenver.edu
+## GSM1031551      GPL570 Grant,,Hughes grant.hughes@ucdenver.edu
+## GSM1031552      GPL570 Grant,,Hughes grant.hughes@ucdenver.edu
+## GSM1031553      GPL570 Grant,,Hughes grant.hughes@ucdenver.edu
+## GSM1031554      GPL570 Grant,,Hughes grant.hughes@ucdenver.edu
+##            contact_laboratory                      contact_institute
+## GSM1031549         Bowler Lab University of Colorado/National Jewish
+## GSM1031550         Bowler Lab University of Colorado/National Jewish
+## GSM1031551         Bowler Lab University of Colorado/National Jewish
+## GSM1031552         Bowler Lab University of Colorado/National Jewish
+## GSM1031553         Bowler Lab University of Colorado/National Jewish
+## GSM1031554         Bowler Lab University of Colorado/National Jewish
+##            contact_address contact_city contact_state contact_zip/postal_code
+## GSM1031549 1400 Jackson St       Denver            CO                   80220
+## GSM1031550 1400 Jackson St       Denver            CO                   80220
+## GSM1031551 1400 Jackson St       Denver            CO                   80220
+## GSM1031552 1400 Jackson St       Denver            CO                   80220
+## GSM1031553 1400 Jackson St       Denver            CO                   80220
+## GSM1031554 1400 Jackson St       Denver            CO                   80220
+##            contact_country
+## GSM1031549             USA
+## GSM1031550             USA
+## GSM1031551             USA
+## GSM1031552             USA
+## GSM1031553             USA
+## GSM1031554             USA
+##                                                                                     supplementary_file
+## GSM1031549 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1031nnn/GSM1031549/suppl/GSM1031549_10062C.CEL.gz
+## GSM1031550 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1031nnn/GSM1031550/suppl/GSM1031550_10071D.CEL.gz
+## GSM1031551 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1031nnn/GSM1031551/suppl/GSM1031551_10087S.CEL.gz
+## GSM1031552 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1031nnn/GSM1031552/suppl/GSM1031552_10097V.CEL.gz
+## GSM1031553 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1031nnn/GSM1031553/suppl/GSM1031553_10102O.CEL.gz
+## GSM1031554 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1031nnn/GSM1031554/suppl/GSM1031554_10104S.CEL.gz
+##            data_row_count                relation               relation.1
+## GSM1031549          12531 Reanalyzed by: GSE76705 Reanalyzed by: GSE122511
+## GSM1031550          12531 Reanalyzed by: GSE76705 Reanalyzed by: GSE122511
+## GSM1031551          12531 Reanalyzed by: GSE76705 Reanalyzed by: GSE122511
+## GSM1031552          12531 Reanalyzed by: GSE76705 Reanalyzed by: GSE122511
+## GSM1031553          12531 Reanalyzed by: GSE76705 Reanalyzed by: GSE122511
+## GSM1031554          12531 Reanalyzed by: GSE76705 Reanalyzed by: GSE122511
+##            age_enroll:ch1 ats_packyears:ch1 bmi:ch1 distwalked:ch1
+## GSM1031549           64.7                38   27.71           1600
+## GSM1031550           66.2                18   32.64           1805
+## GSM1031551           65.5                63   26.58           1620
+## GSM1031552           75.8                41   23.62           1010
+## GSM1031553           61.2                39   30.82           1641
+## GSM1031554           50.6              34.6   26.87           1460
+##            fev1_fvc_utah:ch1 fev1pp_utah:ch1 finalgold:ch1 gender:ch1
+## GSM1031549              0.46              37             3          1
+## GSM1031550              0.65              54             2          1
+## GSM1031551              0.49              53             2          0
+## GSM1031552              0.43              32             3          0
+## GSM1031553              0.78              94             0          1
+## GSM1031554              0.76              96             0          0
+##            parentalcopd:ch1 pctemph_slicer:ch1 pctgastrap_slicer:ch1
+## GSM1031549                1                 NA                    NA
+## GSM1031550                2                 NA                    NA
+## GSM1031551                0                 NA                    NA
+## GSM1031552                0                 NA                    NA
+## GSM1031553                1            1.58281               19.1088
+## GSM1031554                2                 NA                    NA
+##            smokcignow:ch1 tissue:ch1
+## GSM1031549              0       PBMC
+## GSM1031550              0       PBMC
+## GSM1031551              0       PBMC
+## GSM1031552              0       PBMC
+## GSM1031553              0       PBMC
+## GSM1031554              1       PBMC</code></pre>
+<pre class="r"><code>dis &lt;- &quot;finalgold:ch1&quot;
+
+######### DISEASE information
+table(p[,dis])</code></pre>
+<pre><code>## 
+## -1  0  1  2  3  4 
+## 10 42  8 34 25 17</code></pre>
+<pre class="r"><code># identify the way authors described COPD or CONTROLS
+old_labels &lt;- c(&quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,&quot;-1&quot;)
+new_labels &lt;- c(&quot;CONTROL&quot;,rep(&quot;COPD&quot;,5))
+
+# rename 
+p$DISEASE &lt;- mgsub(p[,dis],old_labels,new_labels)
+table(p$DISEASE)</code></pre>
+<pre><code>## 
+## CONTROL    COPD 
+##      42      94</code></pre>
+<pre class="r"><code># other infromation
+p$SMOKING_STATUS &lt;- p$`ats_packyears:ch1`
+p$AGE &lt;- p$`age_enroll:ch1`
+p$SEX &lt;- p$`gender:ch1`
+
+########### Gene.Symbol
+norm[[i]] &lt;- annotateEset(norm[[i]], hgu133plus2.db)</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:many mapping between keys and columns
+## &#39;select()&#39; returned 1:many mapping between keys and columns
+## &#39;select()&#39; returned 1:many mapping between keys and columns</code></pre>
+<pre class="r"><code>fData(norm[[i]])$GENE.SYMBOL &lt;- fData(norm[[i]])$SYMBOL
+
+# add it to the expression object
+colnames(norm[[i]]) &lt;- gsub(&quot;_..*&quot;,&quot;&quot;,colnames(norm[[i]]))
+pData(norm[[i]]) &lt;- p
+
+geo[[i]] &lt;- norm[[i]]
+
+
+
+########### Summary
+df &lt;- df %&gt;% add_row(
+        &quot;GSE&quot; = names(norm)[i],
+        &quot;CONTROL&quot; = table(p$DISEASE)[1],
+        &quot;COPD&quot; = table(p$DISEASE)[2],
+        &quot;COUNTRY&quot; = unique(p$contact_country),
+        &quot;SUBMISSION_DATE&quot; = paste(unique(p$submission_date),collapse = &quot;,&quot;),
+        &quot;PLATFORM&quot; = unique(p$platform_id),
+        &quot;NUM_GENES&quot; = length(unique(f$GENE.SYMBOL)),
+        &quot;AGE_MEAN&quot; = mean(as.numeric(p$AGE),na.rm = T),
+        &quot;AGE_MEDIAN&quot; = median(as.numeric(p$AGE),na.rm = T),
+        &quot;AGE_RANGE&quot; = paste(as.character(range(as.numeric(p$AGE),na.rm = T)),collapse= &quot;-&quot;),
+        &quot;SEX_F&quot; = p$SEX[1],
+        &quot;SEX_M&quot; = p$SEX[2],
+        &quot;PACKYEAR&quot; =  median(na.omit(as.numeric(p$PACKYEAR)))
+)</code></pre>
+</div>
+<div id="gse94916" class="section level2">
+<h2>GSE94916</h2>
+<pre class="r"><code>########################################### 
+## 4
+# Select the experiment
+i &lt;- 4
+p &lt;- pData(geo[[i]])
+head(p)</code></pre>
+<pre><code>##                     title geo_accession                status submission_date
+## GSM2491840   Malaria_rep1    GSM2491840 Public on Feb 01 2018     Feb 15 2017
+## GSM2491841      COPD_rep1    GSM2491841 Public on Feb 01 2018     Feb 15 2017
+## GSM2491842      COPD_rep2    GSM2491842 Public on Feb 01 2018     Feb 15 2017
+## GSM2491843   Malaria_rep2    GSM2491843 Public on Feb 01 2018     Feb 15 2017
+## GSM2491844 Pneumonia_rep1    GSM2491844 Public on Feb 01 2018     Feb 15 2017
+## GSM2491845    Health_rep1    GSM2491845 Public on Feb 01 2018     Feb 15 2017
+##            last_update_date type channel_count source_name_ch1 organism_ch1
+## GSM2491840      Feb 01 2018  RNA             1         Malaria Homo sapiens
+## GSM2491841      Feb 01 2018  RNA             1            COPD Homo sapiens
+## GSM2491842      Feb 01 2018  RNA             1            COPD Homo sapiens
+## GSM2491843      Feb 01 2018  RNA             1         Malaria Homo sapiens
+## GSM2491844      Feb 01 2018  RNA             1       Pneumonia Homo sapiens
+## GSM2491845      Feb 01 2018  RNA             1          Health Homo sapiens
+##                                      characteristics_ch1 treatment_protocol_ch1
+## GSM2491840 cell-type: peripheral blood mononuclear cells                    N/A
+## GSM2491841 cell-type: peripheral blood mononuclear cells                    N/A
+## GSM2491842 cell-type: peripheral blood mononuclear cells                    N/A
+## GSM2491843 cell-type: peripheral blood mononuclear cells                    N/A
+## GSM2491844 cell-type: peripheral blood mononuclear cells                    N/A
+## GSM2491845 cell-type: peripheral blood mononuclear cells                    N/A
+##            growth_protocol_ch1 molecule_ch1            extract_protocol_ch1
+## GSM2491840                 N/A    total RNA Phenol/Chloroform precipitation
+## GSM2491841                 N/A    total RNA Phenol/Chloroform precipitation
+## GSM2491842                 N/A    total RNA Phenol/Chloroform precipitation
+## GSM2491843                 N/A    total RNA Phenol/Chloroform precipitation
+## GSM2491844                 N/A    total RNA Phenol/Chloroform precipitation
+## GSM2491845                 N/A    total RNA Phenol/Chloroform precipitation
+##            label_ch1
+## GSM2491840       Cy3
+## GSM2491841       Cy3
+## GSM2491842       Cy3
+## GSM2491843       Cy3
+## GSM2491844       Cy3
+## GSM2491845       Cy3
+##                                                                                                  label_protocol_ch1
+## GSM2491840 Purified total RNA was amplified using the Agilent Low-Input QuickAmp Kit (Agilent, Waldbronn, Germany).
+## GSM2491841 Purified total RNA was amplified using the Agilent Low-Input QuickAmp Kit (Agilent, Waldbronn, Germany).
+## GSM2491842 Purified total RNA was amplified using the Agilent Low-Input QuickAmp Kit (Agilent, Waldbronn, Germany).
+## GSM2491843 Purified total RNA was amplified using the Agilent Low-Input QuickAmp Kit (Agilent, Waldbronn, Germany).
+## GSM2491844 Purified total RNA was amplified using the Agilent Low-Input QuickAmp Kit (Agilent, Waldbronn, Germany).
+## GSM2491845 Purified total RNA was amplified using the Agilent Low-Input QuickAmp Kit (Agilent, Waldbronn, Germany).
+##            taxid_ch1
+## GSM2491840      9606
+## GSM2491841      9606
+## GSM2491842      9606
+## GSM2491843      9606
+## GSM2491844      9606
+## GSM2491845      9606
+##                                                                                                                                                                                                     hyb_protocol
+## GSM2491840 Hybridization was performed following the Agilent protocol at 65°C over-night in an in-situ hybridization oven with slides mounted in Agilent hybridization chambers. Slides were rotated with 2 rpm.
+## GSM2491841 Hybridization was performed following the Agilent protocol at 65°C over-night in an in-situ hybridization oven with slides mounted in Agilent hybridization chambers. Slides were rotated with 2 rpm.
+## GSM2491842 Hybridization was performed following the Agilent protocol at 65°C over-night in an in-situ hybridization oven with slides mounted in Agilent hybridization chambers. Slides were rotated with 2 rpm.
+## GSM2491843 Hybridization was performed following the Agilent protocol at 65°C over-night in an in-situ hybridization oven with slides mounted in Agilent hybridization chambers. Slides were rotated with 2 rpm.
+## GSM2491844 Hybridization was performed following the Agilent protocol at 65°C over-night in an in-situ hybridization oven with slides mounted in Agilent hybridization chambers. Slides were rotated with 2 rpm.
+## GSM2491845 Hybridization was performed following the Agilent protocol at 65°C over-night in an in-situ hybridization oven with slides mounted in Agilent hybridization chambers. Slides were rotated with 2 rpm.
+##                                                                                                                                    scan_protocol
+## GSM2491840 Slides were scanned using the InnoScan 900 scanner (Innopsys, Carbonne France) at 2 µm/pixel resolution and analyzed with Mapix 6.5.0
+## GSM2491841 Slides were scanned using the InnoScan 900 scanner (Innopsys, Carbonne France) at 2 µm/pixel resolution and analyzed with Mapix 6.5.0
+## GSM2491842 Slides were scanned using the InnoScan 900 scanner (Innopsys, Carbonne France) at 2 µm/pixel resolution and analyzed with Mapix 6.5.0
+## GSM2491843 Slides were scanned using the InnoScan 900 scanner (Innopsys, Carbonne France) at 2 µm/pixel resolution and analyzed with Mapix 6.5.0
+## GSM2491844 Slides were scanned using the InnoScan 900 scanner (Innopsys, Carbonne France) at 2 µm/pixel resolution and analyzed with Mapix 6.5.0
+## GSM2491845 Slides were scanned using the InnoScan 900 scanner (Innopsys, Carbonne France) at 2 µm/pixel resolution and analyzed with Mapix 6.5.0
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                  data_processing
+## GSM2491840 Raw data was further processed using R (http://www.R-project.org) and limma (Ritchie, M.E., Phipson, B., Wu, D., Hu, Y., Law, C.W., Shi, W., and Smyth, G.K. (2015). limma powers differential expression analyses for RNA-sequencing and microarray studies. NAR 43(7), e47). Background correction was performed with the normexp model using negative control spots and and offset of 1. Spot intensities were quantile normalized between arrays.
+## GSM2491841 Raw data was further processed using R (http://www.R-project.org) and limma (Ritchie, M.E., Phipson, B., Wu, D., Hu, Y., Law, C.W., Shi, W., and Smyth, G.K. (2015). limma powers differential expression analyses for RNA-sequencing and microarray studies. NAR 43(7), e47). Background correction was performed with the normexp model using negative control spots and and offset of 1. Spot intensities were quantile normalized between arrays.
+## GSM2491842 Raw data was further processed using R (http://www.R-project.org) and limma (Ritchie, M.E., Phipson, B., Wu, D., Hu, Y., Law, C.W., Shi, W., and Smyth, G.K. (2015). limma powers differential expression analyses for RNA-sequencing and microarray studies. NAR 43(7), e47). Background correction was performed with the normexp model using negative control spots and and offset of 1. Spot intensities were quantile normalized between arrays.
+## GSM2491843 Raw data was further processed using R (http://www.R-project.org) and limma (Ritchie, M.E., Phipson, B., Wu, D., Hu, Y., Law, C.W., Shi, W., and Smyth, G.K. (2015). limma powers differential expression analyses for RNA-sequencing and microarray studies. NAR 43(7), e47). Background correction was performed with the normexp model using negative control spots and and offset of 1. Spot intensities were quantile normalized between arrays.
+## GSM2491844 Raw data was further processed using R (http://www.R-project.org) and limma (Ritchie, M.E., Phipson, B., Wu, D., Hu, Y., Law, C.W., Shi, W., and Smyth, G.K. (2015). limma powers differential expression analyses for RNA-sequencing and microarray studies. NAR 43(7), e47). Background correction was performed with the normexp model using negative control spots and and offset of 1. Spot intensities were quantile normalized between arrays.
+## GSM2491845 Raw data was further processed using R (http://www.R-project.org) and limma (Ritchie, M.E., Phipson, B., Wu, D., Hu, Y., Law, C.W., Shi, W., and Smyth, G.K. (2015). limma powers differential expression analyses for RNA-sequencing and microarray studies. NAR 43(7), e47). Background correction was performed with the normexp model using negative control spots and and offset of 1. Spot intensities were quantile normalized between arrays.
+##            platform_id    contact_name contact_laboratory contact_department
+## GSM2491840    GPL20844 Jochen,,Wilhelm        Wilhelm Lab              ECCPS
+## GSM2491841    GPL20844 Jochen,,Wilhelm        Wilhelm Lab              ECCPS
+## GSM2491842    GPL20844 Jochen,,Wilhelm        Wilhelm Lab              ECCPS
+## GSM2491843    GPL20844 Jochen,,Wilhelm        Wilhelm Lab              ECCPS
+## GSM2491844    GPL20844 Jochen,,Wilhelm        Wilhelm Lab              ECCPS
+## GSM2491845    GPL20844 Jochen,,Wilhelm        Wilhelm Lab              ECCPS
+##                contact_institute  contact_address contact_city contact_state
+## GSM2491840 University of Giessen Gaffkystrasse 11      Giessen        Hessen
+## GSM2491841 University of Giessen Gaffkystrasse 11      Giessen        Hessen
+## GSM2491842 University of Giessen Gaffkystrasse 11      Giessen        Hessen
+## GSM2491843 University of Giessen Gaffkystrasse 11      Giessen        Hessen
+## GSM2491844 University of Giessen Gaffkystrasse 11      Giessen        Hessen
+## GSM2491845 University of Giessen Gaffkystrasse 11      Giessen        Hessen
+##            contact_zip/postal_code contact_country
+## GSM2491840                   35392         Germany
+## GSM2491841                   35392         Germany
+## GSM2491842                   35392         Germany
+## GSM2491843                   35392         Germany
+## GSM2491844                   35392         Germany
+## GSM2491845                   35392         Germany
+##                                                                                              supplementary_file
+## GSM2491840 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2491nnn/GSM2491840/suppl/GSM2491840_257236313187_b1.gpr.gz
+## GSM2491841 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2491nnn/GSM2491841/suppl/GSM2491841_257236313187_b2.gpr.gz
+## GSM2491842 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2491nnn/GSM2491842/suppl/GSM2491842_257236313187_b3.gpr.gz
+## GSM2491843 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2491nnn/GSM2491843/suppl/GSM2491843_257236313187_b4.gpr.gz
+## GSM2491844 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2491nnn/GSM2491844/suppl/GSM2491844_257236313187_b5.gpr.gz
+## GSM2491845 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2491nnn/GSM2491845/suppl/GSM2491845_257236313187_b6.gpr.gz
+##            data_row_count                      cell-type:ch1
+## GSM2491840          62976 peripheral blood mononuclear cells
+## GSM2491841          62976 peripheral blood mononuclear cells
+## GSM2491842          62976 peripheral blood mononuclear cells
+## GSM2491843          62976 peripheral blood mononuclear cells
+## GSM2491844          62976 peripheral blood mononuclear cells
+## GSM2491845          62976 peripheral blood mononuclear cells</code></pre>
+<pre class="r"><code>dis &lt;- &quot;source_name_ch1&quot; 
+
+######### DISEASE information
+table(p[,dis])</code></pre>
+<pre><code>## 
+##      COPD    Health   Malaria Pneumonia 
+##         6         6         6         6</code></pre>
+<pre class="r"><code># identify the way authors described COPD or CONTROLS
+old_labels &lt;- c(&quot;Health&quot;,&quot;COPD&quot;)
+new_labels &lt;- c(&quot;CONTROL&quot;,&quot;COPD&quot;)
+
+# rename 
+p$DISEASE &lt;- mgsub(p[,dis],old_labels,new_labels)
+table(p$DISEASE)</code></pre>
+<pre><code>## 
+##   CONTROL      COPD   Malaria Pneumonia 
+##         6         6         6         6</code></pre>
+<pre class="r"><code># add it to the expression object
+pData(geo[[i]]) &lt;- p
+
+########### Gene.Symbol
+# We also add a new column with Gene.Symbol annotation
+f &lt;- fData(geo[[i]])
+head(f)</code></pre>
+<pre><code>##   ID COL ROW            NAME         SPOT_ID CONTROL_TYPE       REFSEQ
+## 1  1 192 328 GE_BrightCorner GE_BrightCorner          pos             
+## 2  2 192 326      DarkCorner      DarkCorner          pos             
+## 3  3 192 324      DarkCorner      DarkCorner          pos             
+## 4  4 192 322   A_21_P0014386   A_21_P0014386        FALSE             
+## 5  5 192 320   A_33_P3396872   A_33_P3396872        FALSE NM_001105533
+## 6  6 192 318   A_33_P3267760   A_33_P3267760        FALSE             
+##         GB_ACC LOCUSLINK_ID GENE_SYMBOL
+## 1                        NA            
+## 2                        NA            
+## 3                        NA            
+## 4                        NA            
+## 5 NM_001105533        79974       CPED1
+## 6                     54880        BCOR
+##                                           GENE_NAME UNIGENE_ID      ENSEMBL_ID
+## 1                                                                             
+## 2                                                                             
+## 3                                                                             
+## 4                                                                             
+## 5 cadherin-like and PC-esterase domain containing 1  Hs.189652                
+## 6                                  BCL6 corepressor            ENST00000378463
+##   TIGR_ID                                       ACCESSION_STRING
+## 1      NA                                                       
+## 2      NA                                                       
+## 3      NA                                                       
+## 4      NA                                                       
+## 5      NA ref|NM_001105533|gb|AK025639|gb|BC030538|tc|THC2601673
+## 6      NA                                    ens|ENST00000378463
+##       CHROMOSOMAL_LOCATION   CYTOBAND
+## 1                                    
+## 2                                    
+## 3                                    
+## 4                 unmapped           
+## 5 chr7:120901888-120901947 hs|7q31.31
+## 6   chrX:39909128-39909069  hs|Xp11.4
+##                                                                                                         DESCRIPTION
+## 1                                                                                                                  
+## 2                                                                                                                  
+## 3                                                                                                                  
+## 4                                                                                                                  
+## 5 Homo sapiens cadherin-like and PC-esterase domain containing 1 (CPED1), transcript variant 2, mRNA [NM_001105533]
+## 6                                            BCL6 corepressor [Source:HGNC Symbol;Acc:HGNC:20893] [ENST00000378463]
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           GO_ID
+## 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+## 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+## 3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+## 4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+## 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             GO:0005783(endoplasmic reticulum)
+## 6 GO:0000122(negative regulation of transcription from RNA polymerase II promoter)|GO:0000415(negative regulation of histone H3-K36 methylation)|GO:0003714(transcription corepressor activity)|GO:0004842(ubiquitin-protein ligase activity)|GO:0005515(protein binding)|GO:0005634(nucleus)|GO:0006351(transcription, DNA-dependent)|GO:0007507(heart development)|GO:0008134(transcription factor binding)|GO:0030502(negative regulation of bone mineralization)|GO:0031072(heat shock protein binding)|GO:0031519(PcG protein complex)|GO:0035518(histone H2A monoubiquitination)|GO:0042476(odontogenesis)|GO:0042826(histone deacetylase binding)|GO:0044212(transcription regulatory region DNA binding)|GO:0045892(negative regulation of transcription, DNA-dependent)|GO:0051572(negative regulation of histone H3-K4 methylation)|GO:0060021(palate development)|GO:0065001(specification of axis polarity)|GO:0070171(negative regulation of tooth mineralization)
+##                                                       SEQUENCE SPOT_ID_1
+## 1                                                                     NA
+## 2                                                                     NA
+## 3                                                                     NA
+## 4 AATACATGTTTTGGTAAACACTCGGTCAGAGCACCCTCTTTCTGTGGAATCAGACTGGCA        NA
+## 5 GCTTATCTCACCTAATACAGGGACTATGCAACCAAGAAACTGGAAATAAAAACAAAGATA        NA
+## 6 CATCAAAGCTACGAGAGATCCTACACACCCAGATTTAAAAAATAATAAAAACTTAAGGGC        NA</code></pre>
+<pre class="r"><code>f$GENE.SYMBOL &lt;- f$GENE_SYMBOL
+length(f$GENE.SYMBOL)</code></pre>
+<pre><code>## [1] 62976</code></pre>
+<pre class="r"><code>length(unique(f$GENE.SYMBOL))</code></pre>
+<pre><code>## [1] 34730</code></pre>
+<pre class="r"><code>fData(geo[[i]]) &lt;- f
+
+### Adding normalized data 
+colnames(norm[[i]]) &lt;- str_extract(colnames(norm[[i]]),regex(&quot;GSM[0-9]*&quot;))
+exprs(geo[[i]]) &lt;- norm[[i]]$E
+
+
+########### Summary
+df &lt;- df %&gt;% add_row(
+        &quot;GSE&quot; = names(norm)[i],
+        &quot;COPD&quot; = table(p$DISEASE)[2],
+        &quot;COUNTRY&quot; = unique(p$contact_country),
+        &quot;SUBMISSION_DATE&quot; = paste(unique(p$submission_date),collapse = &quot;,&quot;),
+        &quot;PLATFORM&quot; = unique(p$platform_id),
+        &quot;NUM_GENES&quot; = length(unique(f$GENE.SYMBOL))
+)</code></pre>
+</div>
+<div id="gse76705" class="section level2">
+<h2>GSE76705</h2>
+<pre class="r"><code>########################################### 
+## 5
+# Select the experiment
+i &lt;- 5
+p &lt;- pData(geo[[i]])
+head(p)</code></pre>
+<pre><code>##                     title geo_accession                status submission_date
+## GSM2036035 142975hp133a11    GSM2036035 Public on Jan 12 2016     Jan 11 2016
+## GSM2036036 142976HP133A11    GSM2036036 Public on Jan 12 2016     Jan 11 2016
+## GSM2036037 142977HP133A11    GSM2036037 Public on Jan 12 2016     Jan 11 2016
+## GSM2036038 142979HP133A11    GSM2036038 Public on Jan 12 2016     Jan 11 2016
+## GSM2036039 142980HP133A11    GSM2036039 Public on Jan 12 2016     Jan 11 2016
+## GSM2036040 142982HP133A11    GSM2036040 Public on Jan 12 2016     Jan 11 2016
+##            last_update_date type channel_count     source_name_ch1 organism_ch1
+## GSM2036035      Nov 14 2018  RNA             1 ECLIPSE_whole blood Homo sapiens
+## GSM2036036      Nov 14 2018  RNA             1 ECLIPSE_whole blood Homo sapiens
+## GSM2036037      Nov 14 2018  RNA             1 ECLIPSE_whole blood Homo sapiens
+## GSM2036038      Nov 14 2018  RNA             1 ECLIPSE_whole blood Homo sapiens
+## GSM2036039      Nov 14 2018  RNA             1 ECLIPSE_whole blood Homo sapiens
+## GSM2036040      Nov 14 2018  RNA             1 ECLIPSE_whole blood Homo sapiens
+##            characteristics_ch1 characteristics_ch1.1 characteristics_ch1.2
+## GSM2036035          fev1: 37.6           fev1fvc: 34               age: 60
+## GSM2036036          fev1: 91.8           fev1fvc: 78               age: 60
+## GSM2036037          fev1: 52.2           fev1fvc: 36               age: 70
+## GSM2036038          fev1: 36.5           fev1fvc: 29               age: 62
+## GSM2036039          fev1: 33.2           fev1fvc: 35               age: 70
+## GSM2036040          fev1: 30.6           fev1fvc: 29               age: 70
+##            characteristics_ch1.3 characteristics_ch1.4 characteristics_ch1.5
+## GSM2036035             gender: 1             packs: 17       cohort: ECLIPSE
+## GSM2036036             gender: 0             packs: 29       cohort: ECLIPSE
+## GSM2036037             gender: 0            packs: 100       cohort: ECLIPSE
+## GSM2036038             gender: 1             packs: 45       cohort: ECLIPSE
+## GSM2036039             gender: 1             packs: 28       cohort: ECLIPSE
+## GSM2036040             gender: 0             packs: 34       cohort: ECLIPSE
+##            molecule_ch1                                 extract_protocol_ch1
+## GSM2036035    total RNA Paxgene extraction was performed (see PMID 25265030)
+## GSM2036036    total RNA Paxgene extraction was performed (see PMID 25265030)
+## GSM2036037    total RNA Paxgene extraction was performed (see PMID 25265030)
+## GSM2036038    total RNA Paxgene extraction was performed (see PMID 25265030)
+## GSM2036039    total RNA Paxgene extraction was performed (see PMID 25265030)
+## GSM2036040    total RNA Paxgene extraction was performed (see PMID 25265030)
+##            label_ch1
+## GSM2036035    biotin
+## GSM2036036    biotin
+## GSM2036037    biotin
+## GSM2036038    biotin
+## GSM2036039    biotin
+## GSM2036040    biotin
+##                                                                                                                                                                label_protocol_ch1
+## GSM2036035 RNA samples were adjusted to 10ng/ul, and 50ng of total RNA was labelled using the Nugen Ovation RNA Amplification v2 procedure following manufacturer’s instructions.
+## GSM2036036 RNA samples were adjusted to 10ng/ul, and 50ng of total RNA was labelled using the Nugen Ovation RNA Amplification v2 procedure following manufacturer’s instructions.
+## GSM2036037 RNA samples were adjusted to 10ng/ul, and 50ng of total RNA was labelled using the Nugen Ovation RNA Amplification v2 procedure following manufacturer’s instructions.
+## GSM2036038 RNA samples were adjusted to 10ng/ul, and 50ng of total RNA was labelled using the Nugen Ovation RNA Amplification v2 procedure following manufacturer’s instructions.
+## GSM2036039 RNA samples were adjusted to 10ng/ul, and 50ng of total RNA was labelled using the Nugen Ovation RNA Amplification v2 procedure following manufacturer’s instructions.
+## GSM2036040 RNA samples were adjusted to 10ng/ul, and 50ng of total RNA was labelled using the Nugen Ovation RNA Amplification v2 procedure following manufacturer’s instructions.
+##            taxid_ch1
+## GSM2036035      9606
+## GSM2036036      9606
+## GSM2036037      9606
+## GSM2036038      9606
+## GSM2036039      9606
+## GSM2036040      9606
+##                                                                                                                                        hyb_protocol
+## GSM2036035 3.75ug of biotin labelled cDNA was hybridised to HG_Plus_2.0 GeneChips (Affymetrix, Santa Clara, CA, USA) following standard procedures.
+## GSM2036036 3.75ug of biotin labelled cDNA was hybridised to HG_Plus_2.0 GeneChips (Affymetrix, Santa Clara, CA, USA) following standard procedures.
+## GSM2036037 3.75ug of biotin labelled cDNA was hybridised to HG_Plus_2.0 GeneChips (Affymetrix, Santa Clara, CA, USA) following standard procedures.
+## GSM2036038 3.75ug of biotin labelled cDNA was hybridised to HG_Plus_2.0 GeneChips (Affymetrix, Santa Clara, CA, USA) following standard procedures.
+## GSM2036039 3.75ug of biotin labelled cDNA was hybridised to HG_Plus_2.0 GeneChips (Affymetrix, Santa Clara, CA, USA) following standard procedures.
+## GSM2036040 3.75ug of biotin labelled cDNA was hybridised to HG_Plus_2.0 GeneChips (Affymetrix, Santa Clara, CA, USA) following standard procedures.
+##                                                                                                                                                                                              scan_protocol
+## GSM2036035 Arrays were scanned using a GeneChip Scanner 3000 and fluorescent intensity for each feature on the array was obtained by using GeneChip Operating Software (Affymetrix, Santa Clara, CA, USA).
+## GSM2036036 Arrays were scanned using a GeneChip Scanner 3000 and fluorescent intensity for each feature on the array was obtained by using GeneChip Operating Software (Affymetrix, Santa Clara, CA, USA).
+## GSM2036037 Arrays were scanned using a GeneChip Scanner 3000 and fluorescent intensity for each feature on the array was obtained by using GeneChip Operating Software (Affymetrix, Santa Clara, CA, USA).
+## GSM2036038 Arrays were scanned using a GeneChip Scanner 3000 and fluorescent intensity for each feature on the array was obtained by using GeneChip Operating Software (Affymetrix, Santa Clara, CA, USA).
+## GSM2036039 Arrays were scanned using a GeneChip Scanner 3000 and fluorescent intensity for each feature on the array was obtained by using GeneChip Operating Software (Affymetrix, Santa Clara, CA, USA).
+## GSM2036040 Arrays were scanned using a GeneChip Scanner 3000 and fluorescent intensity for each feature on the array was obtained by using GeneChip Operating Software (Affymetrix, Santa Clara, CA, USA).
+##                                                                                                                                                                                                                                                                                                                                                                                                data_processing
+## GSM2036035 CEL files from both studies were processed together with RMA as implemented in the expresso function from the affy R package (version 1.48.0 ) with the parameters bgcorrect.method=rma, normalize.method=quantiles,pmcorrect.method=pmonly,summary.method=medianpolish). Prior to network analysis, gene expression values were centered and normalized by their standard error (signal to ratio).
+## GSM2036036 CEL files from both studies were processed together with RMA as implemented in the expresso function from the affy R package (version 1.48.0 ) with the parameters bgcorrect.method=rma, normalize.method=quantiles,pmcorrect.method=pmonly,summary.method=medianpolish). Prior to network analysis, gene expression values were centered and normalized by their standard error (signal to ratio).
+## GSM2036037 CEL files from both studies were processed together with RMA as implemented in the expresso function from the affy R package (version 1.48.0 ) with the parameters bgcorrect.method=rma, normalize.method=quantiles,pmcorrect.method=pmonly,summary.method=medianpolish). Prior to network analysis, gene expression values were centered and normalized by their standard error (signal to ratio).
+## GSM2036038 CEL files from both studies were processed together with RMA as implemented in the expresso function from the affy R package (version 1.48.0 ) with the parameters bgcorrect.method=rma, normalize.method=quantiles,pmcorrect.method=pmonly,summary.method=medianpolish). Prior to network analysis, gene expression values were centered and normalized by their standard error (signal to ratio).
+## GSM2036039 CEL files from both studies were processed together with RMA as implemented in the expresso function from the affy R package (version 1.48.0 ) with the parameters bgcorrect.method=rma, normalize.method=quantiles,pmcorrect.method=pmonly,summary.method=medianpolish). Prior to network analysis, gene expression values were centered and normalized by their standard error (signal to ratio).
+## GSM2036040 CEL files from both studies were processed together with RMA as implemented in the expresso function from the affy R package (version 1.48.0 ) with the parameters bgcorrect.method=rma, normalize.method=quantiles,pmcorrect.method=pmonly,summary.method=medianpolish). Prior to network analysis, gene expression values were centered and normalized by their standard error (signal to ratio).
+##            platform_id    contact_name            contact_institute
+## GSM2036035      GPL570 Peter,,Castaldi Brigham and Women&#39;s Hospital
+## GSM2036036      GPL570 Peter,,Castaldi Brigham and Women&#39;s Hospital
+## GSM2036037      GPL570 Peter,,Castaldi Brigham and Women&#39;s Hospital
+## GSM2036038      GPL570 Peter,,Castaldi Brigham and Women&#39;s Hospital
+## GSM2036039      GPL570 Peter,,Castaldi Brigham and Women&#39;s Hospital
+## GSM2036040      GPL570 Peter,,Castaldi Brigham and Women&#39;s Hospital
+##             contact_address contact_city contact_state contact_zip/postal_code
+## GSM2036035 181 Longwood Ave       Boston Massachusetts                   02115
+## GSM2036036 181 Longwood Ave       Boston Massachusetts                   02115
+## GSM2036037 181 Longwood Ave       Boston Massachusetts                   02115
+## GSM2036038 181 Longwood Ave       Boston Massachusetts                   02115
+## GSM2036039 181 Longwood Ave       Boston Massachusetts                   02115
+## GSM2036040 181 Longwood Ave       Boston Massachusetts                   02115
+##            contact_country
+## GSM2036035             USA
+## GSM2036036             USA
+## GSM2036037             USA
+## GSM2036038             USA
+## GSM2036039             USA
+## GSM2036040             USA
+##                                                                                             supplementary_file
+## GSM2036035 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2036nnn/GSM2036035/suppl/GSM2036035_142975hp133a11.cel.gz
+## GSM2036036 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2036nnn/GSM2036036/suppl/GSM2036036_142976HP133A11.CEL.gz
+## GSM2036037 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2036nnn/GSM2036037/suppl/GSM2036037_142977HP133A11.CEL.gz
+## GSM2036038 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2036nnn/GSM2036038/suppl/GSM2036038_142979HP133A11.CEL.gz
+## GSM2036039 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2036nnn/GSM2036039/suppl/GSM2036039_142980HP133A11.CEL.gz
+## GSM2036040 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2036nnn/GSM2036040/suppl/GSM2036040_142982HP133A11.CEL.gz
+##            data_row_count                 relation age:ch1 cohort:ch1 fev1:ch1
+## GSM2036035          54675 Reanalyzed by: GSE122511      60    ECLIPSE     37.6
+## GSM2036036          54675 Reanalyzed by: GSE122511      60    ECLIPSE     91.8
+## GSM2036037          54675 Reanalyzed by: GSE122511      70    ECLIPSE     52.2
+## GSM2036038          54675 Reanalyzed by: GSE122511      62    ECLIPSE     36.5
+## GSM2036039          54675 Reanalyzed by: GSE122511      70    ECLIPSE     33.2
+## GSM2036040          54675 Reanalyzed by: GSE122511      70    ECLIPSE     30.6
+##            fev1fvc:ch1 gender:ch1 packs:ch1
+## GSM2036035          34          1        17
+## GSM2036036          78          0        29
+## GSM2036037          36          0       100
+## GSM2036038          29          1        45
+## GSM2036039          35          1        28
+## GSM2036040          29          0        34</code></pre>
+<pre class="r"><code>######### DISEASE information
+# Selecting COPD samples
+p$DISEASE &lt;- &quot;NA&quot;
+p$DISEASE[which(p$`fev1fvc:ch1` &lt; 70)] &lt;- &quot;COPD&quot;
+p$DISEASE[which(p$`fev1fvc:ch1` &gt;= 70)] &lt;- &quot;CONTROL&quot;
+
+table(p$DISEASE)</code></pre>
+<pre><code>## 
+## CONTROL    COPD 
+##      86     143</code></pre>
+<pre class="r"><code># other infromation
+p$AGE &lt;- p$`age:ch1`
+p$SEX &lt;- p$`gender:ch1`
+p$PACKYEAR &lt;- p$`packs:ch1`
+
+
+# add it to the expression object
+pData(geo[[i]]) &lt;- p
+
+########### Gene.Symbol
+# We also add a new column with Gene.Symbol annotation
+f &lt;- fData(geo[[i]])
+head(f)</code></pre>
+<pre><code>##                  ID GB_ACC SPOT_ID Species Scientific Name Annotation Date
+## 1007_s_at 1007_s_at U48705      NA            Homo sapiens     Oct 6, 2014
+## 1053_at     1053_at M87338      NA            Homo sapiens     Oct 6, 2014
+## 117_at       117_at X51757      NA            Homo sapiens     Oct 6, 2014
+## 121_at       121_at X69699      NA            Homo sapiens     Oct 6, 2014
+## 1255_g_at 1255_g_at L36861      NA            Homo sapiens     Oct 6, 2014
+## 1294_at     1294_at L13852      NA            Homo sapiens     Oct 6, 2014
+##               Sequence Type                 Sequence Source
+## 1007_s_at Exemplar sequence Affymetrix Proprietary Database
+## 1053_at   Exemplar sequence                         GenBank
+## 117_at    Exemplar sequence Affymetrix Proprietary Database
+## 121_at    Exemplar sequence                         GenBank
+## 1255_g_at Exemplar sequence Affymetrix Proprietary Database
+## 1294_at   Exemplar sequence                         GenBank
+##                                                                                                                                Target Description
+## 1007_s_at                                         U48705 /FEATURE=mRNA /DEFINITION=HSU48705 Human receptor tyrosine kinase DDR gene, complete cds
+## 1053_at                                  M87338 /FEATURE= /DEFINITION=HUMA1SBU Human replication factor C, 40-kDa subunit (A1) mRNA, complete cds
+## 117_at                                                               X51757 /FEATURE=cds /DEFINITION=HSP70B Human heat-shock protein HSP70B&#39; gene
+## 121_at                                                                                   X69699 /FEATURE= /DEFINITION=HSPAX8A H.sapiens Pax8 mRNA
+## 1255_g_at L36861 /FEATURE=expanded_cds /DEFINITION=HUMGCAPB Homo sapiens guanylate cyclase activating protein (GCAP) gene exons 1-4, complete cds
+## 1294_at                      L13852 /FEATURE= /DEFINITION=HUME1URP Homo sapiens ubiquitin-activating enzyme E1 related protein mRNA, complete cds
+##           Representative Public ID
+## 1007_s_at                   U48705
+## 1053_at                     M87338
+## 117_at                      X51757
+## 121_at                      X69699
+## 1255_g_at                   L36861
+## 1294_at                     L13852
+##                                                              Gene Title
+## 1007_s_at discoidin domain receptor tyrosine kinase 1 /// microRNA 4640
+## 1053_at                     replication factor C (activator 1) 2, 40kDa
+## 117_at                             heat shock 70kDa protein 6 (HSP70B&#39;)
+## 121_at                                                     paired box 8
+## 1255_g_at                       guanylate cyclase activator 1A (retina)
+## 1294_at   microRNA 5193 /// ubiquitin-like modifier activating enzyme 7
+##                Gene Symbol     ENTREZ_GENE_ID
+## 1007_s_at DDR1 /// MIR4640  780 /// 100616237
+## 1053_at               RFC2               5982
+## 117_at               HSPA6               3310
+## 121_at                PAX8               7849
+## 1255_g_at           GUCA1A               2978
+## 1294_at   MIR5193 /// UBA7 7318 /// 100847079
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        RefSeq Transcript ID
+## 1007_s_at NM_001202521 /// NM_001202522 /// NM_001202523 /// NM_001954 /// NM_013993 /// NM_013994 /// NR_039783 /// XM_005249385 /// XM_005249386 /// XM_005249387 /// XM_005249389 /// XM_005272873 /// XM_005272874 /// XM_005272875 /// XM_005272877 /// XM_005275027 /// XM_005275028 /// XM_005275030 /// XM_005275031 /// XM_005275162 /// XM_005275163 /// XM_005275164 /// XM_005275166 /// XM_005275457 /// XM_005275458 /// XM_005275459 /// XM_005275461 /// XM_006715185 /// XM_006715186 /// XM_006715187 /// XM_006715188 /// XM_006715189 /// XM_006715190 /// XM_006725501 /// XM_006725502 /// XM_006725503 /// XM_006725504 /// XM_006725505 /// XM_006725506 /// XM_006725714 /// XM_006725715 /// XM_006725716 /// XM_006725717 /// XM_006725718 /// XM_006725719 /// XM_006725720 /// XM_006725721 /// XM_006725722 /// XM_006725827 /// XM_006725828 /// XM_006725829 /// XM_006725830 /// XM_006725831 /// XM_006725832 /// XM_006726017 /// XM_006726018 /// XM_006726019 /// XM_006726020 /// XM_006726021 /// XM_006726022 /// XR_427836 /// XR_430858 /// XR_430938 /// XR_430974 /// XR_431015
+## 1053_at                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         NM_001278791 /// NM_001278792 /// NM_001278793 /// NM_002914 /// NM_181471 /// XM_006716080
+## 117_at                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            NM_002155
+## 121_at                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    NM_003466 /// NM_013951 /// NM_013952 /// NM_013953 /// NM_013992
+## 1255_g_at                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        NM_000409 /// XM_006715073
+## 1294_at                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           NM_003335 /// NR_049825 /// XM_005265430 /// XM_006713321
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              Gene Ontology Biological Process
+## 1007_s_at                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           0001558 // regulation of cell growth // inferred from electronic annotation /// 0001952 // regulation of cell-matrix adhesion // inferred from electronic annotation /// 0006468 // protein phosphorylation // inferred from electronic annotation /// 0007155 // cell adhesion // traceable author statement /// 0007169 // transmembrane receptor protein tyrosine kinase signaling pathway // inferred from electronic annotation /// 0007565 // female pregnancy // inferred from electronic annotation /// 0007566 // embryo implantation // inferred from electronic annotation /// 0007595 // lactation // inferred from electronic annotation /// 0008285 // negative regulation of cell proliferation // inferred from electronic annotation /// 0010715 // regulation of extracellular matrix disassembly // inferred from mutant phenotype /// 0014909 // smooth muscle cell migration // inferred from mutant phenotype /// 0016310 // phosphorylation // inferred from electronic annotation /// 0018108 // peptidyl-tyrosine phosphorylation // inferred from electronic annotation /// 0030198 // extracellular matrix organization // traceable author statement /// 0038063 // collagen-activated tyrosine kinase receptor signaling pathway // inferred from direct assay /// 0038063 // collagen-activated tyrosine kinase receptor signaling pathway // inferred from mutant phenotype /// 0038083 // peptidyl-tyrosine autophosphorylation // inferred from direct assay /// 0043583 // ear development // inferred from electronic annotation /// 0044319 // wound healing, spreading of cells // inferred from mutant phenotype /// 0046777 // protein autophosphorylation // inferred from direct assay /// 0060444 // branching involved in mammary gland duct morphogenesis // inferred from electronic annotation /// 0060749 // mammary gland alveolus development // inferred from electronic annotation /// 0061302 // smooth muscle cell-matrix adhesion // inferred from mutant phenotype
+## 1053_at                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  0000278 // mitotic cell cycle // traceable author statement /// 0000722 // telomere maintenance via recombination // traceable author statement /// 0000723 // telomere maintenance // traceable author statement /// 0006260 // DNA replication // traceable author statement /// 0006271 // DNA strand elongation involved in DNA replication // traceable author statement /// 0006281 // DNA repair // traceable author statement /// 0006283 // transcription-coupled nucleotide-excision repair // traceable author statement /// 0006289 // nucleotide-excision repair // traceable author statement /// 0006297 // nucleotide-excision repair, DNA gap filling // traceable author statement /// 0015979 // photosynthesis // inferred from electronic annotation /// 0015995 // chlorophyll biosynthetic process // inferred from electronic annotation /// 0032201 // telomere maintenance via semi-conservative replication // traceable author statement
+## 117_at                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            0000902 // cell morphogenesis // inferred from electronic annotation /// 0006200 // ATP catabolic process // inferred from direct assay /// 0006950 // response to stress // inferred from electronic annotation /// 0006986 // response to unfolded protein // traceable author statement /// 0034605 // cellular response to heat // inferred from direct assay /// 0042026 // protein refolding // inferred from direct assay /// 0070370 // cellular heat acclimation // inferred from mutant phenotype
+## 121_at    0001655 // urogenital system development // inferred from sequence or structural similarity /// 0001656 // metanephros development // inferred from electronic annotation /// 0001658 // branching involved in ureteric bud morphogenesis // inferred from expression pattern /// 0001822 // kidney development // inferred from expression pattern /// 0001823 // mesonephros development // inferred from sequence or structural similarity /// 0003337 // mesenchymal to epithelial transition involved in metanephros morphogenesis // inferred from expression pattern /// 0006351 // transcription, DNA-templated // inferred from direct assay /// 0006355 // regulation of transcription, DNA-templated // inferred from electronic annotation /// 0007275 // multicellular organismal development // inferred from electronic annotation /// 0007417 // central nervous system development // inferred from expression pattern /// 0009653 // anatomical structure morphogenesis // traceable author statement /// 0030154 // cell differentiation // inferred from electronic annotation /// 0030878 // thyroid gland development // inferred from expression pattern /// 0030878 // thyroid gland development // inferred from mutant phenotype /// 0038194 // thyroid-stimulating hormone signaling pathway // traceable author statement /// 0039003 // pronephric field specification // inferred from sequence or structural similarity /// 0042472 // inner ear morphogenesis // inferred from sequence or structural similarity /// 0042981 // regulation of apoptotic process // inferred from sequence or structural similarity /// 0045893 // positive regulation of transcription, DNA-templated // inferred from direct assay /// 0045893 // positive regulation of transcription, DNA-templated // inferred from sequence or structural similarity /// 0045944 // positive regulation of transcription from RNA polymerase II promoter // inferred from direct assay /// 0048793 // pronephros development // inferred from sequence or structural similarity /// 0071371 // cellular response to gonadotropin stimulus // inferred from direct assay /// 0071599 // otic vesicle development // inferred from expression pattern /// 0072050 // S-shaped body morphogenesis // inferred from electronic annotation /// 0072073 // kidney epithelium development // inferred from electronic annotation /// 0072108 // positive regulation of mesenchymal to epithelial transition involved in metanephros morphogenesis // inferred from sequence or structural similarity /// 0072164 // mesonephric tubule development // inferred from electronic annotation /// 0072207 // metanephric epithelium development // inferred from expression pattern /// 0072221 // metanephric distal convoluted tubule development // inferred from sequence or structural similarity /// 0072278 // metanephric comma-shaped body morphogenesis // inferred from expression pattern /// 0072284 // metanephric S-shaped body morphogenesis // inferred from expression pattern /// 0072289 // metanephric nephron tubule formation // inferred from sequence or structural similarity /// 0072305 // negative regulation of mesenchymal cell apoptotic process involved in metanephric nephron morphogenesis // inferred from sequence or structural similarity /// 0072307 // regulation of metanephric nephron tubule epithelial cell differentiation // inferred from sequence or structural similarity /// 0090190 // positive regulation of branching involved in ureteric bud morphogenesis // inferred from sequence or structural similarity /// 1900212 // negative regulation of mesenchymal cell apoptotic process involved in metanephros development // inferred from sequence or structural similarity /// 1900215 // negative regulation of apoptotic process involved in metanephric collecting duct development // inferred from sequence or structural similarity /// 1900218 // negative regulation of apoptotic process involved in metanephric nephron tubule development // inferred from sequence or structural similarity /// 2000594 // positive regulation of metanephric DCT cell differentiation // inferred from sequence or structural similarity /// 2000611 // positive regulation of thyroid hormone generation // inferred from mutant phenotype /// 2000612 // regulation of thyroid-stimulating hormone secretion // inferred from mutant phenotype
+## 1255_g_at                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           0007165 // signal transduction // non-traceable author statement /// 0007601 // visual perception // inferred from electronic annotation /// 0007602 // phototransduction // inferred from electronic annotation /// 0007603 // phototransduction, visible light // traceable author statement /// 0016056 // rhodopsin mediated signaling pathway // traceable author statement /// 0022400 // regulation of rhodopsin mediated signaling pathway // traceable author statement /// 0030828 // positive regulation of cGMP biosynthetic process // inferred from electronic annotation /// 0031282 // regulation of guanylate cyclase activity // inferred from electronic annotation /// 0031284 // positive regulation of guanylate cyclase activity // inferred from electronic annotation /// 0050896 // response to stimulus // inferred from electronic annotation
+## 1294_at                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        0006464 // cellular protein modification process // inferred from direct assay /// 0016567 // protein ubiquitination // not recorded /// 0016567 // protein ubiquitination // inferred from electronic annotation /// 0019221 // cytokine-mediated signaling pathway // traceable author statement /// 0019941 // modification-dependent protein catabolic process // not recorded /// 0032020 // ISG15-protein conjugation // inferred from direct assay /// 0032480 // negative regulation of type I interferon production // traceable author statement /// 0045087 // innate immune response // traceable author statement
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 Gene Ontology Cellular Component
+## 1007_s_at 0005576 // extracellular region // inferred from electronic annotation /// 0005615 // extracellular space // inferred from direct assay /// 0005886 // plasma membrane // traceable author statement /// 0005887 // integral component of plasma membrane // traceable author statement /// 0016020 // membrane // inferred from electronic annotation /// 0016021 // integral component of membrane // inferred from electronic annotation /// 0043235 // receptor complex // inferred from direct assay /// 0070062 // extracellular vesicular exosome // inferred from direct assay
+## 1053_at                                                                                                                                                                                                                                                                                                                                                                                         0005634 // nucleus // inferred from electronic annotation /// 0005654 // nucleoplasm // traceable author statement /// 0005663 // DNA replication factor C complex // inferred from direct assay
+## 117_at                                                                                                                                                                                                                0005737 // cytoplasm // inferred from direct assay /// 0005814 // centriole // inferred from direct assay /// 0005829 // cytosol // inferred from direct assay /// 0008180 // COP9 signalosome // inferred from direct assay /// 0070062 // extracellular vesicular exosome // inferred from direct assay /// 0072562 // blood microparticle // inferred from direct assay
+## 121_at                                                                                                                                                                                                                                                                                                                                                                                                     0005634 // nucleus // inferred from direct assay /// 0005654 // nucleoplasm // inferred from sequence or structural similarity /// 0005730 // nucleolus // inferred from direct assay
+## 1255_g_at                                                                                                                          0001750 // photoreceptor outer segment // inferred from electronic annotation /// 0001917 // photoreceptor inner segment // inferred from electronic annotation /// 0005578 // proteinaceous extracellular matrix // inferred from electronic annotation /// 0005886 // plasma membrane // inferred from direct assay /// 0016020 // membrane // inferred from electronic annotation /// 0097381 // photoreceptor disc membrane // traceable author statement
+## 1294_at                                                                                                                                                                                                                                                                                                                                                                                                                                                           0005634 // nucleus // not recorded /// 0005829 // cytosol // not recorded /// 0005829 // cytosol // traceable author statement
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Gene Ontology Molecular Function
+## 1007_s_at 0000166 // nucleotide binding // inferred from electronic annotation /// 0004672 // protein kinase activity // inferred from electronic annotation /// 0004713 // protein tyrosine kinase activity // inferred from electronic annotation /// 0004714 // transmembrane receptor protein tyrosine kinase activity // traceable author statement /// 0005515 // protein binding // inferred from physical interaction /// 0005518 // collagen binding // inferred from direct assay /// 0005518 // collagen binding // inferred from mutant phenotype /// 0005524 // ATP binding // inferred from electronic annotation /// 0016301 // kinase activity // inferred from electronic annotation /// 0016740 // transferase activity // inferred from electronic annotation /// 0016772 // transferase activity, transferring phosphorus-containing groups // inferred from electronic annotation /// 0038062 // protein tyrosine kinase collagen receptor activity // inferred from direct assay /// 0046872 // metal ion binding // inferred from electronic annotation
+## 1053_at                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              0000166 // nucleotide binding // inferred from electronic annotation /// 0003677 // DNA binding // inferred from electronic annotation /// 0005515 // protein binding // inferred from physical interaction /// 0005524 // ATP binding // inferred from electronic annotation /// 0016851 // magnesium chelatase activity // inferred from electronic annotation /// 0017111 // nucleoside-triphosphatase activity // inferred from electronic annotation
+## 117_at                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  0000166 // nucleotide binding // inferred from electronic annotation /// 0005524 // ATP binding // inferred from electronic annotation /// 0019899 // enzyme binding // inferred from physical interaction /// 0031072 // heat shock protein binding // inferred from physical interaction /// 0042623 // ATPase activity, coupled // inferred from direct assay /// 0051082 // unfolded protein binding // inferred from direct assay
+## 121_at                                                                                                                                                                                                                                                                                                                                                                                                                                                                          0000979 // RNA polymerase II core promoter sequence-specific DNA binding // inferred from direct assay /// 0003677 // DNA binding // inferred from direct assay /// 0003677 // DNA binding // inferred from mutant phenotype /// 0003700 // sequence-specific DNA binding transcription factor activity // inferred from direct assay /// 0004996 // thyroid-stimulating hormone receptor activity // traceable author statement /// 0005515 // protein binding // inferred from physical interaction /// 0044212 // transcription regulatory region DNA binding // inferred from direct assay
+## 1255_g_at                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                0005509 // calcium ion binding // inferred from electronic annotation /// 0008048 // calcium sensitive guanylate cyclase activator activity // inferred from electronic annotation /// 0030249 // guanylate cyclase regulator activity // inferred from electronic annotation /// 0046872 // metal ion binding // inferred from electronic annotation
+## 1294_at                                                                                                                                                                                                                                                                                                                                                                                                                                                           0000166 // nucleotide binding // inferred from electronic annotation /// 0003824 // catalytic activity // inferred from electronic annotation /// 0004839 // ubiquitin activating enzyme activity // not recorded /// 0004842 // ubiquitin-protein transferase activity // not recorded /// 0005524 // ATP binding // inferred from electronic annotation /// 0008641 // small protein activating enzyme activity // inferred from electronic annotation /// 0016874 // ligase activity // inferred from electronic annotation /// 0019782 // ISG15 activating enzyme activity // inferred from direct assay</code></pre>
+<pre class="r"><code>f$GENE.SYMBOL &lt;- f$`Gene Symbol`
+length(f$GENE.SYMBOL)</code></pre>
+<pre><code>## [1] 54675</code></pre>
+<pre class="r"><code>length(unique(f$GENE.SYMBOL))</code></pre>
+<pre><code>## [1] 23521</code></pre>
+<pre class="r"><code>fData(geo[[i]]) &lt;- f
+
+
+########### Summary
+df &lt;- df %&gt;% add_row(
+        &quot;GSE&quot; = names(norm)[i],
+        &quot;CONTROL&quot; = table(p$DISEASE)[1],
+        &quot;COPD&quot; = table(p$DISEASE)[2],
+        &quot;COUNTRY&quot; = unique(p$contact_country),
+        &quot;SUBMISSION_DATE&quot; = paste(unique(p$submission_date),collapse = &quot;,&quot;),
+        &quot;PLATFORM&quot; = unique(p$platform_id),
+        &quot;NUM_GENES&quot; = length(unique(f$GENE.SYMBOL)),
+        &quot;AGE_MEAN&quot; = mean(as.numeric(p$AGE),na.rm = T),
+        &quot;AGE_MEDIAN&quot; = median(as.numeric(p$AGE),na.rm = T),
+        &quot;AGE_RANGE&quot; = paste(as.character(range(as.numeric(p$AGE),na.rm = T)),collapse= &quot;-&quot;),
+        &quot;SEX_F&quot; = p$SEX[1],
+        &quot;SEX_M&quot; = p$SEX[2],
+        &quot;PACKYEAR&quot; =  median(na.omit(as.numeric(p$PACKYEAR)))
+)</code></pre>
 </div>
 <div id="output" class="section level2">
 <h2>Output</h2>
 <p>This script produces the following data, and can be found in /home/ana/DataDNA/R-projects/Meta-analysis_COPD</p>
 <div class="alert alert-success">
-<p><strong>Data 1:</strong> RAW data in <code>/GEOquery</code><br />
-<strong>RDS:</strong> Data from GEOquery <code>OUTPUT(c(TODAY,&quot;_GEOquery-download.RDS&quot;))</code></p>
+<p><strong>RDS:</strong> ExpressionSet for each experiment with information of samples<br />
+<strong>Table:</strong> Table of experiment with info summarization</p>
 </div>
+<pre class="r"><code>##############################################################
+saveRDS(geo,OUTPUT(c(TODAY,&quot;_Step3_LungTissue-CURATED.RDS&quot;)))
+
+write_csv(df,OUTPUT(c(TODAY,&quot;_Step3_Summary.csv&quot;)))</code></pre>
 </div>
 <div id="session-info" class="section level2">
 <h2>Session Info</h2>
@@ -1797,28 +2822,96 @@ sapply(blood,getGEOSuppFiles,baseDir = here::here(&quot;GEOquery&quot;))</code><
 ## [11] LC_MEASUREMENT=it_IT.UTF-8 LC_IDENTIFICATION=C       
 ## 
 ## attached base packages:
-## [1] parallel  stats     graphics  grDevices utils     datasets  methods  
-## [8] base     
+## [1] stats4    parallel  stats     graphics  grDevices utils     datasets 
+## [8] methods   base     
 ## 
 ## other attached packages:
-## [1] GEOquery_2.56.0     Biobase_2.48.0      BiocGenerics_0.34.0
-## [4] stringr_1.4.0      
+##  [1] affycoretools_1.60.1 gsubfn_0.7           proto_1.0.0         
+##  [4] forcats_0.5.0        dplyr_1.0.2          purrr_0.3.4         
+##  [7] readr_1.4.0          tidyr_1.1.2          tibble_3.0.3        
+## [10] ggplot2_3.3.2        tidyverse_1.3.0      hgu133plus2.db_3.2.3
+## [13] org.Hs.eg.db_3.11.4  annotate_1.66.0      XML_3.99-0.5        
+## [16] AnnotationDbi_1.50.3 IRanges_2.22.2       S4Vectors_0.26.1    
+## [19] mgsub_1.7.2          GEOquery_2.56.0      Biobase_2.48.0      
+## [22] BiocGenerics_0.34.0  stringr_1.4.0       
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.5          compiler_4.0.2      pillar_1.4.6       
-##  [4] BiocManager_1.30.10 tools_4.0.2         digest_0.6.25      
-##  [7] evaluate_0.14       lifecycle_0.2.0     tibble_3.0.3       
-## [10] pkgconfig_2.0.3     rlang_0.4.7         cli_2.0.2          
-## [13] curl_4.3            yaml_2.2.1          xfun_0.18          
-## [16] dplyr_1.0.2         knitr_1.30          xml2_1.3.2         
-## [19] generics_0.0.2      vctrs_0.3.4         hms_0.5.3          
-## [22] rprojroot_1.3-2     tidyselect_1.1.0    glue_1.4.2         
-## [25] here_0.1            R6_2.4.1            fansi_0.4.1        
-## [28] rmarkdown_2.3       limma_3.44.3        purrr_0.3.4        
-## [31] readr_1.4.0         tidyr_1.1.2         magrittr_1.5       
-## [34] backports_1.1.10    ellipsis_0.3.1      htmltools_0.5.0    
-## [37] assertthat_0.2.1    BiocStyle_2.16.1    stringi_1.5.3      
-## [40] crayon_1.3.4</code></pre>
+##   [1] R.utils_2.10.1              tidyselect_1.1.0           
+##   [3] RSQLite_2.2.1               htmlwidgets_1.5.2          
+##   [5] grid_4.0.2                  BiocParallel_1.22.0        
+##   [7] munsell_0.5.0               codetools_0.2-16           
+##   [9] preprocessCore_1.50.0       withr_2.3.0                
+##  [11] colorspace_1.4-1            Category_2.54.0            
+##  [13] OrganismDbi_1.30.0          knitr_1.30                 
+##  [15] rstudioapi_0.11             GenomeInfoDbData_1.2.3     
+##  [17] hwriter_1.3.2               bit64_4.0.5                
+##  [19] rprojroot_1.3-2             vctrs_0.3.4                
+##  [21] generics_0.0.2              xfun_0.18                  
+##  [23] biovizBase_1.36.0           BiocFileCache_1.12.1       
+##  [25] R6_2.4.1                    GenomeInfoDb_1.24.2        
+##  [27] Glimma_1.16.0               locfit_1.5-9.4             
+##  [29] AnnotationFilter_1.12.0     bitops_1.0-6               
+##  [31] reshape_0.8.8               DelayedArray_0.14.1        
+##  [33] assertthat_0.2.1            scales_1.1.1               
+##  [35] nnet_7.3-14                 gtable_0.3.0               
+##  [37] affy_1.66.0                 ggbio_1.36.0               
+##  [39] ensembldb_2.12.1            rlang_0.4.7                
+##  [41] genefilter_1.70.0           splines_4.0.2              
+##  [43] rtracklayer_1.48.0          lazyeval_0.2.2             
+##  [45] dichromat_2.0-0             broom_0.7.1                
+##  [47] checkmate_2.0.0             BiocManager_1.30.10        
+##  [49] yaml_2.2.1                  reshape2_1.4.4             
+##  [51] modelr_0.1.8                GenomicFeatures_1.40.1     
+##  [53] backports_1.1.10            Hmisc_4.4-1                
+##  [55] RBGL_1.64.0                 tools_4.0.2                
+##  [57] tcltk_4.0.2                 affyio_1.58.0              
+##  [59] ellipsis_0.3.1              gplots_3.1.0               
+##  [61] ff_4.0.2                    RColorBrewer_1.1-2         
+##  [63] Rcpp_1.0.5                  plyr_1.8.6                 
+##  [65] base64enc_0.1-3             progress_1.2.2             
+##  [67] zlibbioc_1.34.0             RCurl_1.98-1.2             
+##  [69] prettyunits_1.1.1           rpart_4.1-15               
+##  [71] openssl_1.4.3               SummarizedExperiment_1.18.2
+##  [73] haven_2.3.1                 cluster_2.1.0              
+##  [75] fs_1.5.0                    here_0.1                   
+##  [77] magrittr_1.5                data.table_1.13.0          
+##  [79] reprex_0.3.0                ProtGenerics_1.20.0        
+##  [81] matrixStats_0.57.0          hms_0.5.3                  
+##  [83] evaluate_0.14               xtable_1.8-4               
+##  [85] jpeg_0.1-8.1                gcrma_2.60.0               
+##  [87] readxl_1.3.1                gridExtra_2.3              
+##  [89] compiler_4.0.2              biomaRt_2.44.1             
+##  [91] KernSmooth_2.23-17          crayon_1.3.4               
+##  [93] ReportingTools_2.28.0       R.oo_1.24.0                
+##  [95] htmltools_0.5.0             GOstats_2.54.0             
+##  [97] Formula_1.2-3               geneplotter_1.66.0         
+##  [99] lubridate_1.7.9             DBI_1.1.0                  
+## [101] dbplyr_1.4.4                rappdirs_0.3.1             
+## [103] BiocStyle_2.16.1            Matrix_1.2-18              
+## [105] cli_2.0.2                   R.methodsS3_1.8.1          
+## [107] GenomicRanges_1.40.0        pkgconfig_2.0.3            
+## [109] GenomicAlignments_1.24.0    foreign_0.8-80             
+## [111] foreach_1.5.0               xml2_1.3.2                 
+## [113] XVector_0.28.0              AnnotationForge_1.30.1     
+## [115] rvest_0.3.6                 VariantAnnotation_1.34.0   
+## [117] digest_0.6.25               graph_1.66.0               
+## [119] Biostrings_2.56.0           rmarkdown_2.3              
+## [121] cellranger_1.1.0            htmlTable_2.1.0            
+## [123] edgeR_3.30.3                GSEABase_1.50.1            
+## [125] curl_4.3                    Rsamtools_2.4.0            
+## [127] gtools_3.8.2                lifecycle_0.2.0            
+## [129] jsonlite_1.7.1              PFAM.db_3.11.4             
+## [131] askpass_1.1                 limma_3.44.3               
+## [133] BSgenome_1.56.0             fansi_0.4.1                
+## [135] pillar_1.4.6                lattice_0.20-41            
+## [137] GGally_2.0.0                httr_1.4.2                 
+## [139] survival_3.2-3              GO.db_3.11.4               
+## [141] glue_1.4.2                  iterators_1.0.12           
+## [143] png_0.1-7                   bit_4.0.4                  
+## [145] Rgraphviz_2.32.0            stringi_1.5.3              
+## [147] blob_1.2.1                  oligoClasses_1.50.4        
+## [149] DESeq2_1.28.1               latticeExtra_0.6-29        
+## [151] caTools_1.18.0              memoise_1.1.0</code></pre>
 </div>
 
 
