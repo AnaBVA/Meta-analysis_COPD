@@ -7,3 +7,6 @@ fig
 Tissue/download
 Tissue/output_data
 .httr-oauth
+
+Blood/download
+Blood/output_data
