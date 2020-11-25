@@ -65,7 +65,7 @@ library(annotate)
 library(hgu133plus2.db)
 library(tidyverse)
 library(gsubfn)
-library(oligo)
+library(affycoretools)
 ```
 
 
