@@ -88,8 +88,6 @@ Some GSE ids have more than one platform and samples that we will not use, so we
 
 ```{r}
 sapply(geo,length)
-# we want the experiment with 64 samples, so we reverse the element
-geo[[1]] <- rev(geo[[1]])
 
 saveRDS(geo,OUTPUT(c(TODAY,"_GEOquery-download.RDS")))
 ```
