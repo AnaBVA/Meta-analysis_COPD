@@ -1,5 +1,5 @@
 ---
-title: "6-meta-analysis.RMD"
+title: "6-Blood-meta-analysis.RMD"
 author: Ana BVA
 date: "`r BiocStyle::doc_date()`"
 output:
@@ -20,17 +20,16 @@ editor_options:
 
 We previously had run the following scripts:
 
-- 0: Data selection `/0-Data-selection.RMD`
 
-- 1: Dowload RAW data `/1-download_raw-data.RMD`
+- 1: Dowload RAW data `/1-Blood-download_raw-data.RMD`
 
-- 2: Normalizing data `/2-normalizing-data.RMD`
+- 2: Normalizing data `/2-Blood-normalizing-data.RMD`
 
-- 3: Curating data `/3-curatig-data.RMD`
+- 3: Curating data `/3-Blood-curatig-data.RMD`
 
-- 4: Differential gene expression analysis  `/4-DE.RMD`
+- 4: Differential gene expression analysis  `/4-Blood-DE.RMD`
 
-- 5: Merging data `/5-merge-data.RMD`
+- 5: Merging data `/5-Blood-merge-data.RMD`
 
 
 ## Input
@@ -45,31 +44,27 @@ This script needs the following files:
 
 ### Setup
 
-For running the script, type:
 
 ```{bash, eval = F}
 ssh -X aaltamirano@dna.lavis.unam.mx
 qrsh
-cd /mnt/Genoma/amedina/DataDNA/R-projects/Meta-analysis_COPD/output_data/.out
+cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/Blood/output_data/.out
  module load r/4.0.1 
 
-## OR
-ssh ana@10.200.0.42
-cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/output_data/.out
+nohup R -e "rmarkdown::render(here::here('Blood/vignettes/5-Blood-merge-data.RMD'))" > 5-Blood-merge-data.RMD &
 
-nohup R -e "rmarkdown::render(here::here('vignettes/6-meta-analysis.RMD'))" > 6-meta-analysis.RMD.out &
 ```
 
 The script can be found in: `r getwd() `. And the directories were set using
 `R/setup.R` (e.i. DATA, OUPUT, DOWNLOAD) as a small functions that will paste the names into complete paths.
 
-
-```{r setup}
+```{r setup,}
 knitr::opts_knit$set(root.dir = here::here())
-source(here::here("R/setup.R"))
+source(here::here("Blood/R/setup.R"))
 ```
 
 And this analysis is run in: `r getwd() `
+
 
 
 ### Libraries
@@ -86,17 +81,15 @@ library(RColorBrewer)
 
 ### Read data
 
-
 ```{r experiments}
-gse_table <- read.csv(OUTPUT("2020-10-07_Step3_Summary.csv"), row.names = 1)
-gse_table <- gse_table[-which(rownames(gse_table)=="GSE119040"),]
-kable(gse_table, caption = "GSE information") %>%
+gse_table <- read.csv(OUTPUT("2020-11-25_Step3_Summary.csv"), row.names = 1)
+kable(gse_table, caption = "GSE Blood information") %>%
   kableExtra::scroll_box(width = "100%", height = "100px")
 ```
 
 
 ```{r , class.source="bg-info",class.output="bg-info" }
-full_tables <- read_csv(OUTPUT("2020-10-08_Step5_Full_Tables.csv"))
+full_tables <- read_csv(OUTPUT("2020-11-28_Step5_Full_Tables.csv"))
 colnames(full_tables)
 
 ```
