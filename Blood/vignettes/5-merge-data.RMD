@@ -1,5 +1,5 @@
 ---
-title: "5-merge-data.RMD"
+title: "5-Blood-merge-data.RMD"
 author: Ana BVA
 date: "`r BiocStyle::doc_date()`"
 output:
@@ -19,15 +19,13 @@ editor_options:
 
 We previously had run the following scripts:
 
-- 0: Data selection `/0-Data-selection.RMD`
+- 1: Dowload RAW data `/1-Blood-download_raw-data.RMD`
 
-- 1: Dowload RAW data `/1-download_raw-data.RMD`
+- 2: Normalizing data `/2-Blood-normalizing-data.RMD`
 
-- 2: Normalizing data `/2-normalizing-data.RMD`
+- 3: Curating data `/3-Blood-curatig-data.RMD`
 
-- 3: Curating data `/3-curatig-data.RMD`
-
-- 4: Differential gene expression analysis  `/4-DE.RMD`
+- 4: Differential gene expression analysis  `/4-Blood-DE.RMD`
 
 
 ## Input
@@ -42,28 +40,22 @@ This script needs the following files:
 
 ### Setup
 
-For running the script, type:
-
 ```{bash, eval = F}
 ssh -X aaltamirano@dna.lavis.unam.mx
 qrsh
-cd /mnt/Genoma/amedina/DataDNA/R-projects/Meta-analysis_COPD/output_data/.out
+cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/Blood/output_data/.out
  module load r/4.0.1 
 
-## OR
-ssh ana@10.200.0.42
-cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/output_data/.out
+nohup R -e "rmarkdown::render(here::here('Blood/vignettes/5-Blood-merge-data.RMD'))" > 5-Blood-merge-data.RMD &
 
-nohup R -e "rmarkdown::render(here::here('vignettes/5-merge-data.RMD'))" > 5-merge-data.RMD.out &
 ```
 
 The script can be found in: `r getwd() `. And the directories were set using
 `R/setup.R` (e.i. DATA, OUPUT, DOWNLOAD) as a small functions that will paste the names into complete paths.
 
-
-```{r setup}
+```{r setup,}
 knitr::opts_knit$set(root.dir = here::here())
-source(here::here("R/setup.R"))
+source(here::here("Blood/R/setup.R"))
 ```
 
 And this analysis is run in: `r getwd() `
@@ -81,7 +73,7 @@ library(tidyverse)
 We will import DE results from all experiments. 
 
 ```{r}
-files <- list.files(OUTPUT("DE"), full.names = T)
+files <- list.files(here::here("Blood/output_data/DE"), full.names = T)
 files <- gtools::mixedsort(files)[-10]
 data <- files %>% map(read_csv)
 ```
@@ -137,7 +129,7 @@ full_tables <- full_tables[which(!is.na(full_tables$GENE.SYMBOL)),]
 full_tables
 
 ## Save data 
-write_csv(full_tables, path= OUTPUT(c(TODAY,"_Step5_Full_Tables.csv")))
+write_csv(full_tables, file= OUTPUT(c(TODAY,"_Step5_Full_Tables.csv")))
 ```
 
 
