@@ -1,0 +1,12 @@
+name: 8-Meta-analysis-COPD_Dashboard
+title: 8-Meta-analysis-COPD_Dashboard
+username:
+account: anabva
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3239448
+bundleId: 3864979
+url: https://anabva.shinyapps.io/8-Meta-analysis-COPD_Dashboard/
+when: 1605495540.56683
+asMultiple: FALSE
+asStatic: FALSE

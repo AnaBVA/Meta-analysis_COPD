@@ -1,5 +1,5 @@
 ---
-title: "4-Differential Geneexpression analysis.RMD"
+title: "4 Blood: Differential Gene expression analysis"
 author: Ana BVA
 date: "`r BiocStyle::doc_date()`"
 output:
@@ -19,49 +19,42 @@ editor_options:
 
 We previously had run the following scripts:
 
-- 0: Data selection `/0-Data-selection.RMD`
 
-- 1: Dowload RAW data `/1-download_raw-data.RMD`
+- 1: Dowload RAW data `/1-Blood-download_raw-data.RMD`
 
-- 2: Normalizing data `/2-normalizing-data.RMD`
+- 2: Normalizing data `/2-Blood-normalizing-data.RMD`
 
-- 3: Curating data `/3-curatig-data.RMD`
+- 3: Curating data `/3-Blood-curatig-data.RMD`
 
 
 ## Input
 
-This script needs the following files, which were obtained by step 3 `/3-curatig-data.RMD`:
+This script needs the following files, which were obtained by step 3 `/3-Blood-curatig-data.RMD`:
 
 <div class="alert alert-warning">
-  <strong>Table:</strong> GSE summary `2020-10-05_GSE_Summary.csv`   
-  <strong>Data 2:</strong> ExpressionSet objects with normalized and curated data `2020-10-05_GSE_LungTissue-CURATED.RDS`    
+  <strong>Table:</strong> GSE summary `Blood_2020-11-25_Step3_Summary.csv`   
+  <strong>Data 2:</strong> ExpressionSet objects with normalized and curated data `Blood_2020-11-25_Step3_LungTissue-CURATED.RDS`    
 </div>
 
 
 ## Setup
 
-For running the script, type:
-
 ```{bash, eval = F}
 ssh -X aaltamirano@dna.lavis.unam.mx
 qrsh
-cd /mnt/Genoma/amedina/DataDNA/R-projects/Meta-analysis_COPD/output_data/.out
+cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/Blood/output_data/.out
  module load r/4.0.1 
 
-## OR
-ssh ana@10.200.0.42
-cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/output_data/.out
+nohup R -e "rmarkdown::render(here::here('Blood/vignettes/3-Blood-curatig-data.RMD'))" > 3-Blood-curatig-data.RMD.out &
 
-nohup R -e "rmarkdown::render(here::here('vignettes/4-DE.RMD'))" > 4-DE.RMD.out &
 ```
 
 The script can be found in: `r getwd() `. And the directories were set using
 `R/setup.R` (e.i. DATA, OUPUT, DOWNLOAD) as a small functions that will paste the names into complete paths.
 
-
-```{r setup}
+```{r setup,}
 knitr::opts_knit$set(root.dir = here::here())
-source(here::here("R/setup.R"))
+source(here::here("Blood/R/setup.R"))
 ```
 
 And this analysis is run in: `r getwd() `
@@ -86,8 +79,8 @@ in the following table:
 
 
 ```{r experiments}
-gse_table <- read.csv(OUTPUT("2020-10-07_Step3_Summary.csv"), row.names = 1)
-kable(gse_table, caption = "GSE information") %>%
+gse_table <- read.csv(OUTPUT("2020-11-25_Step3_Summary.csv"), row.names = 1)
+kable(gse_table, caption = "GSE Blood information") %>%
   kableExtra::scroll_box(width = "100%", height = "100px")
 ```
 
@@ -141,7 +134,7 @@ wrap the following code into one function.
 
 save_DE <- function(i){
   
-g <- geo[[i]][[1]]
+g <- geo[[i]]
 message("plotting data")
 boxplot(g)
 hist(g)
@@ -157,7 +150,7 @@ colnames(de)
 
 # saving the results in a csv
 message("Saving data into csv")
-write_csv(de,path= OUTPUT(c("DE/",TODAY,"_Step4_TableGenes_",i,"_",names(geo[i]),".csv")))
+write_csv(de,file= here::here(str_c("Blood/output_data/DE/",TODAY,"_Blood_Step4_TableGenes_",i,"_",names(geo[i]),".csv")))
 
 # saving the results to later combine all the information 
  return(de)
@@ -171,7 +164,8 @@ write_csv(de,path= OUTPUT(c("DE/",TODAY,"_Step4_TableGenes_",i,"_",names(geo[i])
 
 
 ```{r, class.source="bg-info",class.output="bg-info"}
-geo <- readRDS(OUTPUT("2020-10-07_Step3_LungTissue-CURATED.RDS"))
+geo <- readRDS(OUTPUT("2020-11-25_Step3_LungTissue-CURATED.RDS"))
+names(geo) <- gsub(".GSE.*","",names(geo))
 names(geo)
 ```
 
@@ -207,161 +201,19 @@ i <- 3
 de3 <- save_DE(i)
 ```
 
-
-
 ### `r names(geo)[4] `
 
-This experiment is RNAseq, the data will be download from Recount2. I’m following Recount2 vignette
-Using `DESeq2`package we calculated DEG.  
-
 ```{r}
-## Specify design and switch to DESeq2 format
 i <- 4
-rse <-  geo[[i]][[1]]
-
- dds <- DESeqDataSet(rse, ~ DISEASE)
- 
- ## Perform DE analysis
- dds <- DESeq(dds)
- boxplot(log10(assays(dds)[["cooks"]]), range=0, las=2)
- 
- ntd <- normTransform(dds)
- meanSdPlot(assay(ntd))
- 
- res <- results(dds)
- plotMA(res, ylim=c(-2,2))
- 
- # Calculates de CI
- res$error <- qnorm(0.975)*res$lfcSE
- res$CI.L <- res$log2FoldChange-res$error
- res$CI.R <- res$log2FoldChange+res$error
- 
- res
- 
- 
-r <- as_tibble(res, rownames="rownames")
-r <- full_join(r,as.data.frame(rowData(geo[[i]][[1]])), by=c("rownames"="gene_id")) 
-r$logFC <- r$log2FoldChange
-
-colnames(r) <- str_c(colnames(r),"_",names(geo[i]))
-colnames(r)
-r <- r[,-12]
-colnames(r)
-
-write_csv(r,path= OUTPUT(c("DE/",TODAY,"_Step4_TableGenes_",i,"_",names(geo[i]),".csv")))
-
-
-de4 <- r
+de4 <- save_DE(i)
 ```
-
-
 
 ### `r names(geo)[5] `
 
 ```{r}
 i <- 5
-de5 <- save_DE(i)
+de4 <- save_DE(i)
 ```
-
-
-### `r names(geo)[6] `
-
-```{r}
-i <- 6
-de6 <- save_DE(i)
-```
-
-### `r names(geo)[7] `
-
-```{r}
-i <- 7
-de7 <- save_DE(i)
-```
-
-### `r names(geo)[8] `
-
-```{r}
-i <- 8
-de8 <- save_DE(i)
-```
-
-### `r names(geo)[9] `
-
-```{r}
-i <- 9
-de9 <- save_DE(i)
-```
-
-
-
-### `r names(geo)[10] `
-
-```{r}
-i <- 10
-de10 <- save_DE(i)
-```
-
-
-
-### `r names(geo)[11] `
-
-```{r}
-i <- 11
-de11 <- save_DE(i)
-```
-
-
-
-### `r names(geo)[12] `
-
-```{r }
-i <- 12
-rse <-  geo[[i]][[1]]
-
-counts <- t(apply(exprs(rse), 1,as.numeric))
-colnames(counts) <- colnames(rse)
-colData <- pData(rse)
-
-rse <- SummarizedExperiment(assays=list(counts=counts), colData=colData)
-rowData(rse) <- fData(geo[[i]][[1]])
-
- dds <- DESeqDataSet(rse, ~ DISEASE)
- 
- ## Perform DE analysis
- dds <- DESeq(dds)
- boxplot(log10(assays(dds)[["cooks"]]), range=0, las=2)
- 
- ntd <- normTransform(dds)
- meanSdPlot(assay(ntd))
- 
- res <- results(dds)
- plotMA(res, ylim=c(-2,2))
- 
- # Calculates de CI
- res$error <- qnorm(0.975)*res$lfcSE
- res$CI.L <- res$log2FoldChange-res$error
- res$CI.R <- res$log2FoldChange+res$error
- 
- res
-
-r <- as_tibble(res, rownames="rownames")
-r <- full_join(r,as.data.frame(rowData(rse)), by=c("rownames"="GENEID")) 
-r$logFC <- r$log2FoldChange
-
-colnames(r) <- str_c(colnames(r),"_",names(geo[i]))
-colnames(r)
-
-
-write_csv(r,path= OUTPUT(c("DE/",TODAY,"_Step4_TableGenes_",i,"_",names(geo[i]),".csv")))
-
-# saving the results to later combine all the information 
-de12 <- r
-```
-
-
-
-
-
 
 
 
