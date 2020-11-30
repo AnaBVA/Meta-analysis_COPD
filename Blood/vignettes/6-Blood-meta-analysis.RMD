@@ -300,7 +300,7 @@ meta$qval <- p.adjust(meta$pval,method="fdr")
 
 
 write.csv(meta, OUTPUT(c(TODAY,"_Step6_meta-analysis.csv")))
-# meta <- read.csv(OUTPUT("2020-10-16_Step6_meta-analysis.csv"))
+meta <- read.csv(OUTPUT(c(TODAY,"_Step6_meta-analysis.csv")))
 
 hist(meta$qval, main="q-value from Cochrane's test", xlab="FDR(P-value)")
 hist(meta$QEp, main="Test for Heterogeneity: Q test", xlab="QEp")
@@ -314,11 +314,14 @@ genesqval <- meta[meta$qval <= qval_cutoff,]
 #genesqval <- genesqval[genesqval$QEp < 0.2,]
 genesqval <-  genesqval[order(genesqval$qval),]
 
+#genesqval <- genesqval[genesqval$num_exp > 2, ]
+#genesqval <- genesqval[abs(genesqval$estimate) > .3, ]
+
 kable(genesqval, caption = "Meta-analysis")
 
-up <- "IL6"
-down <- "PRKCZ"
-ace2 <- "ACE2"
+up <- "SLC8A1"
+down <- "MS4A1"
+ace2 <- "AFF3"
 
 meta.plot(up)
 meta.plot(down)
