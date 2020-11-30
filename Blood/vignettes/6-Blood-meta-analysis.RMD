@@ -368,7 +368,7 @@ pheatmap(topgenes,
 We also checked for expression in TFs 
 
 ````{r}
-tfs <- read.csv(DATA("hs_hgnc_curated_tfs.txt"),col.names = "TF")
+tfs <- read.csv(here::here("Tissue/data/hs_hgnc_curated_tfs.txt"),col.names = "TF")
 
 qval_cutoff <- 0.1
 genesqval <- meta[meta$qval <= qval_cutoff,]
