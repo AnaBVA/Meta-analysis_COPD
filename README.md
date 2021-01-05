@@ -42,7 +42,7 @@ For running the dashboard app you can:
 
 - Access by: 
 
- https://anabva.shinyapps.io/8-Meta-analysis_Dashboard/
+https://anabva.shinyapps.io/8-Meta-analysis-COPD_Dashboard/
 
 - Install locally_
 
