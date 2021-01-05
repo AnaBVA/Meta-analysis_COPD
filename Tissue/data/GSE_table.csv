@@ -1,8 +1,0 @@
-GSE,Samples,Platform,Platform manufacturer,Year,Category
-GSE1122,15,[Hu6800],Affymetrix,2004,Normal lung & Emphysema & AAD
-GSE1650,30,[HG-U133A],Affymetrix,2004,Normal or mild Emphysema & severe Emphysema
-GSE27597,72,[HuEx-1_0-st],Affymetrix,2011,Normal lung & COPD and Emphysema
-GSE37768,38,[HG-U133_Plus_2],Affymetrix,2016,Normal lung & COPD
-GSE47460,582,Agilent-014850,Agilent,2013,Normal lung & COPD & ILD
-GSE57148,189,Illumina HiSeq 2000,Illumina,2015,Normal lung & COPD
-GSE8581,58,[HG-U133_Plus_2],Affymetrix,2008,Normal lung & COPD
