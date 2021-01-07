@@ -1,5 +1,5 @@
 ---
-title: "7-enrichment-analysis.RMD"
+title: "7-Blood-enrichment-analysis.RMD"
 author: Ana BVA
 date: "`r BiocStyle::doc_date()`"
 output:
@@ -19,19 +19,17 @@ editor_options:
 
 We previously had run the following scripts:
 
-- 0: Data selection `/0-Data-selection.RMD`
+- 1: Dowload RAW data `/1-Blood-download_raw-data.RMD`
 
-- 1: Dowload RAW data `/1-download_raw-data.RMD`
+- 2: Normalizing data `/2-Blood-normalizing-data.RMD`
 
-- 2: Normalizing data `/2-normalizing-data.RMD`
+- 3: Curating data `/3-Blood-curatig-data.RMD`
 
-- 3: Curating data `/3-curatig-data.RMD`
+- 4: Differential gene expression analysis  `/4-Blood-DE.RMD`
 
-- 4: Differential gene expression analysis  `/4-DE.RMD`
+- 5: Merging data `/5-Blood-merge-data.RMD`
 
-- 5: Merging data `/5-merge-data.RMD`
-
-- 6: Merging data `/6-meta-analysis.RMD`
+- 6: Merging data `/6-Blood-meta-analysis.RMD`
 
 
 
@@ -50,18 +48,17 @@ This script needs the following files:
 
 For running the script, type:
 
+
 ```{bash, eval = F}
 ssh -X aaltamirano@dna.lavis.unam.mx
 qrsh
-cd /mnt/Genoma/amedina/DataDNA/R-projects/Meta-analysis_COPD/output_data/.out
+cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/Blood/output_data/.out
  module load r/4.0.1 
 
-## OR
-ssh ana@10.200.0.42
-cd /home/ana/DataDNA/R-projects/Meta-analysis_COPD/output_data/.out
+nohup R -e "rmarkdown::render(here::here('Blood/vignettes/7-Blood-enrichment-pathways.RMD'))" > 7-Blood-enrichment-pathways.RMD &
 
-nohup R -e "rmarkdown::render(here::here('vignettes/8-enrichment-pathways.RMD'))" > 8-enrichment-pathways.RMD.out &
 ```
+
 
 The script can be found in: `r getwd() `. And the directories were set using
 `R/setup.R` (e.i. DATA, OUPUT, DOWNLOAD) as a small functions that will paste the names into complete paths.
@@ -69,7 +66,7 @@ The script can be found in: `r getwd() `. And the directories were set using
 
 ```{r setup}
 knitr::opts_knit$set(root.dir = here::here())
-source(here::here("R/setup.R"))
+source(here::here("Blood/R/setup.R"))
 ```
 
 And this analysis is run in: `r getwd() `
@@ -90,7 +87,7 @@ library(reactable)
 We will import DE results from all experiments. 
 
 ```{r}
-meta <- read_csv(OUTPUT("2020-10-16_Step6_meta-analysis.csv"))[,-1]
+meta <- read_csv(OUTPUT("2020-11-30_Step6_meta-analysis.csv"))[,-1]
 meta
 ```
 
@@ -102,21 +99,45 @@ meta
 qval_cutoff <- 0.5
 
 df <- meta %>%
-  filter(qval <= qval_cutoff) %>%
+  filter(qval <= qval_cutoff & meta$num_exp > 2)  %>%
   dplyr::arrange(desc(estimate))
 
-signature <- as.vector(df$qval)
+signature <- as.vector(df$estimate)
 names(signature) <- df$genes
 head(signature)
 ```
 
-### Enrichment analysis
+Then we will check KEGG, REACTOME and some databases from EnrichR
 
-We will use a function to generate plots from different databases
+
+```{r, eval=FALSE}
+# KEGG
+KEGG <- hyperdb_rgsets("KEGG", "92.0")
+
+#HALLMARL
+HALLMARK <- msigdb_gsets(species="Homo sapiens", category="H",clean = T)
+
+#ENRICHR
+TF_TJ <- enrichr_gsets("TRANSFAC_and_JASPAR_PWMs")
+
+enrichR<- enrichr_gsets("Jensen_DISEASES")
+
+enrichR<- enrichr_gsets("Jensen_TISSUES")
+
+enrichR<- enrichr_gsets("Chromosome_Location")
+
+enrichR<- enrichr_gsets("WikiPathways_2019_Human")
+
+enrichR<- enrichr_gsets("ClinVar_2019")
+
+```
+
+
 
 ```{r}
+KEGG <- hyperdb_rgsets("KEGG", "92.0")
 
-enrich <- function(DB){
+DB <- KEGG
   # Ranked Signature using the estimator from the meta analysis (FC)
   hyp_obj <- hypeR(names(signature),DB, test="hypergeometric", background=nrow(meta), fdr=0.5, plotting=TRUE)
   hyp_obj$plots[[1]]
@@ -142,43 +163,8 @@ enrich <- function(DB){
   # Generate markdown report
   #hyp_to_rmd(hyp_obj,"hypr-KEGG-genesets.rmd")
   #hyp_to_rmd(hyp_obj,"hypr-TRANSFAC_and_JASPAR_PWMs.rmd")
-}
-
 ```
 
-Then we will check KEGG, REACTOME and some databases from EnrichR
-
-
-```{r, eval=FALSE}
-# KEGG
-KEGG <- hyperdb_rgsets("KEGG", "92.0")
-enrich(KEGG)
-
-#HALLMARL
-HALLMARK <- msigdb_gsets(species="Homo sapiens", category="H",clean = T)
-enrich(HALLMARK)
-
-#ENRICHR
-TF_TJ <- enrichr_gsets("TRANSFAC_and_JASPAR_PWMs")
-enrich(TF_TJ)
-
-enrichR<- enrichr_gsets("Jensen_DISEASES")
-enrich(enrichR)
-
-enrichR<- enrichr_gsets("Jensen_TISSUES")
-enrich(enrichR)
-
-enrichR<- enrichr_gsets("Chromosome_Location")
-enrich(enrichR)
-
-enrichR<- enrichr_gsets("WikiPathways_2019_Human")
-enrich(enrichR)
-
-
-enrichR<- enrichr_gsets("ClinVar_2019")
-enrich(enrichR)
-
-```
 
 
 
