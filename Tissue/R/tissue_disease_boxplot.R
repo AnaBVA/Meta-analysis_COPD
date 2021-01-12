@@ -1,4 +1,6 @@
 library(tidyverse)
+library(ggpubr)
+library(oligo)
 
 # Data
 tissue <- readRDS(here::here("Tissue/output_data/2020-10-07_Step3_LungTissue-CURATED.RDS"))
@@ -37,3 +39,20 @@ ggplot(df,aes(x=GSE,y=expr, fill=Disease)) +
   geom_boxplot() + 
   #coord_cartesian(ylim = c(0,30)) +
   theme_classic() 
+
+
+dfvar <- df %>% 
+  group_by(genes,Disease) %>%
+  summarise(var=var(expr), mean=mean(expr)) 
+
+b <- ggplot(dfvar,aes(x=Disease,y=log(var), fill = Disease)) + 
+  geom_boxplot() + 
+  theme_classic()
+
+s <- ggplot(dfvar,aes(x=mean,y=var, group = Disease ,color = Disease, alpha= 0.7)) + 
+  geom_point() + 
+  geom_smooth(size = .5, color = "black",linetype="dashed", aes (fill = Disease)) +
+  theme_classic()
+
+ggarrange(b, s)
+
