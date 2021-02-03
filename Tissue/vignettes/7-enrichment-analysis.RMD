@@ -69,7 +69,7 @@ The script can be found in: `r getwd() `. And the directories were set using
 
 ```{r setup}
 knitr::opts_knit$set(root.dir = here::here())
-source(here::here("R/setup.R"))
+source(here::here("Tissue/R/setup.R"))
 ```
 
 And this analysis is run in: `r getwd() `
@@ -82,6 +82,7 @@ library(hypeR)
 library(WGCNA)
 library(tidyverse)
 library(reactable)
+library(ggpubr)
 ```
 
 
@@ -90,7 +91,7 @@ library(reactable)
 We will import DE results from all experiments. 
 
 ```{r}
-meta <- read_csv(OUTPUT("2020-10-16_Step6_meta-analysis.csv"))[,-1]
+meta <- read_csv(OUTPUT("2021-02-02_Step6_meta-analysis.csv"))
 meta
 ```
 
@@ -99,52 +100,33 @@ meta
 ### Ranking and weighted values
 
 ```{r , class.source="bg-info",class.output="bg-info" }
-qval_cutoff <- 0.5
+qval_cutoff <- 0.05
 
-df <- meta %>%
-  filter(qval <= qval_cutoff) %>%
-  dplyr::arrange(desc(estimate))
+up_df <- meta %>%
+  filter(qval.fixed <= qval_cutoff) %>%
+  filter(is.na(tau2) == F) %>%
+  #filter(TE.fixed > 0) %>%
+  dplyr::arrange(desc(TE.fixed))
+  #dplyr::arrange(estimate)
 
-signature <- as.vector(df$qval)
-names(signature) <- df$genes
-head(signature)
+up_signature <- as.vector(up_df$TE.fixed)
+names(up_signature) <- up_df$X1
+head(up_signature)
+
+
+down_df <- meta %>%
+  filter(qval.fixed <= qval_cutoff) %>%
+  filter(is.na(tau2) == F) %>%
+  #filter(TE.fixed < 0) %>%
+  dplyr::arrange((TE.fixed))
+  #dplyr::arrange(estimate)
+
+down_signature <- as.vector(down_df$TE.fixed)
+names(down_signature) <- down_df$X1
+head(down_signature)
 ```
 
 ### Enrichment analysis
-
-We will use a function to generate plots from different databases
-
-```{r}
-
-enrich <- function(DB){
-  # Ranked Signature using the estimator from the meta analysis (FC)
-  hyp_obj <- hypeR(names(signature),DB, test="hypergeometric", background=nrow(meta), fdr=0.5, plotting=TRUE)
-  hyp_obj$plots[[1]]
-  hyp_obj
-  
-  # Weighted Signature using as ranking the estimator and the weighted the qvalue
-  hyp_obj <- hypeR(signature, DB, test="kstest", background=nrow(meta),fdr=0.5, plotting=TRUE)
-  hyp_obj$plots[[1]]
-  hyp_obj
-  
-  # Show interactive table
-  #hyp_show(hyp_obj)
-  
-  # Plot dots plot
-  hyp_dots(hyp_obj) + theme_minimal()
-  
-  # Plot enrichment map
-  #hyp_emap(hyp_obj)
-  
-  # Plot hiearchy map
-  #hyp_hmap(hyp_obj)
-  
-  # Generate markdown report
-  #hyp_to_rmd(hyp_obj,"hypr-KEGG-genesets.rmd")
-  #hyp_to_rmd(hyp_obj,"hypr-TRANSFAC_and_JASPAR_PWMs.rmd")
-}
-
-```
 
 Then we will check KEGG, REACTOME and some databases from EnrichR
 
@@ -152,54 +134,50 @@ Then we will check KEGG, REACTOME and some databases from EnrichR
 ```{r, eval=FALSE}
 # KEGG
 KEGG <- hyperdb_rgsets("KEGG", "92.0")
-enrich(KEGG)
 
 #HALLMARL
 HALLMARK <- msigdb_gsets(species="Homo sapiens", category="H",clean = T)
-enrich(HALLMARK)
 
 #ENRICHR
 TF_TJ <- enrichr_gsets("TRANSFAC_and_JASPAR_PWMs")
-enrich(TF_TJ)
 
 enrichR<- enrichr_gsets("Jensen_DISEASES")
-enrich(enrichR)
 
 enrichR<- enrichr_gsets("Jensen_TISSUES")
-enrich(enrichR)
 
 enrichR<- enrichr_gsets("Chromosome_Location")
-enrich(enrichR)
 
 enrichR<- enrichr_gsets("WikiPathways_2019_Human")
-enrich(enrichR)
-
 
 enrichR<- enrichr_gsets("ClinVar_2019")
-enrich(enrichR)
+
 
 ```
 
 
 
 ```{r}
+# KEGG
+KEGG <- hyperdb_rgsets("KEGG", "92.0")
+
+#HALLMARL
 HALLMARK <- msigdb_gsets(species="Homo sapiens", category="H",clean = T)
+
+DB <- KEGG
 DB <- HALLMARK
   # Ranked Signature using the estimator from the meta analysis (FC)
-  hyp_obj <- hypeR(names(signature),DB, test="hypergeometric", background=nrow(meta), fdr=0.5, plotting=TRUE)
+  hyp_obj <- hypeR(names(up_signature),DB, test="hypergeometric", background=nrow(meta), fdr=0.5, plotting=TRUE)
   hyp_obj$plots[[1]]
   hyp_obj
+  hyp_dots(hyp_obj) + theme_minimal()
   
   # Weighted Signature using as ranking the estimator and the weighted the qvalue
-  hyp_obj <- hypeR(signature, DB, test="kstest", background=nrow(meta),fdr=0.5, plotting=TRUE)
+  hyp_obj <- hypeR(up_signature, DB, test="kstest", background=nrow(meta),fdr=0.5, plotting=TRUE)
   hyp_obj$plots[[1]]
-  hyp_obj
+  hyp_dots(hyp_obj) + theme_minimal(14)
   
   # Show interactive table
   #hyp_show(hyp_obj)
-  
-  # Plot dots plot
-  hyp_dots(hyp_obj) + theme_minimal()
   
   # Plot enrichment map
   #hyp_emap(hyp_obj)
@@ -214,35 +192,61 @@ DB <- HALLMARK
 
 
 ```{r}
-TF_TJ <- enrichr_gsets("TRANSFAC_and_JASPAR_PWMs")
-DB <- TF_TJ
   # Ranked Signature using the estimator from the meta analysis (FC)
-  hyp_obj <- hypeR(names(signature),DB, test="hypergeometric", background=nrow(meta), fdr=0.5, plotting=TRUE)
+  hyp_obj <- hypeR(names(down_signature),DB, test="hypergeometric", background=nrow(meta), fdr=0.5, plotting=TRUE)
   hyp_obj$plots[[1]]
   hyp_obj
   
-  # Weighted Signature using as ranking the estimator and the weighted the qvalue
-  hyp_obj <- hypeR(signature, DB, test="kstest", background=nrow(meta),fdr=0.5, plotting=TRUE)
-  hyp_obj$plots[[1]]
-  hyp_obj
-  
-  # Show interactive table
-  #hyp_show(hyp_obj)
-  
-  # Plot dots plot
-  hyp_dots(hyp_obj) + theme_minimal()
-  
-  # Plot enrichment map
-  #hyp_emap(hyp_obj)
-  
-  # Plot hiearchy map
-  #hyp_hmap(hyp_obj)
-  
-  # Generate markdown report
-  #hyp_to_rmd(hyp_obj,"hypr-KEGG-genesets.rmd")
-  #hyp_to_rmd(hyp_obj,"hypr-TRANSFAC_and_JASPAR_PWMs.rmd")
 ```
 
+```{r}
+
+# UP KEGG
+up_kegg_obj <- hypeR(up_signature, 
+                   KEGG, 
+                   test="kstest", 
+                   background=nrow(meta),
+                   fdr=0.1, plotting=TRUE)
+
+ up_kegg <-  hyp_dots(up_kegg_obj) + theme_minimal() + xlab("KEGG")
+ 
+ # UP HALLMARL
+ up_hall_obj <- hypeR(up_signature, 
+                   HALLMARK, 
+                   test="kstest", 
+                   background=nrow(meta),
+                   fdr=0.1, plotting=TRUE)
+
+ up_hall <-  hyp_dots(up_hall_obj) + theme_minimal() + xlab("HALLMARL")
+ 
+ # UP KEGG
+down_kegg_obj <- hypeR(down_signature, 
+                   KEGG, 
+                   test="kstest", 
+                   background=nrow(meta),
+                   fdr=0.1, plotting=TRUE)
+
+ down_kegg <-  hyp_dots(down_kegg_obj) + theme_minimal() + xlab("KEGG")
+ 
+ 
+  # DOWN HALLMARL
+ down_hall_obj <- hypeR(down_signature, 
+                   HALLMARK, 
+                   test="kstest", 
+                   background=nrow(meta),
+                   fdr=0.1, plotting=TRUE)
+
+ down_hall <-  hyp_dots(down_hall_obj) + theme_minimal() + xlab("HALLMARL")
+ 
+ 
+ggpubr::ggarrange(up_kegg,down_kegg,up_hall,down_hall, 
+                   common.legend = T,
+                   labels = c("UP","DOWN","UP","DOWN"),
+                   ncol = 2,nrow = 2) 
+
+  
+ 
+```
 
 
 
