@@ -68,6 +68,43 @@ library(gsubfn)
 library(affycoretools)
 ```
 
+### Function
+
+Function to obtain sample information after curated and stored in a tibble
+
+```{r}
+
+obtainInfo <- function(df){
+  df <- df %>% add_row(
+          "GSE" = names(norm)[i],
+          "CONTROL" = table(p$DISEASE)[1],
+          "COPD" = table(p$DISEASE)[2],
+          "OTHER" = sum(table(p$DISEASE)[-c(1,2)]),
+          "COUNTRY" = unique(p$contact_country),
+          "SUBMISSION_DATE" = paste(unique(p$submission_date),collapse = ","),
+          "PLATFORM" = unique(p$platform_id),
+          "NUM_GENES" = length(unique(f$GENE.SYMBOL)),
+          "H_AGE_MEAN" = mean(as.numeric(p$AGE[which(p$DISEASE=="CONTROL")]),na.rm = T),
+          "H_AGE_MEDIAN" = median(as.numeric(p$AGE[which(p$DISEASE=="CONTROL")]),na.rm = T),
+          "H_AGE_RANGE" = paste(as.character(range(as.numeric(p$AGE[which(p$DISEASE=="CONTROL")]),na.rm = T)),collapse= "-"),
+          "H_SEX_F" = table(p$SEX[which(p$DISEASE=="CONTROL")])[1],
+          "H_SEX_M" = table(p$SEX[which(p$DISEASE=="CONTROL")])[2],
+          "H_SMOKING_STATUS" = toString(c(names(table(p$SMOKING_STATUS[which(p$DISEASE=="CONTROL")])),table(p$SMOKING_STATUS[which(p$DISEASE=="CONTROL")]))),
+          "H_PACKYEAR" = median(na.omit(as.numeric(p$PACKYEAR[which(p$DISEASE=="CONTROL")]))),
+          "COPD_AGE_MEAN" = mean(as.numeric(p$AGE[which(p$DISEASE=="COPD")]),na.rm = T),
+          "COPD_AGE_MEDIAN" = median(as.numeric(p$AGE[which(p$DISEASE=="COPD")]),na.rm = T),
+          "COPD_AGE_RANGE" = paste(as.character(range(as.numeric(p$AGE[which(p$DISEASE=="COPD")]),na.rm = T)),collapse= "-"),
+          "COPD_SEX_F" = table(p$SEX[which(p$DISEASE=="COPD")])[1],
+          "COPD_SEX_M" = table(p$SEX[which(p$DISEASE=="COPD")])[2],
+          "COPD_SMOKING_STATUS" = toString(c(names(table(p$SMOKING_STATUS[which(p$DISEASE=="COPD")])),table(p$SMOKING_STATUS[which(p$DISEASE=="COPD")]))),
+          "COPD_PACKYEAR" = median(na.omit(as.numeric(p$PACKYEAR[which(p$DISEASE=="COPD")])))
+  )
+}
+
+```
+
+
+
 
 ## Curation
 
@@ -101,17 +138,25 @@ it will contain number of COPD samples, controls, experiment publication date, e
 df <- tibble("GSE"= NA,
              "CONTROL" = NA,
              "COPD" = NA,
+             "OTHER" = NA,
              "COUNTRY" = NA,
              "SUBMISSION_DATE" = NA,
              "PLATFORM" = NA,
              "NUM_GENES" = NA,
-             "AGE_MEAN" = NA,
-             "AGE_MEDIAN" = NA,
-             "AGE_RANGE" = NA,
-             "SEX_F" = NA,
-             "SEX_M" = NA,
-             "SMOKING_STATUS" = NA,
-             "PACKYEAR" = NA
+             "H_AGE_MEAN" = NA,
+             "H_AGE_MEDIAN" = NA,
+             "H_AGE_RANGE" = NA,
+             "H_SEX_F" = NA,
+             "H_SEX_M" = NA,
+             "H_SMOKING_STATUS" = NA,
+             "H_PACKYEAR" = NA,
+             "COPD_AGE_MEAN" = NA,
+             "COPD_AGE_MEDIAN" = NA,
+             "COPD_AGE_RANGE" = NA,
+             "COPD_SEX_F" = NA,
+             "COPD_SEX_M" = NA,
+             "COPD_SMOKING_STATUS" = NA,
+             "COPD_PACKYEAR" = NA
                  )
 
 ```
@@ -151,14 +196,13 @@ table(p$DISEASE)
 # other infromation
 NA
 
-
 # add it to the expression object
 pData(geo[[i]]) <- p
 
 ########### Gene.Symbol
 # We also add a new column with Gene.Symbol annotation
 f <- fData(geo[[i]])
-f[1,]
+#f[1,]
 
 # Parse column to have Gene.Symbol
 ff <- dplyr::mutate(f,
@@ -179,15 +223,7 @@ exprs(geo[[i]]) <- exprs(norm[[i]])
 
 
 ########### Summary
-df <- df %>% add_row(
-        "GSE" = names(norm)[i],
-        "CONTROL" = table(p$DISEASE)[1],
-        "COPD" = table(p$DISEASE)[2],
-        "COUNTRY" = unique(p$contact_country),
-        "SUBMISSION_DATE" = paste(unique(p$submission_date),collapse = ","),
-        "PLATFORM" = unique(p$platform_id),
-        "NUM_GENES" = length(unique(f$GENE.SYMBOL))
-)
+df <- obtainInfo(df)
 
 df <- df[-1,]
 ```
@@ -257,16 +293,7 @@ colnames(norm[[i]]) <- gsub("_..*","",colnames(norm[[i]]))
 exprs(geo[[i]]) <- exprs(norm[[i]])
 
 ########### Summary
-df <- df %>% add_row(
-        "GSE" = names(norm)[i],
-        "CONTROL" = table(p$DISEASE)[1],
-        "COPD" = table(p$DISEASE)[2],
-        "COUNTRY" = unique(p$contact_country),
-        "SUBMISSION_DATE" = paste(unique(p$submission_date),collapse = ","),
-        "PLATFORM" = unique(p$platform_id),
-        "NUM_GENES" = length(unique(f$GENE.SYMBOL)),
-        "SMOKING_STATUS" = toString(c(names(table(p$SMOKING_STATUS)),table(p$SMOKING_STATUS)))
-)
+df <- obtainInfo(df)
 
 
 ```
@@ -295,7 +322,7 @@ p$DISEASE <- mgsub(p[,dis],old_labels,new_labels)
 table(p$DISEASE)
 
 # other infromation
-p$SMOKING_STATUS <- p$`ats_packyears:ch1`
+p$PACKYEAR<- p$`ats_packyears:ch1`
 p$AGE <- p$`age_enroll:ch1`
 p$SEX <- p$`gender:ch1`
 
@@ -312,21 +339,7 @@ geo[[i]] <- norm[[i]]
 
 
 ########### Summary
-df <- df %>% add_row(
-        "GSE" = names(norm)[i],
-        "CONTROL" = table(p$DISEASE)[1],
-        "COPD" = table(p$DISEASE)[2],
-        "COUNTRY" = unique(p$contact_country),
-        "SUBMISSION_DATE" = paste(unique(p$submission_date),collapse = ","),
-        "PLATFORM" = unique(p$platform_id),
-        "NUM_GENES" = length(unique(f$GENE.SYMBOL)),
-        "AGE_MEAN" = mean(as.numeric(p$AGE),na.rm = T),
-        "AGE_MEDIAN" = median(as.numeric(p$AGE),na.rm = T),
-        "AGE_RANGE" = paste(as.character(range(as.numeric(p$AGE),na.rm = T)),collapse= "-"),
-        "SEX_F" = p$SEX[1],
-        "SEX_M" = p$SEX[2],
-        "PACKYEAR" =  median(na.omit(as.numeric(p$PACKYEAR)))
-)
+df <- obtainInfo(df)
 
 
 ```
@@ -372,15 +385,7 @@ exprs(geo[[i]]) <- norm[[i]]$E
 
 
 ########### Summary
-df <- df %>% add_row(
-        "GSE" = names(norm)[i],
-        "COPD" = table(p$DISEASE)[2],
-        "COUNTRY" = unique(p$contact_country),
-        "SUBMISSION_DATE" = paste(unique(p$submission_date),collapse = ","),
-        "PLATFORM" = unique(p$platform_id),
-        "NUM_GENES" = length(unique(f$GENE.SYMBOL))
-)
-
+df <- obtainInfo(df)
 
 ```
 
@@ -422,21 +427,7 @@ fData(geo[[i]]) <- f
 
 
 ########### Summary
-df <- df %>% add_row(
-        "GSE" = names(norm)[i],
-        "CONTROL" = table(p$DISEASE)[1],
-        "COPD" = table(p$DISEASE)[2],
-        "COUNTRY" = unique(p$contact_country),
-        "SUBMISSION_DATE" = paste(unique(p$submission_date),collapse = ","),
-        "PLATFORM" = unique(p$platform_id),
-        "NUM_GENES" = length(unique(f$GENE.SYMBOL)),
-        "AGE_MEAN" = mean(as.numeric(p$AGE),na.rm = T),
-        "AGE_MEDIAN" = median(as.numeric(p$AGE),na.rm = T),
-        "AGE_RANGE" = paste(as.character(range(as.numeric(p$AGE),na.rm = T)),collapse= "-"),
-        "SEX_F" = p$SEX[1],
-        "SEX_M" = p$SEX[2],
-        "PACKYEAR" =  median(na.omit(as.numeric(p$PACKYEAR)))
-)
+df <- obtainInfo(df)
 
 ```
 

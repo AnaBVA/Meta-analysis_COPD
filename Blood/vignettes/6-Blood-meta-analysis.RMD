@@ -158,6 +158,7 @@ logFC %>%
 adj_pvalue <- 0.05
 
 ap <- left_join(adjp,logFC,by = c("GENE.SYMBOL" = "GENE.SYMBOL", "GSE" = "GSE")) %>%
+  filter(adjP < adj_pvalue) %>% 
   select(-adjP) %>%
   spread(GSE,logFC) %>% 
   replace(is.na(.), 0)
@@ -173,13 +174,14 @@ down <- ap %>%
 
 ### UP 
 m <- make_comb_mat(up,mode = "distinct")
+#m <- m[comb_degree(m) >= 1]
 m <- m[comb_degree(m) >= 5 | comb_degree(m) == 1]
 
 #pdf("upsetUP.pdf",width = 14,height = 6)
 ht <- draw(UpSet(m,
-      pt_size = unit(3, "mm"), 
+      pt_size = unit(5, "mm"), 
       lwd = 3,
-      comb_col = c("red", "grey","grey","grey", "black","blue")[comb_degree(m)])
+      comb_col = c("red", "#5c5c5c","#5c5c5c","#5c5c5c", "black","blue")[comb_degree(m)])
       #order.by = "freq"
     )
 
@@ -187,7 +189,7 @@ od = column_order(ht)
 cs = comb_size(m)
 decorate_annotation("intersection_size", {
     grid.text(cs[od], x = seq_along(cs), y = unit(cs[od], "native") + unit(2, "pt"), 
-        default.units = "native", just = "bottom", gp = gpar(fontsize = 8))
+        default.units = "native", just = "bottom", gp = gpar(fontsize = 12))
 })
 
 #dev.off()
@@ -198,13 +200,14 @@ sample(up$GENE.SYMBOL[extract_comb(m,"11111")],5)
 
 ### DOWN
 m <- make_comb_mat(down,mode = "distinct")
+#m <- m[comb_degree(m) >= 1]
 m <- m[comb_degree(m) >= 5 | comb_degree(m) == 1] 
 
 #pdf("upsetDOWN.pdf",width = 14,height = 6)
 ht <- draw(UpSet(m,
-      pt_size = unit(3, "mm"), 
+      pt_size = unit(4, "mm"), 
       lwd = 3,
-      comb_col = c("blue", "grey","grey","grey", "black","red")[comb_degree(m)])
+      comb_col = c("blue", "#5c5c5c","#5c5c5c","#5c5c5c", "black","red")[comb_degree(m)])
       #order.by = "freq"
     )
 #dev.off()
@@ -213,7 +216,7 @@ od = column_order(ht)
 cs = comb_size(m)
 decorate_annotation("intersection_size", {
     grid.text(cs[od], x = seq_along(cs), y = unit(cs[od], "native") + unit(2, "pt"), 
-        default.units = "native", just = "bottom", gp = gpar(fontsize = 8))
+        default.units = "native", just = "bottom", gp = gpar(fontsize = 12))
 })
 comb_size(m)
 
@@ -313,8 +316,8 @@ Meta-analysis for all genes. We are saving the results in a new dataframe.
 gs <- full_tables$GENE.SYMBOL
 
 meta <- data.frame(genes = 0,
-                   TE.fixed = 0,
-                   pval.fixed = 0,
+                   TE.random = 0,
+                   pval.random = 0,
                    tau2 = 0,
                    I2 = 0,
                    pval.Q = 0,
@@ -335,7 +338,8 @@ full_tables[full_tables == 0] <- NA
 
 length(gm)
 
-for (i in gm) {
+for (i in gm) { 
+#for( i in gm[18705:length(gm)]){ #problemas con 
   gene <- full_tables[which(full_tables$GENE.SYMBOL == i),]
   dat <- data.frame(
     yi = as.numeric(gene[,FC]),
@@ -345,6 +349,7 @@ for (i in gm) {
   )
   dat$study <- rownames(gse_table)
   dat$country <- gse_table$COUNTRY
+  
 
   # meta analysis with random models "REML"
   m1 <- metagen(TE = yi, 
@@ -361,7 +366,7 @@ for (i in gm) {
   # res <- suppressWarnings(metafor::rma(yi, sei=sei,control=list(stepadj=.5,maxiter=1000)))
   num_exp <- sum(!is.na(dat$yi))
   meta <- rbind(meta,
-                c(i, m1$TE.fixed,m1$pval.fixed,m1$tau2,m1$I2,m1$pval.Q,num_exp))
+                c(i, m1$TE.random,m1$pval.random,m1$tau2,m1$I2,m1$pval.Q,num_exp))
   #meta <- rbind(meta,c(i,res$QEp,res$beta,res$pval,res$se,res$H2,res$tau2,res$I2,num_exp))
 }
 
@@ -373,61 +378,75 @@ rownames(meta) <- meta$genes
 meta <- meta[,-1] %>% mutate_all(as.numeric)
 
 # FDR correction
-meta$qval.fixed <- p.adjust(meta$pval.fixed,method="fdr")
+meta$qval.random <- p.adjust(meta$pval.random,method="fdr")
 meta$qval.Q <- p.adjust(meta$pval.Q, method = "fdr")
 
-write.csv(meta, OUTPUT(c(TODAY,"_Step6_meta-analysis.csv")))
-#meta <- read.csv(OUTPUT("2020-11-30_Step6_meta-analysis.csv"))
+#write.csv(meta, OUTPUT(c(TODAY,"_Step6_meta-analysis.csv")))
+meta <- read_csv("Blood/output_data/Blood_2021-03-01_Step6_meta-analysis.csv")
 
-# hist(meta$qval, main="q-value from Cochrane's test", xlab="FDR(P-value)")
-# hist(meta$QEp, main="Test for Heterogeneity: Q test", xlab="QEp")
-# hist(meta$estimate, main = "Estimate vlues", xlab = "estimate values")
-# hist(meta$tau2,100)
-# hist(meta$I2)
-# hist(meta$H2)
+### Distribution of statistics 
 
-hist(meta$qval.fixed, main="q-value from REML", xlab="q-value",100)
-hist(meta$pval.Q, main="q-value for Heterogeneity: Q test", xlab="q-value for Q")
-hist(meta$TE.fixed, main = "Estimate values", xlab = "estimate values",100)
-hist(meta$tau2,100)
-hist(meta$I2)
+bqval <- ggplot(meta) +
+ aes(x = qval.random) +
+ geom_histogram(bins = 55L, fill = "#c45a75") +
+ labs(x = "q-value from REML") +
+ theme_classic()
+
+bq <- ggplot(meta) +
+ aes(x = qval.Q) +
+ geom_histogram(bins = 55L, fill = "#c45a75") +
+ labs(x = "q-value for Q test") +
+ theme_classic()
+
+bte <- ggplot(meta) +
+ aes(x = TE.random) +
+ geom_histogram(bins = 55L, fill = "#c45a75") +
+ labs(x = "Estimate values") +
+ theme_classic()
+
+btau <- ggplot(meta) +
+ aes(x = tau2) +
+ geom_histogram(bins = 55L, fill = "#c45a75") +
+ labs(x = "Tau2") +
+ theme_classic()
+
+bi2 <- ggplot(meta) +
+ aes(x = I2) +
+ geom_histogram(bins = 55L, fill = "#c45a75") +
+ labs(x = "I2") +
+ theme_classic()
 
 
+ggpubr::ggarrange(bqval,bq,bte,btau,bi2,
+                  nrow =2,
+                  ncol =3)
+
+### Selecting genes
 qval_cutoff <- 0.05
-genesqval <- meta[meta$qval.fixed <= qval_cutoff,]
-#genesqval <- genesqval[genesqval$QEp < 0.2,]
-genesqval <-  genesqval[order(genesqval$qval.fixed),]
 
-#genesqval <- genesqval[genesqval$num_exp > 2, ]
-#genesqval <- genesqval[abs(genesqval$estimate) > .3, ]
+genesqval <- meta %>% 
+  filter(meta$qval.random <= qval_cutoff & I2 < 0.40 & num_exp > 3) %>% 
+  arrange(TE.random)
 
-kable(genesqval, caption = "Meta-analysis")
+genesqval
 
+kable(c(head(genesqval),tail(genesqval)), caption = "Meta-analysis")
 
-up <- "IRAK3"
-meta.plot(up)
-up <- "IFIT1"
-meta.plot(up)
+### Forest plot
+meta.plot(genesqval$X1[1])
+meta.plot(genesqval$X1[nrow(genesqval)])
 
-down <- "AFF3"
-meta.plot(down)
-down <- "MYOM2"
-meta.plot(down)
-down <- "HLA-DQA1"
-meta.plot(down)
+### logFC values from selected genes
+topgenes <- full_tables %>% 
+  filter(full_tables$GENE.SYMBOL %in% genesqval$X1) %>% 
+  select(GENE.SYMBOL,contains("logFC"))
 
-
-topgenes <- full_tables[full_tables$GENE.SYMBOL %in% rownames(genesqval),c("GENE.SYMBOL",FC)]
+## as dataframe
 topgenes <- column_to_rownames(topgenes,"GENE.SYMBOL")
 
+# scaling data
 topgenes <- scale(topgenes)
 
-# keeping genes with less than 2 NAs
-topgenes <- topgenes[which(rowSums(is.na(topgenes)) <= 2),]
-#topgenes <- na.omit(topgenes)
-
-#ordering rows
-#topgenes <- topgenes[order(rowMeans(topgenes),decreasing = T),]
 
 #"BrBG"
 color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
@@ -436,9 +455,9 @@ breaks <- c(seq(min(topgenes,na.rm = T),-0.1,length.out = 7),0,seq(0.1,max(topge
 ```
 
 ```{r fig.height=15}
-
+dim(topgenes)
 pheatmap(topgenes,
-         main = str_c("Genes with q-value less than ",qval_cutoff),
+         main = str_c("Genes with q-value less than ",qval_cutoff, " (ngenes = ",dim(topgenes)[1], ")"),
          color = color,
          breaks = breaks,
          fontsize_row = 7,
@@ -457,29 +476,25 @@ pheatmap(topgenes,
 
 
 ```{r}
-mo <- meta[order(meta$TE.fixed),]
-mo <- filter(mo,mo$qval.fixed <= 0.05)
-mo <- filter(mo,mo$num_exp >=4)
-mo <- filter(mo,is.na(mo$tau2) == F)
-mo <- rbind(head(mo,15),tail(mo,15))
+mo <-  genesqval %>% 
+  arrange(TE.random)
 
+mo <- rbind(head(mo,15), tail(mo,15))
 
-topgenes <- full_tables[full_tables$GENE.SYMBOL %in% rownames(mo),c("GENE.SYMBOL",FC)] %>%
+### logFC values from selected genes
+topgenes <- full_tables %>% 
+  filter(full_tables$GENE.SYMBOL %in% mo$X1) %>% 
+  select(GENE.SYMBOL,contains("logFC")) %>% 
   column_to_rownames(.,"GENE.SYMBOL") %>%
-  na.omit(.) 
-  
-arrange(topgenes,rowSums(topgenes))
+  na.omit(.)
 
 topgenes <- scale(topgenes)
-
-# keeping genes with less than 2 NAs
-#topgenes <- topgenes[which(rowSums(is.na(topgenes)) <= 2),]
 
 color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
 breaks <- c(seq(min(topgenes,na.rm = T),-0.1,length.out = 7),0,seq(0.1,max(topgenes,na.rm = T),length.out = 7))
 
 pheatmap(topgenes,
-         main = "Top 30 (The highest logFC and qval < 0.05)",
+         main = str_c("The highest logFC and qval < " ,qval_cutoff , " (ngenes = ",dim(topgenes)[1], ")"),
          color = color,
          breaks = breaks,
          fontsize_row = 9,
@@ -503,14 +518,14 @@ We also checked for expression in TFs
 ````{r}
 tfs <- read.csv(here::here("Tissue/data/hs_hgnc_curated_tfs.txt"),col.names = "TF")
 
-qval_cutoff <- 0.05
-genesqval <- meta[meta$qval.fixed <= qval_cutoff,]
+tf_copd <- filter(genesqval,genesqval$X1 %in% tfs$TF)
+#write.csv(tf_copd, OUTPUT(c(TODAY,"_Step6_TF-",qval_cutoff,"-meta-analysis.csv")))
 
-tf_copd <- filter(genesqval,rownames(genesqval) %in% tfs$TF)
-write.csv(tf_copd, OUTPUT(c(TODAY,"_Step6_TF-",qval_cutoff,"-meta-analysis.csv")))
+topgenes <- full_tables %>% 
+  filter(full_tables$GENE.SYMBOL %in% tf_copd$X1) %>% 
+  select(GENE.SYMBOL,contains("logFC")) %>% 
+  column_to_rownames("GENE.SYMBOL")
 
-topgenes <- full_tables[full_tables$GENE.SYMBOL %in% rownames(tf_copd),c("GENE.SYMBOL",FC)]
-topgenes <- column_to_rownames(topgenes,"GENE.SYMBOL")
 topgenes <- scale(topgenes)
 #topgenes <- na.omit(topgenes)
 
@@ -519,7 +534,7 @@ color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
 breaks <- c(seq(min(topgenes,na.rm = T),-0.1,length.out = 7),0,seq(0.1,max(topgenes,na.rm = T),length.out = 7))
 
 pheatmap(topgenes,
-         main = str_c("TFs with q-val less than ",qval_cutoff),
+         main = str_c("TFs" , " (ngenes = ",dim(topgenes)[1], ")"),,
          color = color,
          breaks = breaks,
          fontsize_row = 3,

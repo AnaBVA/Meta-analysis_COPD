@@ -1,0 +1,184 @@
+---
+title: "Paper figures and tables"
+author: Ana BVA
+date: "`r BiocStyle::doc_date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup}
+knitr::opts_knit$set(root.dir = here::here())
+```
+
+```{r include=FALSE}
+library(knitr)
+library(tidyverse)
+```
+
+
+In this file you will find the code we used to generate figures and tables for the paper [A robust transcriptomic profile for Chronic Obstructive Pulmonary Disease through a meta-analysis](). All code used in this analysis can be found in our [Github repository]().
+
+
+## Datasets
+
+For the analysis we selected the datasets by following these steps:
+
+```{r, out.width = "450px",fig.align='center'}
+knitr::include_graphics(here::here("paper/fig/DataSelection.png"))
+```
+
+### 1. Search in GEO
+
+First, we serached datasets in [Gene Eexpression Omnibus (GEO) ](https://www.ncbi.nlm.nih.gov/gds) from NCBI by using these terms: *COPD, emphesema, chronic bronchitis, homo sapiens, GSE, microarray, RNAseq, NOT single cell* on **17th March, 2021**. For reproducibility purpose we provide the query used (added in supplementary table  `GEO_search`):  
+
+<div class="alert alert-info">
+  <strong>Query:</strong> (("chronic obstructive pulmonary disease" OR "COPD" OR "Emphysema" OR "chronic bronchitis") AND ("Expression profiling by high throughput sequencing"[Filter] OR "Expression profiling by array"[Filter]) AND "Homo sapiens"[orgn] AND "gse"[Filter] NOT "single cell"
+</div>
+
+### 2. Download results
+
+We downloaded the results and stored in `/GEO_data/2021-03-17gds_result.txt`
+
+```{bash}
+tail GEO_data/2021-03-17gds_result.txt
+```
+
+
+### 3. Parsed information
+
+Then, we parsed the information to have it in a table format by using `/GEO_data/parsegeo.pl`
+
+```{bash}
+cd GEO_data/
+perl parsegeo.pl 2021-03-17gds_result.txt
+```
+
+The parsed table is in `/GEO_data/021-03-17gds_result_tab.txt` and added in Supplementary tables `
+
+```{r}
+df <- read.delim(here::here("GEO_data/2021-03-17gds_result_tab.txt"), sep = "\t")
+kable(df[1:2,])
+```
+
+We also added columns to help manual curation (the columns added were `SampleType` and `Disease`). The table is provided in Supplementary Tables `Parsed_table`.
+
+```{r}
+type <- "LUNG TISSUE|BLOOD|MACROPHAGE.|BALF|SPUTUM|CELL|EPITHELIUM|MUSCLE|CULTURE|FIBROBLAST"
+df$SampleType <- str_extract(str_to_upper(df$Extended.Description),type)
+table(df$SampleType)
+
+disease <- "CHRONIC OBSTRUCTIVE PULMONARY DISEASE|COPD|CANCER|ASTHMA"
+df$Disease <-str_extract(str_to_upper(df$Extended.Description),disease) %>% 
+  str_replace("CHRONIC OBSTRUCTIVE PULMONARY DISEASE", "COPD")
+table(df$Disease)
+
+#write_delim(df,"GEO_data/2021-03-17_Parsed_table.txt", delim = "\t")
+```
+
+### 4. Manual curation
+
+Then, we manually curated all datasets to define sample type (*e.i.* Blood, lung tissue, sputum, cell lines, etc). This table is provided in Supplementary Tables as `Manual_curation`. Then, we selected "BLOOD" and "LUNG_TISSUE" datasets for a deeper manual curation. 
+
+
+
+```{r, out.width = "750px",fig.align='center'}
+knitr::include_graphics(here::here("paper/fig/PRISMA.png"))
+```
+
+
+## Pre-processing
+
+Data normalized is shown in figure bellow.
+
+```{r norm, message=FALSE, warning=FALSE}
+library(oligo)
+library(affy)
+library(SummarizedExperiment)
+
+norm_plots <- function(name,x,plot, mfrow = c(2, 3),...){
+  pdf(here::here(name),height = 6,width = 10)
+  par(mfrow = mfrow ,mar=c(2,1,1,1))
+  for (i in 1:length(x)){
+    if(plot == "hist" & class(x[[i]]) =="ExpressionSet"){
+        print(paste0(gsub(".GSE.*","",names(x)[i]), " ExpressionSet"))
+        hist(x[[i]], main = gsub(".GSE.*","",names(x)[i]))
+      }
+    if(plot == "boxplot" & class(x[[i]]) =="ExpressionSet"){
+        print(paste0(gsub(".GSE.*","",names(x)[i]), " ExpressionSet" ))
+        boxplot(x[[i]], main = gsub(".GSE.*","",names(x)[i]))
+      }
+    if(plot == "hist" & class(x[[i]]) !="ExpressionSet"){
+      print(gsub(".GSE.*","",names(x)[i]))
+      #hist(assay(lung_norm[[i]]),100)
+      plotDensity(log2(assay(lung_norm[[i]])+1), main = gsub(".GSE.*","",names(x)[i]))
+    }
+    if(plot == "boxplot" & class(x[[i]]) !="ExpressionSet"){
+      print(gsub(".GSE.*","",names(x)[i]))
+      #hist(assay(lung_norm[[i]]),100)
+      boxplot(log2(assay(lung_norm[[i]])+1), main = gsub(".GSE.*","",names(x)[i]))
+    }
+  }
+  dev.off()
+}
+
+```
+
+For blood datasets:
+
+```{r}
+## Read data  
+blood_norm <- readRDS(here::here("Blood/output_data/Blood_2020-11-25_Step3_LungTissue-CURATED.RDS"))
+
+#Plot images
+norm_plots(name = "paper/fig/blood-norm_hist.pdf", x = blood_norm, plot = "hist")
+norm_plots(name = "paper/fig/blood-norm_boxplot.pdf", x = blood_norm, plot = "boxplot")
+```
+
+```{r,out.width = "750px",fig.align='center',include=TRUE, out.height="500px"}
+knitr::include_graphics(here::here("paper/fig/blood-norm_hist.pdf"))
+```
+
+```{r,out.width = "750px",fig.align='center',include=TRUE}
+knitr::include_graphics(here::here("paper/fig/blood-norm_boxplot.pdf"))
+```
+
+
+For lung datasets:
+
+```{r}
+## Read data  
+lung_norm <- readRDS(here::here("Tissue/output_data/2021-03-30_Step3_LungTissue-CURATED.RDS"))
+lung_norm <- lapply(lung_norm, function(x){x[[1]]})
+
+#Plot images
+norm_plots(name = "paper/fig/lung-norm_hist.pdf", x = lung_norm, plot = "hist", mfrow = c(4, 3))
+norm_plots(name = "paper/fig/lung-norm_boxplot.pdf", x = lung_norm, plot = "boxplot", mfrow = c(4, 3))
+```
+
+
+```{r,out.width = "750px",fig.align='center',include=TRUE, out.height="500px"}
+knitr::include_graphics(here::here("paper/fig/lung-norm_hist.pdf"))
+```
+
+```{r,out.width = "750px",fig.align='center',include=TRUE}
+knitr::include_graphics(here::here("paper/fig/lung-norm_boxplot.pdf"))
+```
+
+
+## Summary of data 
+
+```{r eval=FALSE, include=T}
+source(here::here("Lung-Blood/scripts/sample_size.R"))
+```
+
+```{r,out.width = "750px",fig.align='center',include=TRUE}
+knitr::include_graphics(here::here("Lung-Blood/fig/sample_size.pdf"))
+```
+
+

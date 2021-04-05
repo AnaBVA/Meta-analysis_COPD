@@ -51,7 +51,7 @@ The script can be found in: `r getwd() `. And the directories were set using
 
 ```{r setup}
 knitr::opts_knit$set(root.dir = here::here())
-source(here::here("R/setup.R"))
+source(here::here("Tissue/R/setup.R"))
 ```
 
 And this analysis is run in: `r getwd() `

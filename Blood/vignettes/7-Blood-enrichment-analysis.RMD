@@ -76,10 +76,12 @@ And this analysis is run in: `r getwd() `
 
 ```{r libraries, message=FALSE, warning=FALSE}
 library(hypeR)
-library(WGCNA)
 library(tidyverse)
 library(reactable)
 library(ggpubr)
+library(fgsea)
+library(data.table)
+library(grid)
 ```
 
 
@@ -88,165 +90,165 @@ library(ggpubr)
 We will import DE results from all experiments. 
 
 ```{r}
-meta <- read_csv(OUTPUT("2021-02-01_Step6_meta-analysis.csv"))
+meta <- read_csv(OUTPUT("2021-03-01_Step6_meta-analysis.csv"))
 meta
 ```
 
 
 
-### Ranking and weighted values
-
-```{r , class.source="bg-info",class.output="bg-info" }
-qval_cutoff <- 0.05
-
-up_df <- meta %>%
-  filter(qval.fixed <= qval_cutoff) %>%
-  filter(is.na(tau2) == F) %>%
-  #filter(TE.fixed > 0) %>%
-  dplyr::arrange(desc(TE.fixed))
-  #dplyr::arrange(estimate)
-
-up_signature <- as.vector(up_df$TE.fixed)
-names(up_signature) <- up_df$X1
-head(up_signature)
-
-
-down_df <- meta %>%
-  filter(qval.fixed <= qval_cutoff) %>%
-  filter(is.na(tau2) == F) %>%
-  #filter(TE.fixed < 0) %>%
-  dplyr::arrange((TE.fixed))
-  #dplyr::arrange(estimate)
-
-down_signature <- as.vector(down_df$TE.fixed)
-names(down_signature) <- down_df$X1
-head(down_signature)
-```
-
-### Enrichment analysis
+### Pathways
 
 Then we will check KEGG, REACTOME and some databases from EnrichR
 
-
-```{r, eval=FALSE}
-# KEGG
+Other pathways
+```{r}
 KEGG <- hyperdb_rgsets("KEGG", "92.0")
-
-#HALLMARL
 HALLMARK <- msigdb_gsets(species="Homo sapiens", category="H",clean = T)
-
-#ENRICHR
 TF_TJ <- enrichr_gsets("TRANSFAC_and_JASPAR_PWMs")
+JD<- enrichr_gsets("Jensen_DISEASES")
+JT<- enrichr_gsets("Jensen_TISSUES")
+goB<- enrichr_gsets("GO_Biological_Process_2018")
+goM<- enrichr_gsets("GO_Molecular_Function_2018")
+goC<- enrichr_gsets("GO_Cellular_Component_2018")
 
-enrichR<- enrichr_gsets("Jensen_DISEASES")
-
-enrichR<- enrichr_gsets("Jensen_TISSUES")
-
-enrichR<- enrichr_gsets("Chromosome_Location")
-
-enrichR<- enrichr_gsets("WikiPathways_2019_Human")
-
-enrichR<- enrichr_gsets("ClinVar_2019")
-
-
+#enrichR<- enrichr_gsets("GWAS_Catalog_2019")
+#enrichR<- enrichr_gsets("Reactome_2016")
+#enrichR<- enrichr_gsets("WikiPathways_2019_Human")
 ```
 
 
+#GSEA
+
+Function to plot fGSEA figures
 
 ```{r}
-# KEGG
-KEGG <- hyperdb_rgsets("KEGG", "92.0")
+gsea.plot <- function(examplePathways = examplePathways, 
+                      signature = signature,
+                      i = 1,
+                      cpadj = 0.1){
+# 
+fgseaRes <- fgsea(pathways = examplePathways, 
+                  stats    = signature,
+                  eps      = 0.0,
+                  minSize  = 15,
+                  maxSize  = 500)
 
-#HALLMARL
-HALLMARK <- msigdb_gsets(species="Homo sapiens", category="H",clean = T)
+#print(head(fgseaRes[order(pval), ]))
 
-DB <- KEGG
-DB <- HALLMARK
-DB <- TF_TJ
-  # Ranked Signature using the estimator from the meta analysis (FC)
-  hyp_obj <- hypeR(names(up_signature),DB, test="hypergeometric", background=nrow(meta), fdr=0.5, plotting=TRUE)
-  hyp_obj$plots[[1]]
-  hyp_obj
-  hyp_dots(hyp_obj) + theme_minimal()
-  
-  # Weighted Signature using as ranking the estimator and the weighted the qvalue
-  hyp_obj <- hypeR(up_signature, DB, test="kstest", background=nrow(meta),fdr=0.5, plotting=TRUE)
-  hyp_obj$plots[[1]]
-  hyp_dots(hyp_obj) + theme_minimal(14)
-  
-  # Show interactive table
-  #hyp_show(hyp_obj)
-  
-  # Plot enrichment map
-  #hyp_emap(hyp_obj)
-  
-  # Plot hiearchy map
-  #hyp_hmap(hyp_obj)
-  
-  # Generate markdown report
-  #hyp_to_rmd(hyp_obj,"hypr-KEGG-genesets.rmd")
-  #hyp_to_rmd(hyp_obj,"hypr-TRANSFAC_and_JASPAR_PWMs.rmd")
+## Table order by padj
+fgo <- as_tibble(fgseaRes) %>%
+  filter(padj <= cpadj) %>%
+  arrange(-padj) %>% 
+  mutate(name = factor(pathway, levels=pathway))
+
+# plot with top pathways
+gg <- ggplot(fgo) +
+  aes(x = name, y = padj) +
+  geom_point( size=5, color="#c45a75") +
+  labs(x = "Pathways") +
+  coord_flip() +
+  geom_hline(yintercept=0.01, linetype="dashed", color = "red")+
+  theme_minimal(10)
+
+# one plot
+x <- fgo %>% 
+  arrange(padj)
+
+x <- x$pathway[i]
+
+one <- plotEnrichment(examplePathways[[x]],
+               signature) + labs(title=x)
+#dev.off()
+
+# top pathways
+topPathwaysUp <- fgseaRes[ES > 0][head(order(pval), n=10), pathway]
+topPathwaysDown <- fgseaRes[ES < 0][head(order(pval), n=10), pathway]
+topPathways <- c(topPathwaysUp, rev(topPathwaysDown))
+top <- plotGseaTable(examplePathways[topPathways], signature, fgseaRes, 
+              gseaParam=0.5, render = F)
+#dev.off()
+
+# collapsed pathways
+collapsedPathways <- collapsePathways(fgseaRes[order(pval)][padj < 0.01], 
+                                      examplePathways, signature)
+mainPathways <- fgseaRes[pathway %in% collapsedPathways$mainPathways][
+                         order(-NES), pathway]
+com <- plotGseaTable(examplePathways[mainPathways], signature, fgseaRes, 
+              gseaParam = 0.5, render = F)
+#dev.off()
+
+return(list(table = fgo,gg = gg, one = one, top = top, collapse = com))
+
+}
+
 ```
 
+Setup the data
 
 ```{r}
-  # Ranked Signature using the estimator from the meta analysis (FC)
-  hyp_obj <- hypeR(names(down_signature),DB, test="hypergeometric", background=nrow(meta), fdr=0.5, plotting=TRUE)
-  hyp_obj$plots[[1]]
-  hyp_obj
-  
+### Selecting genes
+# Rank based on https://bioinformatics-core-shared-training.github.io/cruk-summer-school-2019/RNAseq/html/06_Gene_set_testing.html
+
+qval_cutoff <- 0.05
+
+up_df <- meta %>%
+  filter(num_exp > 3) %>% 
+  mutate(rank = -log10(pval.random) * sign(TE.random)) %>% 
+  dplyr::arrange(desc(rank)) 
+
+signature <- as.vector(up_df$rank)
+names(signature) <- up_df$X1
+head(signature)
 ```
+
+We do the enrichment analysis and plots
 
 ```{r}
+k <- gsea.plot(examplePathways = KEGG$genesets, signature = signature, cpadj = 0.05, i = 2)
+h <- gsea.plot(examplePathways = HALLMARK$genesets, signature = signature, cpadj = 0.05)
+jt <- gsea.plot(examplePathways = JT$genesets, signature = signature, cpadj = 0.05)
+gob <- gsea.plot(examplePathways = goB$genesets, signature = signature, cpadj = 0.01)
+goc <- gsea.plot(examplePathways = goC$genesets, signature = signature, cpadj = 0.05)
+gom <- gsea.plot(examplePathways = goM$genesets, signature = signature, cpadj = 0.05)
 
-# UP KEGG
-up_kegg_obj <- hypeR(up_signature, 
-                   KEGG, 
-                   test="kstest", 
-                   background=nrow(meta),
-                   fdr=0.1, plotting=TRUE)
+ggarrange(k$gg,h$gg,jt$gg,gob$gg,goc$gg,gom$gg,
+          labels = c("KEGG", "HALLMARK", "Jensen TISSUES",
+                     "GO: Biology", "GO: Celular", "GO: Molecular"),
+          vjust = 0.5)
+#
+#ggarrange(k$one,h$one,jt$one,gob$one,goc$one,gom$one)
+#dev.off()
+#
+#gridExtra::grid.arrange(k$top,h$top,jt$top,
+#          gob$top,goc$top, gom$top,
+#          ncol = 3)
+#dev.off()
+#
+#gridExtra::grid.arrange(k$collapse,h$collapse,jt$collapse,
+#          gob$collapse,goc$collapse, gom$collapse,
+#          ncol = 3)
+#dev.off()
 
- up_kegg <-  hyp_dots(up_kegg_obj) + theme_minimal(14) + xlab("KEGG")
- 
- # UP HALLMARL
- up_hall_obj <- hypeR(up_signature, 
-                   HALLMARK, 
-                   test="kstest", 
-                   background=nrow(meta),
-                   fdr=0.1, plotting=TRUE)
+grid.draw(gob$top)
+dev.off()
 
- up_hall <-  hyp_dots(up_hall_obj) + theme_minimal(14) + xlab("HALLMARL")
- 
- # UP KEGG
-down_kegg_obj <- hypeR(down_signature, 
-                   KEGG, 
-                   test="kstest", 
-                   background=nrow(meta),
-                   fdr=0.1, plotting=TRUE)
+gridExtra::grid.arrange(k$one, 
+                        k$top, 
+                        ncol = 1,
+                        heights = c(2,5),
+                        nrow = 2)
 
- down_kegg <-  hyp_dots(down_kegg_obj) + theme_minimal(14) + xlab("KEGG")
- 
- 
-  # DOWN HALLMARL
- down_hall_obj <- hypeR(down_signature, 
-                   HALLMARK, 
-                   test="kstest", 
-                   background=nrow(meta),
-                   fdr=0.1, plotting=TRUE)
+gridExtra::grid.arrange(#gob$gg, #goc$gg,  gom$gg,
+                        gob$one, #goc$one,gom$one,
+                        gob$top, #goc$top,gom$top,
+                        vp=viewport(width=.6),
+                        #labels = c("GO: Biology","GO: Celular", "GO: Molecular"),
+                        ncol = 1,
+                        heights = c(2,5),
+                        nrow = 2)
 
- down_hall <-  hyp_dots(down_hall_obj) + theme_minimal(14) + xlab("HALLMARL")
- 
- 
-ggpubr::ggarrange(up_kegg,down_kegg,up_hall,down_hall, 
-                   common.legend = T,
-                   labels = c("UP","DOWN","UP","DOWN"),
-                   ncol = 2,nrow = 2)
-
-  
  
 ```
-
-
 
 
 ## Output
