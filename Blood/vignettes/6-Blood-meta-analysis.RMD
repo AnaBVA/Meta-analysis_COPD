@@ -237,6 +237,9 @@ CI.L <- str_subset(colnames(full_tables),"CI.L")
 for(i in 1:length(CI.R)) {
   full_tables[str_c("SE_",gsub(".*_","",CI.R))] <- (full_tables[,CI.R]-full_tables[,CI.L]) /(2*1.96)
 }
+
+#write_csv(full_tables,OUTPUT("2020-11-28_Step5_Full_Tables_SE.csv"))
+
 ```
 
 Meta-analysis for a single gene

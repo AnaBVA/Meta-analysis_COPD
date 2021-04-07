@@ -1,10 +1,11 @@
 ---
-title: "Lung tissue Meta-analysis for COPD"
+title: "Meta-analysis for COPD"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
-    css: mystyle.css
     vertical_layout: scroll
+    social: menu
+    source_code: https://github.com/AnaBVA/Meta-analysis_COPD/tree/master/Dashboard
 runtime: shiny
 ---
 
@@ -22,24 +23,64 @@ library(DT)
 ```
 
 
-About {data-orientation=rows}
+Home {data-orientation=rows}
 =====================================  
 
-We performed a meta-analysis with lung tissue and blood datasets. The paper  can be found in [link]() and the code to generate the analysis is in [Github](https://github.com/AnaBVA/Meta-analysis_COPD).
-
-The analysis was performed using the following datasets: 
-
-Row
+Row 
 -------------------------------------
     
+### Tissue type 
+
+Please, select which tissue type you what to explore:
+
+```{r }
+selectInput("tissue_type", "Tissue type:", choices = c("Lung tissue", "Blood"))
+```
+
+<br>
+<br>
+
+Row 
+-------------------------------------
+
+### Meta-analysis
+
+We performed a meta-analysis with **lung tissue** and **blood** datasets. The paper  can be found in [link]() and the code to generate the analysis is in [Github](https://github.com/AnaBVA/Meta-analysis_COPD). This application allows visitors to explore meta-analysis output by selecting your own specific threshold and visualize forest and funnel plot for your interest genes. 
+
+
+```{r, out.width = "750px",fig.align='center'}
+knitr::include_graphics("fig/pipeline.png")
+```
+
+
+
+Datasets {data-orientation=rows}
+=====================================  
+
 ### Experiments in the Meta-analysis
 
-    
+
 ```{r}
-gse_table <- read.csv("2021-03-26_Step3_Summary.csv", row.names = 1)
-gse_table <- gse_table[-10,]
-kable(gse_table, caption = "GSE information") %>%
-   kable_styling()
+lung_gse <- read.csv("2021-03-26_Step3_Summary.csv", row.names = 1)
+lung_gse <- lung_gse[-11,]
+
+blood_gse <- read.csv("Blood_2021-03-26_Step3_Summary.csv", row.names = 1)
+
+gse_table<- reactive({ 
+  if (input$tissue_type == "Lung tissue") {
+    lung_gse
+  } else if(input$tissue_type == "Blood"){
+    blood_gse
+  }
+})
+
+renderUI({
+HTML(
+    kable(gse_table(), caption = "GSE information") %>%
+      kable_styling()
+    )   
+})
+
 ```
 
 
@@ -68,27 +109,47 @@ numericInput("numexp_cutoff", "Number of minimum experiments:", value = 5,
 Row {.tabset .tabset-fade}
 -------------------------------------
 
-### Heatmap {data-height=1200}
+### Heatmap {data-width=950}
 
 
 ```{r}
 # Data
-full_tables <- read_csv("2020-10-08_Step5_Full_Tables.csv")
-meta <- read_csv("2021-03-01_Step6_meta-analysis.csv")
+lung_full_tables <- read_csv("2020-10-08_Step5_Full_Tables_SE.csv")
+blood_full_tables <- read_csv("Blood_2020-11-28_Step5_Full_Tables_SE.csv")
 # View(meta %>% filter(qval < 0.5,I2 < 40,num_exp > 5))
 
+full_table<- reactive({ 
+  if (input$tissue_type == "Lung tissue") {
+    lung_full_tables
+  } else if(input$tissue_type == "Blood"){
+    blood_full_tables
+  }
+})
 
-FC <- str_subset(colnames(full_tables),"logFC")
+
+lung_meta <- read_csv("2021-03-01_Step6_meta-analysis.csv")
+blood_meta <- read_csv("Blood_2021-03-01_Step6_meta-analysis.csv")
+
+meta_data <- reactive({ 
+  if (input$tissue_type == "Lung tissue") {
+    lung_meta
+  } else if(input$tissue_type == "Blood"){
+    blood_meta
+  }
+})
+
+
+FC_names <- reactive({  str_subset(colnames(full_table()),"logFC")  })
 
 # Heatmap
 genesqval <-  reactive({
-  meta %>% filter(qval.random <= input$q_cutoff, 
+  meta_data() %>% filter(qval.random <= input$q_cutoff, 
                   I2 <= input$i2_cutoff, 
                   num_exp >= input$numexp_cutoff)
 })
 
 topgenes <- reactive({
-  data.frame(full_tables[which(full_tables$GENE.SYMBOL %in% genesqval()$genes),FC], 
+  data.frame(full_table()[which(full_table()$GENE.SYMBOL %in% genesqval()$genes),FC_names()], 
                    row.names = genesqval()$genes)
 })
 
@@ -160,10 +221,11 @@ Gene {data-orientation=rows}
 Please select one gene to generate a forest and funnel plot by clicking the interested row. The image can be saved with right click -> Save Image As...
 
 ```{r}
-
 output$gen <- DT::renderDataTable(
-meta,
-selection = 'single'
+  meta_data(),
+  selection = 'single',
+  options = list(
+          lengthMenu = list(c(5, 10, 20), c('5', '10', '20')))
 )
 DT::dataTableOutput('gen')
 
@@ -174,34 +236,25 @@ Row
 
 
 ```{r}
-## Get meta-analysis data
-
-CI.R <- str_subset(colnames(full_tables),"CI.R")
-CI.L <- str_subset(colnames(full_tables),"CI.L")
-
-for(i in 1:length(CI.R)) {
-  full_tables[str_c("SE_",gsub(".*_","",CI.R))] <- (full_tables[,CI.R]-full_tables[,CI.L]) /(2*1.96)
-}
-
-SE <- str_subset(colnames(full_tables),"SE_")
-GSE <- gsub(".*_","",FC)
+SE <- reactive({ str_subset(colnames(full_table()),"SE_")  })
+GSE <- reactive({ gsub(".*_","",FC_names() )  })
 
 meta.analysis <- function(gs){
-gene <-  full_tables[full_tables$GENE.SYMBOL == gs,]
-#gene <-  na.omit(full_tables[full_tables$GENE.SYMBOL == gs,])
+gene <-  full_table()[full_table()$GENE.SYMBOL == gs,]
+#gene <-  na.omit(full_table()[full_table()$GENE.SYMBOL == gs,])
 gene <- gene[!is.na(gene$GENE.SYMBOL),]
 
 dat <- data.frame(
-  yi = as.numeric(gene[,FC]),
-  sei = as.numeric(gene[,SE]),
-  n1i = as.numeric(gse_table$CONTROL),
-  n2i = as.numeric(gse_table$COPD)
+  yi = as.numeric(gene[,FC_names()]),
+  sei = as.numeric(gene[,SE()]),
+  n1i = as.numeric(gse_table()$CONTROL),
+  n2i = as.numeric(gse_table()$COPD)
 )
 
 dat <- escalc(measure="ZCOR", yi=yi,sei=sei,n1i=n1i,n2i=n2i, data = dat) 
 
-dat$study <- rownames(gse_table)
-dat$country <- gse_table$COUNTRY
+dat$study <- rownames(gse_table())
+dat$country <- gse_table()$COUNTRY
 
 m1 <- metagen(TE = yi, 
                   seTE = sei, 
@@ -225,7 +278,7 @@ return(m1)
 ```{r}
 
 renderPlot({
-  gene =  as.character(meta[input$gen_rows_selected,"genes"])
+  gene =  as.character(meta_data()[input$gen_rows_selected,"genes"])
   m1 <- meta.analysis(gene)
   forest(m1,
        col.diamond = "blue",
@@ -250,10 +303,21 @@ renderPlot({
 ```{r}
 
 renderPlot({
-  gene =  as.character(meta[input$gen_rows_selected,"genes"])
+  gene =  as.character(meta_data()[input$gen_rows_selected,"genes"])
   m1 <- meta.analysis(gene)
   funnel.meta(m1,psize = 1.8,cex = 1.8)
 })
 
 ```
 
+
+About {data-orientation=rows}
+=====================================  
+
+### About the app
+
+The application is built with the [Shiny](http://shiny.rstudio.com) framework for the [R programming language](https://www.r-project.org/). The application layout is produced with the [flexdashboard](http://rstudio.github.io/flexdashboard/index.html) package. We  used [meta](https://github.com/guido-s/meta/) to calculate the meta-analysis. 
+
+I welcome feedback and suggestions! Please visit our [lab page](https://liigh.unam.mx/profile/dra-alejandra-medina-rivera/).
+
+Application author: [Ana B. Villaseñor-Altamirano](https://anabva.github.io/), [LIIGH, UNAM](https://liigh.unam.mx/)
