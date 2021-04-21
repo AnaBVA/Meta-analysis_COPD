@@ -8,12 +8,14 @@ pivot_expr <- function(exprSet,GSE = 1){
   # identify COPD samples
   copd <- data.frame(exprs(exprSet)[,which(pData(exprSet)$DISEASE == "COPD")])
   copd <- tibble::rownames_to_column(copd, "genes")
+  copd$genes <- fData(exprSet)$GENE.SYMBOL
   pes <- pivot_longer(copd,cols = -1,names_to = "GSM", values_to = "expr") %>%
     add_column(Disease = "COPD")
   
   # identify Control samples
   h <- data.frame(exprs(exprSet)[,which(pData(exprSet)$DISEASE == "CONTROL")])
   h <- tibble::rownames_to_column(h, "genes")
+  h$genes <- fData(exprSet)$GENE.SYMBOL
   ph <- pivot_longer(h,cols = -1,names_to = "GSM", values_to = "expr") %>%
     add_column(Disease = "Control")
   
@@ -28,7 +30,7 @@ pivot_expr <- function(exprSet,GSE = 1){
 
 ##############################################################
 # Lung Data
-tissue <- readRDS(here::here("Tissue/output_data/2020-10-07_Step3_LungTissue-CURATED.RDS"))
+tissue <- readRDS(here::here("Tissue/output_data/2021-03-30_Step3_LungTissue-CURATED.RDS"))
 #fc_tissue <- read_csv("Tissue/output_data/2020-10-07_Step5_Full_Tables.csv")
 
 
@@ -111,32 +113,93 @@ ggarrange(bplot,tplot,
 
 
 ## summarizing var
+# bdfvar %>% select(genes,GSE, var) %>% pivot_wider(names_from = GSE, values_from = var)
 bvarsum <- bdfvar %>%
-  group_by(GSE,Disease) %>% 
+  group_by(Disease,genes) %>% 
   summarise(median_var = median(var),
             mean_var = mean(var),
             tissue = "Blood")
 
 tvarsum <- tdfvar %>%
-  group_by(GSE,Disease) %>% 
+  group_by(Disease, genes) %>% 
   summarise(median_var = median(var),
             mean_var = mean(var),
             tissue = "Lung")
 
 varsum <- rbind(bvarsum,tvarsum)
-  
-ggplot(varsum,aes(x=Disease,y=median_var, fill=tissue)) + 
-  geom_boxplot() + 
-  scale_fill_manual(values=c("#c45a75","#5abdc4")) +
-  theme_classic() + 
-  stat_compare_means() 
 
-ggplot(varsum,aes(x=tissue,y=median_var, fill=Disease)) + 
-  geom_boxplot() + 
+stat.test <- varsum %>%
+  group_by(Disease) %>%
+  wilcox_test(median_var ~ tissue) %>%
+  adjust_pvalue(method = "bonferroni") %>%
+  add_significance("p.adj")
+
+stat.test
+
+disease_violoin <- ggplot(varsum,aes(x=Disease,y=log10(median_var), fill=tissue)) + 
+  geom_violin() + 
+  scale_fill_manual(values=c("#c45a75","#5abdc4")) + 
+  #stat_compare_means(paired = T) +
+  theme_classic(13)
+
+tissue_violin <- ggplot(varsum,aes(x=tissue,y=log10(median_var), fill=Disease)) + 
+  geom_violin() + 
   scale_fill_manual(values=c("#66CC99","#9999CC")) +
-  theme_classic() + 
-  stat_compare_means()
-  
+  #stat_compare_means(paired = T) +
+
+ggarrange(disease_violin, tissue_violin,
+          ncol = 2)
+
+disease_df <- varsum %>% 
+  select(genes,Disease, median_var, tissue) %>% 
+  pivot_wider(names_from = Disease, values_from = median_var)
+
+lung_scatter <- ggscatter(disease_df %>% filter(tissue == "Lung"), 
+          x = "Control", y = "COPD",
+          color = "#5abdc4", alpha = 0.5,
+          add = "reg.line") + 
+  labs(title = "Lung", x = "Control variance", y = "COPD varance") +
+  stat_regline_equation(label.x = 1, label.y = 32) +
+  stat_cor(label.x = 1, label.y = 34) +
+  theme_bw(13)
+
+blood_scatter <- ggscatter(disease_df %>% filter(tissue == "Blood"), 
+                           x = "Control", y = "COPD",
+                           color = "#c45a75", alpha = 0.5,
+                           add = "reg.line") + 
+  labs(title = "Blood", x = "Control variance", y = "COPD varance") +
+  stat_regline_equation(label.x = 1, label.y = 32) +
+  stat_cor(label.x = 1, label.y = 34) +
+  theme_bw(13)
+
+ggarrange(lung_scatter,blood_scatter,
+          ncol = 2)
+
+tissue_df <- varsum %>% 
+  select(genes,Disease, median_var, tissue) %>% 
+  pivot_wider(names_from = tissue, values_from = median_var)
+
+control_scatter <- ggscatter(tissue_df %>% filter(Disease == "Control"), 
+                           x = "Blood", y = "Lung",
+                           color = "#66CC99", alpha = 0.5,
+                           add = "reg.line") + 
+  labs(title = "Control", x = "Blood variance", y = "Lung variance") +
+  stat_regline_equation(label.x = 1, label.y = 32) +
+  stat_cor(label.x = 1, label.y = 34) +
+  theme_bw(13)
+
+copd_scatter <- ggscatter(tissue_df %>% filter(Disease == "COPD"), 
+          x = "Blood", y = "Lung",
+          color = "#9999CC", alpha = 0.5,
+          add = "reg.line") + 
+  labs(title = "COPD", x = "Blood variance", y = "Lung variance") +
+  stat_regline_equation(label.x = 1, label.y = 32) +
+  stat_cor(label.x = 1, label.y = 34) +
+  theme_bw(13)
+
+ggarrange(lung_scatter,blood_scatter,control_scatter,copd_scatter,
+          ncol = 2, nrow = 2)
 
 
-
+ggplot(tissue_df %>% filter(Disease == "Control"), aes(x = Blood, y = Lung)) + geom_point()
+ggplot(tissue_df %>% filter(Disease == "COPD"), aes(x = Blood, y = Lung)) + geom_point()

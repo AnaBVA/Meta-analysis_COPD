@@ -43,7 +43,6 @@ flung <- read_csv(here::here("Tissue/output_data/2020-10-08_Step5_Full_Tables.cs
 # all genes
 bt <- filter(blood, blood$genes %in% lung$genes) %>% 
   select(genes)
-#write.csv(bt, "scripts/2021-03-01_shared_genes_q0.5.csv", quote = F)
 
 # UP in blood and lung
 up_b <- blood %>% 
@@ -54,7 +53,6 @@ up_l <- lung %>%
 
 up_bt <- filter(up_b, up_b$genes %in% up_l$genes) %>%
   select(genes)
-#write.csv(up_bt, "scripts/2021-03-01_UPshared_genes_q0.5.csv", quote = F)
 
 # Immune response... oir is 25 shared genes in IR hallmark pathway
 #bt <- bt[bt$genes %in% names(oir),]
@@ -69,6 +67,7 @@ bt <- bt  %>%
 #Top genes
 # bt <- rbind(head(bt,15), tail(bt,15))
 
+#write.csv(bt, str_c("output_data/2021-04-10_shared_genes_q",qval_cutoff,".csv"), quote = F)
 
 # filter genes in full table
 fblood <- filter(fblood, fblood$GENE.SYMBOL %in% bt$genes) 

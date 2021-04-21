@@ -182,3 +182,14 @@ knitr::include_graphics(here::here("Lung-Blood/fig/sample_size.pdf"))
 ```
 
 
+# Sample type variability
+
+We then wondering with tissue has less variability and which tissue would be more 
+suitable for measuring biomarkers in COPD. We weren't able to satisfactory conclude
+and more research needs to be done. But our results indicate no statistical differences
+in sample variability between lung and blood tissue. 
+
+First, we measure variability using gene variance. It was calculated per gene in each 
+dataset and split by disease (control or COPD).
+
+Then, the median was calculated per experiment and disease 

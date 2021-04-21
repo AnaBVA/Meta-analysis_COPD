@@ -5,7 +5,7 @@ output:
     orientation: columns
     vertical_layout: scroll
     social: menu
-    source_code: https://github.com/AnaBVA/Meta-analysis_COPD/tree/master/Dashboard
+    source_code: https://github.com/AnaBVA/Meta-analysis_COPD/blob/master/Dashboard/8-Meta-analysis_Dashboard.RMD
 runtime: shiny
 ---
 
@@ -82,6 +82,144 @@ HTML(
 })
 
 ```
+
+
+Row {.tabset .tabset-fade}
+-------------------------------------
+
+### Samples
+
+```{r}
+lung_gse$GSE <- rownames(lung_gse)
+blood_gse$GSE <- rownames(blood_gse)
+
+df_table<- reactive({ 
+  #gse_table()$GSE <- rownames(gse_table())
+  gse_table() %>% 
+    select(GSE,CONTROL,COPD) %>%
+    pivot_longer(!GSE, names_to = "disease", values_to = "count")
+  
+})
+
+renderPlot({
+  ggplot(df_table(), aes(x=disease,y = count, fill = disease)) +
+    geom_bar(stat = "identity") +
+    facet_wrap( ~ GSE, ncol=4) + 
+    ylab("Number of samples") +
+    xlab("") +
+    scale_fill_manual(values=c("#66CC99","#9999CC")) +
+    geom_text(aes(label=count), position=position_dodge(width=0.9), vjust=-0.25) +
+    theme_bw(15)
+})
+
+```
+
+### Country
+
+```{r}
+
+renderPlot({
+ggplot(gse_table()) +
+ aes(x = COUNTRY) +
+ geom_bar(fill = "#d8576b") +
+ coord_flip() +
+ theme_minimal()
+})
+
+```
+
+
+### Platform
+
+```{r}
+
+renderPlot({
+ggplot(gse_table()) +
+ aes(x = PLATFORM) +
+ geom_bar(fill = "#d8576b") +
+ coord_flip() +
+ theme_minimal()
+})
+
+```
+
+
+### Age
+
+```{r}
+
+a_df<- reactive({ 
+  gse_table() %>% 
+    select(GSE,H_AGE_MEAN,COPD_AGE_MEAN) %>%
+    rename(CONTROL = H_AGE_MEAN) %>% 
+    rename(COPD = COPD_AGE_MEAN) %>% 
+    pivot_longer(!GSE, names_to = "disease", values_to = "count")
+  
+})
+
+renderPlot({
+ggplot(a_df()) +
+  aes(x = disease, y = count,fill = disease) +
+  geom_boxplot() +
+  labs(y = "AGE MEAN") +
+  #scale_fill_hue() +
+  scale_fill_manual(values=c("#66CC99","#9999CC")) +
+  theme_minimal()
+})
+
+```
+
+
+### Sex
+
+```{r}
+
+s_df<- reactive({ 
+  gse_table() %>% 
+    mutate(H_SEX = H_SEX_F*100/CONTROL) %>%
+    mutate(COPD_SEX = COPD_SEX_F*100/COPD) %>%
+    select(GSE,H_SEX,COPD_SEX) %>%
+    rename(CONTROL = H_SEX) %>% 
+    rename(COPD = COPD_SEX) %>% 
+    pivot_longer(!GSE, names_to = "disease", values_to = "count")
+  
+})
+
+renderPlot({
+ggplot(s_df()) +
+  aes(x = disease, y = count,fill = disease) +
+  geom_boxplot() +
+  labs(y = "SEX (Female %)") +
+  scale_fill_manual(values=c("#66CC99","#9999CC")) +
+  theme_minimal()
+})
+  
+```
+
+### Cigarrets
+
+```{r}
+
+c_df<- reactive({ 
+  gse_table() %>% 
+    select(GSE,H_PACKYEAR, COPD_PACKYEAR) %>%
+    rename(CONTROL = H_PACKYEAR) %>% 
+    rename(COPD = COPD_PACKYEAR) %>% 
+    pivot_longer(!GSE, names_to = "disease", values_to = "count") 
+})
+
+
+renderPlot({
+ggplot(c_df()) +
+  aes(x = disease, y = count,fill = disease) +
+  geom_boxplot() +
+  labs(y = "Package per year") +
+  scale_fill_manual(values=c("#66CC99","#9999CC")) +
+  theme_minimal()
+})
+```
+
+
 
 
 Heatmap {data-orientation=rows}
