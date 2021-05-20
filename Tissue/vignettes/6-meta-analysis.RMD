@@ -102,6 +102,82 @@ colnames(full_tables)
 
 ```
 
+### MetaVolcano
+
+Using [Metavolcano](https://www.bioconductor.org/packages/release/bioc/vignettes/MetaVolcanoR/inst/doc/MetaVolcano.html) funcions to create a volcano plot with DE genes 
+
+We first need to create a list with tables. Each table contains information about gene `Symbol`, `Log2FC`, `pvalue`, `CI.L`, `CI.R` per experiment. 
+
+```{r}
+# colnames 
+df <- tibble(x=colnames(full_tables)) %>% 
+  separate(x, c("type", "GSE"), "_") %>% 
+  add_column(pos = 1:nrow(.))
+
+df$GSE[1] <- "Gene"
+
+# list
+split_df <- function(i){
+  df <- data.frame(GENE.SYMBOL = full_tables$GENE.SYMBOL,
+                   full_tables[,which(df$GSE == i)]
+                   )
+  colnames(df) <- c( "Symbol", "Log2FC",  "pvalue", "CI.L", "CI.R")
+  #colnames(df) <- gsub("_GSE.*", "", colnames(df) )
+  as.data.frame(df)
+  #as.data.frame(df)[-c(8359,18704),]
+  }
+
+diffexplist <- lapply(unique(df$GSE)[-1], split_df)
+names(diffexplist) <- unique(df$GSE)[-1]
+
+```
+
+Now, we implement the `MetaVolcano` funtions. 
+
+```{r}
+library(MetaVolcanoR)
+
+meta_degs_rem <- rem_mv(diffexp=diffexplist,
+            pcriteria="pvalue",
+            foldchangecol='Log2FC', 
+            genenamecol='Symbol',
+            geneidcol=NULL,
+            collaps=FALSE,
+            llcol='CI.L',
+            rlcol='CI.R',
+            vcol=NULL, 
+            cvar=TRUE,
+            metathr=0.01,
+            jobname="MetaVolcano",
+            outputfolder=".", 
+            draw='HTML',
+            ncores=1)
+
+head(meta_degs_rem@metaresult, 3)
+meta_degs_rem@MetaVolcano + theme_void()
+
+meta_df <- meta_degs_rem@metaresult %>% 
+  filter(randomP < 0.05 )
+
+meta_degs_vote <- votecount_mv(diffexp=diffexplist,
+                   pcriteria='pvalue',
+                   foldchangecol='Log2FC',
+                   genenamecol='Symbol',
+                   geneidcol=NULL,
+                   pvalue=0.05,
+                   foldchange=0, 
+                   metathr=0.01,
+                   collaps=FALSE,
+                   jobname="MetaVolcano", 
+                   outputfolder=".",
+                   draw='HTML')
+head(meta_degs_vote@metaresult, 3)
+meta_degs_vote@degfreq
+meta_degs_vote@MetaVolcano
+
+```
+
+
 
 
 ### p-Values
@@ -441,7 +517,8 @@ ggpubr::ggarrange(bqval,bq,bte,btau,bi2,
 qval_cutoff <- 0.05
 
 genesqval <- meta %>% 
-  filter(meta$qval.random <= qval_cutoff & I2 < 0.40 & num_exp >= 9) %>% 
+  filter(meta$qval.random <= qval_cutoff ) %>% 
+  #filter(meta$qval.random <= qval_cutoff & I2 < 0.40 & num_exp >= 9) %>% 
   arrange(TE.random)
 
 genesqval
@@ -535,6 +612,7 @@ We also checked for expression in TFs
 ````{r}
 tfs <- read.csv(here::here("Tissue/data/hs_hgnc_curated_tfs.txt"),col.names = "TF")
 
+tf_copd <- filter(meta,meta$X1 %in% tfs$TF)
 tf_copd <- filter(genesqval,genesqval$X1 %in% tfs$TF)
 #write.csv(tf_copd, OUTPUT(c(TODAY,"_Step6_TF-",qval_cutoff,"-meta-analysis.csv")))
 
@@ -550,7 +628,7 @@ topgenes <- scale(topgenes)
 color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
 breaks <- c(seq(min(topgenes,na.rm = T),-0.1,length.out = 7),0,seq(0.1,max(topgenes,na.rm = T),length.out = 7))
 
-pheatmap(topgenes,
+pheatmap(na.omit(topgenes),
          main = str_c("TFs" , " (ngenes = ",dim(topgenes)[1], ")"),,
          color = color,
          breaks = breaks,
