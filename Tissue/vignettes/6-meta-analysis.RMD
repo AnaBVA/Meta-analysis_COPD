@@ -517,8 +517,8 @@ ggpubr::ggarrange(bqval,bq,bte,btau,bi2,
 qval_cutoff <- 0.05
 
 genesqval <- meta %>% 
-  filter(meta$qval.random <= qval_cutoff ) %>% 
-  #filter(meta$qval.random <= qval_cutoff & I2 < 0.40 & num_exp >= 9) %>% 
+  #filter(meta$qval.random <= qval_cutoff ) %>% 
+  filter(meta$qval.random <= qval_cutoff & I2 < 0.40 & num_exp >= 9) %>% 
   arrange(TE.random)
 
 genesqval

@@ -171,7 +171,7 @@ write_csv(de,path= OUTPUT(c("DE/",TODAY,"_Step4_TableGenes_",i,"_",names(geo[i])
 
 
 ```{r, class.source="bg-info",class.output="bg-info"}
-geo <- readRDS(OUTPUT("2020-10-07_Step3_LungTissue-CURATED.RDS"))
+geo <- readRDS(OUTPUT("2021-03-30_Step3_LungTissue-CURATED.RDS"))
 names(geo)
 ```
 
