@@ -110,14 +110,20 @@ datos <- datos[,-which(colnames(datos) == "Row.names")]
 color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
 annotation_colors = list(DISEASE = c(CONTROL = "#66CC99",COPD = "#9999CC"),
                          CLUSTER = c(Control = "#ffffff", Group1 = "#b6dbff", Group2 = "#006ddb", Group3 = "#490092", Group4 = "#009292"))
+
 pheatmap(df, 
          annotation = annoCluster,
          color = color,
-         scale = "row",
-         cutree_cols = 2,
+         cutree_cols = 5,
+         show_colnames = F,
+         show_rownames = F,
+         clustering_distance_rows = "euclidean",
+         clustering_method = "ward.D",
          annotation_colors = annotation_colors,
-         main = str_c("Selected meta-analysis genes: n = ",dim(df)[1], ", samples = ",dim(df)[2])
-         )
+         scale = "row",
+         main = str_c("Selected SVN model genes: n = ",dim(df)[1], ", samples = ",dim(df)[2])
+)
+
 
 ###################### PCA
 library(PCAtools)
@@ -209,6 +215,9 @@ rf_rfe <- rfe(DISEASE ~ ., data = TrainingSet,
               ntree = 500)
 
 rf_rfe
+
+#saveRDS(rf_rfe, "Tissue/output_data/rf_rfe_61g.RDS")
+
 rf_rfe$fit
 
 plot(rf_rfe, type = c("g", "o"))
@@ -241,18 +250,13 @@ Model <- train(DISEASE ~ ., data = TrainingSet,
                                        #summaryFunction = twoClassSummary,
                                        savePredictions = T,
                                        classProbs = T),
-               tuneGrid = data.frame(degree= 3,scale=0.5,C=seq(0,2, length = 10))
+               tuneGrid = data.frame(degree= 1,scale=0.5,C=seq(0,2, length = 10))
 )
 
 plot(Model)
 Model
 
-
-
-library(MLeval)
-evalm(Model)
-
-library(plotROC)
+#saveRDS(Model, "Tissue/output_data/Model_61g.RDS")
 
 
 # Feature importance
@@ -270,8 +274,11 @@ Model.testing.confusion <-confusionMatrix(Model.testing, TestingSet$DISEASE)
 print(Model.training.confusion)
 print(Model.testing.confusion)
 
+library(MLeval)
+pred <- predict(Model, newdata=TestingSet, type="prob")
+evalm(data.frame(pred, TestingSet$DISEASE))
 
-svn <- rownames(Importance$importance)[which(Importance$importance$COPD > 50)]
+svn <- rownames(Importance$importance)[which(Importance$importance$COPD > 60)]
 svn <- fData(sub_gse5)$GENE.SYMBOL
 svn <- rf_rfe$optVariables
 
@@ -314,6 +321,56 @@ featurePlot(x = TrainingSet[, svn],
             strip=strip.custom(par.strip.text=list(cex=.7)),
             scales = list(x = list(relation="free"), 
                           y = list(relation="free")))
+
+###################### tSNE
+set.seed(123)
+tsne_model <- Rtsne(t(svn_df), metadata = svn_anno, pca=T, perplexity=10,  dims=3)
+d_tsne = as.data.frame(tsne_model$Y)
+
+d_tsne$DISEASE <- as.factor(annoCluster$DISEASE)
+d_tsne$CLUSTER <- as.factor(annoCluster$CLUSTER)
+rownames(d_tsne) <- rownames(t(df))
+#d_tsne_1$DISEASE <- as.factor(copdanno$DISEASE)
+
+ggplot(d_tsne, aes(x=V1, y=V2, color = DISEASE)) +
+  geom_point(size=3, alpha = 0.9) +
+  guides(colour=guide_legend(override.aes=list(size=6))) +
+  xlab("Dim 1") + ylab("Dim 2") +
+  ggtitle("t-SNE") +
+  theme_test(base_size=20) +
+  theme(axis.text.x=element_blank(),
+        axis.text.y=element_blank()) +
+  scale_colour_manual(values = c("#66CC99","#9999CC")) #c("#eeeeec","#b6dbff", "#006ddb", "#490092", "#009292")
+
+p <- pca(svn_df, metadata = svn_anno)
+screeplot(p)
+# biplot(p,
+#        colby = 'DISEASE',
+#        #colkey = c(CONTROL = "#66CC99",COPD = "#9999CC"),
+#        hline = 0, vline = 0,
+#        title = "PCA",
+#        legendPosition = 'right',
+#        lab =NULL)
+
+d_pca = as.data.frame(p$rotated[,1:4])
+d_pca$DISEASE <- as.factor(p$metadata$DISEASE)
+d_pca$CLUSTER <- as.factor(annoCluster$CLUSTER)
+
+ggplot(d_pca, aes(x=PC1, y=PC2, color = DISEASE)) +
+  geom_point(size=3, alpha = 0.9) +
+  guides(colour=guide_legend(override.aes=list(size=6))) +
+  xlab("PC1") + ylab("PC2") +
+  ggtitle("PCA") +
+  theme_test(base_size=20) +
+  theme(axis.text.x=element_blank(),
+        axis.text.y=element_blank()) +
+  scale_colour_manual(values = c("#66CC99","#9999CC")) #c("#eeeeec","#b6dbff", "#006ddb", "#490092", "#009292")
+
+
+pairsplot(p,
+          colby = 'DISEASE',
+          colkey = c(CONTROL = "#66CC99",COPD = "#9999CC"))
+
 
 ###################### RandomForest
 # PARALELIZACIÓN DE PROCESO
@@ -414,23 +471,28 @@ datos4 <- datos[,unique(colnames(datos4))]
 
 
 color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
-pheatmap(log(df4+2), 
+f <- pheatmap(log(df4+2), 
          annotation = anno4,
          color = color,
-         #cluster_rows = F,
+         cluster_rows = F,
          annotation_colors = list(DISEASE = c(CONTROL = "#66CC99",COPD = "#9999CC")),
          cutree_cols = 3,
+         show_colnames = F,
+         show_rownames = T,
          clustering_distance_rows = "euclidean",
          clustering_method = "ward.D",
          scale = "row",
-         main = str_c("Selected genes: n = ",dim(df4)[1], ", samples = ",dim(df4)[2])
+         main = str_c(names(geo)[i]," Selected genes: n = ",dim(df4)[1], ", samples = ",dim(df4)[2])
 )
 
+return(ggplotify::as.ggplot(f))
 }
 
-feature_heatmap <- function(i,svn, eval_model = T){
+feature_heatmap <- function(i,svn, eval_model = F, type = "m"){
+  gse1 <- geo[[i]][[1]]
+  
+if(type == "m"){
 
-gse1 <- geo[[i]][[1]]
 
 feature_selection1 <- which(fData(gse1)$GENE.SYMBOL %in% svn)
 samples_selection1 <- which(pData(gse1)$DISEASE %in% c("CONTROL", "COPD"))
@@ -445,20 +507,41 @@ df1 <- df1[unique(rownames(df1)),]
 
 info1 <- as.data.frame(pData(sub_gse1))
 
+} else {
+    feature_selection1 <- which(rowData(gse1)$GENE.SYMBOL %in% svn)
+    #feature_selection4 <- which(rowData(gse4)$GENE.SYMBOL %in% genesqval$X1)
+    samples_selection1 <- which(colData(gse1)$DISEASE %in% c("CONTROL", "COPD"))
+    
+    sub_gse1 <- gse1[feature_selection1,samples_selection1]
+    
+    ### 
+    
+    
+    df1 <- assay(sub_gse1)
+    df1 <- log(df1+2)
+    rownames(df1) <- rowData(sub_gse1)$GENE.SYMBOL
+    
+    info1 <- as.data.frame(colData(sub_gse1))
+    
+}
+
+
 anno1 <- data.frame(DISEASE = info1$DISEASE)
 rownames(anno1) <- rownames(info1)
 
 color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
-pheatmap(df1, 
+f <- pheatmap(na.omit(df1), 
          annotation = anno1,
          annotation_colors = list(DISEASE = c(CONTROL = "#66CC99",COPD = "#9999CC")),
          color = color,
          clustering_distance_rows = "euclidean",
          clustering_method = "ward.D",
-         #cluster_rows = F,
+         cluster_rows = T,
+         show_colnames = F,
+         show_rownames = T,
          cutree_cols = 3,
          scale = "row",
-         main = str_c("Selected genes: n = ",dim(df1)[1], ", samples = ",dim(df1)[2])
+         main = str_c(names(geo)[i]," Selected genes: n = ",dim(df1)[1], ", samples = ",dim(df1)[2])
 )
 
   if(eval_model == T) {
@@ -471,22 +554,30 @@ pheatmap(df1,
     print(Model.testing.confusion)
   }
 
+return(ggplotify::as.ggplot(f))
+
 }
+
+
 
 ################################ GSE
 
-feature_heatmap(1, svn)
-feature_heatmap(2, svn)
-feature_heatmap(3, svn)
-feature_heatmap_rnaseq(4,svn)
-feature_heatmap(5, svn)
-feature_heatmap(6, svn)
-feature_heatmap(7, svn)
-feature_heatmap(8, svn)
-feature_heatmap(9, svn)
-feature_heatmap(10, svn)
-feature_heatmap(11, svn)
-feature_heatmap_rnaseq(12,svn)
+f <- list()
+
+f[[1]] <- feature_heatmap(1, svn)
+f[[2]] <- feature_heatmap(2, svn)
+f[[3]] <- feature_heatmap(3, svn)
+f[[4]] <- feature_heatmap(4,svn, type = "f")
+#f[[4]] <- feature_heatmap_rnaseq(4,svn)
+f[[5]] <- feature_heatmap(5, svn)
+f[[6]] <- feature_heatmap(6, svn)
+f[[7]] <- feature_heatmap(7, svn)
+f[[8]] <- feature_heatmap(8, svn)
+f[[9]] <- feature_heatmap(9, svn)
+f[[10]] <- feature_heatmap(10, svn)
+f[[11]] <- feature_heatmap(11, svn)
+#f[[12]] <- feature_heatmap(12,svn, type = "f")
+f[[12]] <- feature_heatmap_rnaseq(12,svn)
 
 
-
+g <- gridExtra::marrangeGrob(f, nrow = 4, ncol = 3)
