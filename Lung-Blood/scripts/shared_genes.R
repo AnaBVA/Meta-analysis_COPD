@@ -5,6 +5,7 @@ library(ComplexHeatmap)
 library(pheatmap)
 library(RColorBrewer)
 
+#############
 ## meta analysis resulrs
 blood <- read_csv(here::here("Blood/output_data/Blood_2021-03-01_Step6_meta-analysis.csv"))
 lung <- read_csv(here::here("Tissue/output_data/2021-03-01_Step6_meta-analysis.csv"))
@@ -13,6 +14,9 @@ lung <- read_csv(here::here("Tissue/output_data/2021-03-01_Step6_meta-analysis.c
 qval_cutoff <- 0.05
 blood <- filter(blood,qval.random <= qval_cutoff & I2 < 0.40 & num_exp > 3) %>% rename(genes = X1)
 lung <- filter(lung,qval.random <= qval_cutoff & I2 < 0.40 & num_exp >= 9) %>% rename(genes = X1)
+
+
+#############
 
 # data for the upset plot
 us <- full_join(blood[,1:2], lung[,1:2], by= "genes") %>%
@@ -34,6 +38,41 @@ decorate_annotation("intersection_size", {
   grid.text(cs[od], x = seq_along(cs), y = unit(cs[od], "native") + unit(1, "pt"), 
             default.units = "native", just = "bottom", gp = gpar(fontsize = 12))
 })
+
+#############
+# feature selection for the model results
+blood.rf_rfe <- readRDS("Blood/output_data/rf_rfe_701g.RDS")
+blood.rf_rfe <- as_tibble(blood.rf_rfe$optVariables)
+blood.rf_rfe$Blood <- 1
+
+lung.rf_rfe <- readRDS("Tissue/output_data/rf_rfe_61g.RDS")
+lung.rf_rfe <- as_tibble(lung.rf_rfe$optVariables)
+lung.rf_rfe$Lung <- 1
+
+# data for the upset plot
+us <- full_join(blood.rf_rfe, lung.rf_rfe, by= "value") %>%
+  mutate_if(is.numeric, ~1 * (. != "NA" )) %>% # change values to 1 if non NA
+  replace(is.na(.), 0)
+
+colnames(us) <- c("genes", "Blood", "Lung")
+
+# upset plot
+m1 = make_comb_mat(us)
+ht <- draw(UpSet(m1,
+                 pt_size = unit(3, "mm"), 
+                 lwd = 3
+))
+
+od = column_order(ht)
+cs = comb_size(m1)
+decorate_annotation("intersection_size", {
+  grid.text(cs[od], x = seq_along(cs), y = unit(cs[od], "native") + unit(1, "pt"), 
+            default.units = "native", just = "bottom", gp = gpar(fontsize = 12))
+})
+
+filter(us, Blood == Lung)
+
+###########
 
 
 ## full tables with logFC

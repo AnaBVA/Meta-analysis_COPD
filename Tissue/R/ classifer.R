@@ -439,75 +439,29 @@ print(modelo_rf.testing.confusion)
 library(plotROC)
 ggplot(modelo_rf$pred[])
 
-################################ GSE
+################################ External validation
 
 
-feature_heatmap_rnaseq <- function(i, svn) {
-
-gse4 <- geo[[i]][[1]]
-
-feature_selection4 <- which(rowData(gse4)$GENE.SYMBOL %in% svn)
-#feature_selection4 <- which(rowData(gse4)$GENE.SYMBOL %in% genesqval$X1)
-samples_selection4 <- which(colData(gse4)$DISEASE %in% c("CONTROL", "COPD"))
-
-sub_gse4 <- gse4[feature_selection4,samples_selection4]
-
-### 
-
-
-df4 <- assay(sub_gse4)
-rownames(df4) <- rowData(sub_gse4)$GENE.SYMBOL
-
-info4 <- as.data.frame(colData(sub_gse4))
-
-anno4 <- data.frame(DISEASE = info4$DISEASE)
-rownames(anno4) <- rownames(info4)
-
-# Merge in one dataframe genes and disease info
-#datos <- merge(as.data.frame(t(df)),anno)
-datos4 <- as.data.frame(t(df4))
-datos4$DISEASE <- anno4$DISEASE
-datos4 <- datos[,unique(colnames(datos4))]
-
-
-color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
-f <- pheatmap(log(df4+2), 
-         annotation = anno4,
-         color = color,
-         cluster_rows = F,
-         annotation_colors = list(DISEASE = c(CONTROL = "#66CC99",COPD = "#9999CC")),
-         cutree_cols = 3,
-         show_colnames = F,
-         show_rownames = T,
-         clustering_distance_rows = "euclidean",
-         clustering_method = "ward.D",
-         scale = "row",
-         main = str_c(names(geo)[i]," Selected genes: n = ",dim(df4)[1], ", samples = ",dim(df4)[2])
-)
-
-return(ggplotify::as.ggplot(f))
-}
-
-feature_heatmap <- function(i,svn, eval_model = F, type = "m"){
-  gse1 <- geo[[i]][[1]]
+feature_heatmap <- function(i,svn, eval_model = F){
+  gse1 <- geo[[i]]
   
-if(type == "m"){
-
-
-feature_selection1 <- which(fData(gse1)$GENE.SYMBOL %in% svn)
-samples_selection1 <- which(pData(gse1)$DISEASE %in% c("CONTROL", "COPD"))
-
-sub_gse1 <- gse1[feature_selection1,samples_selection1]
-
-### 
-
-df1 <- exprs(sub_gse1)
-rownames(df1) <- fData(sub_gse1)$GENE.SYMBOL
-df1 <- df1[unique(rownames(df1)),]
-
-info1 <- as.data.frame(pData(sub_gse1))
-
-} else {
+  if(!(i %in% c(4,12))){
+    
+    
+    feature_selection1 <- which(fData(gse1)$GENE.SYMBOL %in% svn)
+    samples_selection1 <- which(pData(gse1)$DISEASE %in% c("CONTROL", "COPD"))
+    
+    sub_gse1 <- gse1[feature_selection1,samples_selection1]
+    
+    ### 
+    
+    df1 <- exprs(sub_gse1)
+    rownames(df1) <- fData(sub_gse1)$GENE.SYMBOL
+    df1 <- df1[unique(rownames(df1)),]
+    
+    info1 <- as.data.frame(pData(sub_gse1))
+    
+  } else {
     feature_selection1 <- which(rowData(gse1)$GENE.SYMBOL %in% svn)
     #feature_selection4 <- which(rowData(gse4)$GENE.SYMBOL %in% genesqval$X1)
     samples_selection1 <- which(colData(gse1)$DISEASE %in% c("CONTROL", "COPD"))
@@ -523,27 +477,26 @@ info1 <- as.data.frame(pData(sub_gse1))
     
     info1 <- as.data.frame(colData(sub_gse1))
     
-}
-
-
-anno1 <- data.frame(DISEASE = info1$DISEASE)
-rownames(anno1) <- rownames(info1)
-
-color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
-f <- pheatmap(na.omit(df1), 
-         annotation = anno1,
-         annotation_colors = list(DISEASE = c(CONTROL = "#66CC99",COPD = "#9999CC")),
-         color = color,
-         clustering_distance_rows = "euclidean",
-         clustering_method = "ward.D",
-         cluster_rows = T,
-         show_colnames = F,
-         show_rownames = T,
-         cutree_cols = 3,
-         scale = "row",
-         main = str_c(names(geo)[i]," Selected genes: n = ",dim(df1)[1], ", samples = ",dim(df1)[2])
-)
-
+  }
+  
+  anno1 <- data.frame(DISEASE = info1$DISEASE)
+  rownames(anno1) <- rownames(info1)
+  
+  color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
+  f <- pheatmap(na.omit(df1), 
+                annotation = anno1,
+                annotation_colors = list(DISEASE = c(CONTROL = "#66CC99",COPD = "#9999CC")),
+                color = color,
+                clustering_distance_rows = "euclidean",
+                clustering_method = "ward.D",
+                cluster_rows = T,
+                show_colnames = F,
+                show_rownames = T,
+                cutree_cols = 3,
+                scale = "row",
+                main = str_c(names(geo)[i]," Selected genes: n = ",dim(df1)[1], ", samples = ",dim(df1)[2])
+  )
+  
   if(eval_model == T) {
     datos1 <- merge(t(df1),anno1, by = 0)
     rownames(datos1) <- datos1$Row.names
@@ -553,31 +506,58 @@ f <- pheatmap(na.omit(df1),
     Model.testing.confusion <-confusionMatrix(Model.testing, datos1$DISEASE)
     print(Model.testing.confusion)
   }
-
-return(ggplotify::as.ggplot(f))
-
+  
+  return(ggplotify::as.ggplot(f))
+  
 }
 
 
-
-################################ GSE
-
-f <- list()
-
-f[[1]] <- feature_heatmap(1, svn)
-f[[2]] <- feature_heatmap(2, svn)
-f[[3]] <- feature_heatmap(3, svn)
-f[[4]] <- feature_heatmap(4,svn, type = "f")
-#f[[4]] <- feature_heatmap_rnaseq(4,svn)
-f[[5]] <- feature_heatmap(5, svn)
-f[[6]] <- feature_heatmap(6, svn)
-f[[7]] <- feature_heatmap(7, svn)
-f[[8]] <- feature_heatmap(8, svn)
-f[[9]] <- feature_heatmap(9, svn)
-f[[10]] <- feature_heatmap(10, svn)
-f[[11]] <- feature_heatmap(11, svn)
-#f[[12]] <- feature_heatmap(12,svn, type = "f")
-f[[12]] <- feature_heatmap_rnaseq(12,svn)
-
-
+f <- sapply(1:12, feature_heatmap)
 g <- gridExtra::marrangeGrob(f, nrow = 4, ncol = 3)
+
+######
+feature_heatmap_rnaseq <- function(i, svn) {
+  
+  gse4 <- geo[[i]][[1]]
+  
+  feature_selection4 <- which(rowData(gse4)$GENE.SYMBOL %in% svn)
+  #feature_selection4 <- which(rowData(gse4)$GENE.SYMBOL %in% genesqval$X1)
+  samples_selection4 <- which(colData(gse4)$DISEASE %in% c("CONTROL", "COPD"))
+  
+  sub_gse4 <- gse4[feature_selection4,samples_selection4]
+  
+  ### 
+  
+  
+  df4 <- assay(sub_gse4)
+  rownames(df4) <- rowData(sub_gse4)$GENE.SYMBOL
+  
+  info4 <- as.data.frame(colData(sub_gse4))
+  
+  anno4 <- data.frame(DISEASE = info4$DISEASE)
+  rownames(anno4) <- rownames(info4)
+  
+  # Merge in one dataframe genes and disease info
+  #datos <- merge(as.data.frame(t(df)),anno)
+  datos4 <- as.data.frame(t(df4))
+  datos4$DISEASE <- anno4$DISEASE
+  datos4 <- datos[,unique(colnames(datos4))]
+  
+  
+  color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
+  f <- pheatmap(log(df4+2), 
+                annotation = anno4,
+                color = color,
+                cluster_rows = F,
+                annotation_colors = list(DISEASE = c(CONTROL = "#66CC99",COPD = "#9999CC")),
+                cutree_cols = 3,
+                show_colnames = F,
+                show_rownames = T,
+                clustering_distance_rows = "euclidean",
+                clustering_method = "ward.D",
+                scale = "row",
+                main = str_c(names(geo)[i]," Selected genes: n = ",dim(df4)[1], ", samples = ",dim(df4)[2])
+  )
+  
+  return(ggplotify::as.ggplot(f))
+}
