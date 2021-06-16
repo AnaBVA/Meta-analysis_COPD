@@ -95,6 +95,101 @@ colnames(full_tables)
 
 ```
 
+We can filter genes by selecting only protein coding genes in the human genome using biomaRt.
+
+```{r}
+library("biomaRt")
+mart <- useMart(biomart="ensembl", dataset="hsapiens_gene_ensembl")
+all_genes <- getBM(attributes = c( "hgnc_symbol","transcript_biotype"), 
+                          filters = c("hgnc_symbol"), 
+                          values = full_tables$GENE.SYMBOL,
+                          #values = list(biotype=c("protein_coding")), 
+                          mart = mart)
+
+
+genes_emb <- full_tables$GENE.SYMBOL %in% all_genes$hgnc_symbol
+
+```
+
+
+### MetaVolcano
+
+Using [Metavolcano](https://www.bioconductor.org/packages/release/bioc/vignettes/MetaVolcanoR/inst/doc/MetaVolcano.html) funcions to create a volcano plot with DE genes 
+
+We first need to create a list with tables. Each table contains information about gene `Symbol`, `Log2FC`, `pvalue`, `CI.L`, `CI.R` per experiment. 
+
+```{r}
+# colnames 
+df <- tibble(x=colnames(full_tables)) %>% 
+  separate(x, c("type", "GSE"), "_") %>% 
+  add_column(pos = 1:nrow(.))
+
+df$GSE[1] <- "Gene"
+
+# list
+split_df <- function(i){
+  df <- data.frame(GENE.SYMBOL = full_tables$GENE.SYMBOL[genes_emb],
+                   full_tables[genes_emb,which(df$GSE == i)]
+                   )
+  colnames(df) <- c( "Symbol", "Log2FC",  "pvalue", "CI.L", "CI.R")
+  #colnames(df) <- gsub("_GSE.*", "", colnames(df) )
+  as.data.frame(df)
+  #as.data.frame(df)[-c(8359,18704),]
+  }
+
+diffexplist <- lapply(sort(unique(df$GSE)[-1]), split_df)
+names(diffexplist) <- sort(unique(df$GSE)[-1])
+
+```
+
+Now, we implement the `MetaVolcano` funtions. 
+
+```{r}
+library(MetaVolcanoR)
+
+meta_degs_rem <- rem_mv(diffexp=diffexplist,
+            pcriteria="pvalue",
+            foldchangecol='Log2FC', 
+            genenamecol='Symbol',
+            geneidcol=NULL,
+            collaps=FALSE,
+            llcol='CI.L',
+            rlcol='CI.R',
+            vcol=NULL, 
+            cvar=TRUE,
+            metathr=0.01,
+            jobname="MetaVolcano",
+            outputfolder=here::here("Blood/output_data"), 
+            draw='HTML',
+            ncores=1)
+
+head(meta_degs_rem@metaresult, 3)
+meta_degs_rem@MetaVolcano
+
+meta_df <- meta_degs_rem@metaresult %>% 
+  filter(randomP < 0.05 )
+
+meta_degs_vote <- votecount_mv(diffexp=diffexplist,
+                   pcriteria='pvalue',
+                   foldchangecol='Log2FC',
+                   genenamecol='Symbol',
+                   geneidcol=NULL,
+                   pvalue=0.05,
+                   foldchange=0, 
+                   metathr=0.01,
+                   collaps=FALSE,
+                   jobname="MetaVolcano", 
+                   outputfolder=here::here("Blood/output_data"),
+                   draw='HTML')
+head(meta_degs_vote@metaresult, 3)
+meta_degs_vote@degfreq
+meta_degs_vote@MetaVolcano
+
+
+```
+
+
+
 
 
 ### p-Values
@@ -159,11 +254,17 @@ adj_pvalue <- 0.05
 
 ap <- left_join(adjp,logFC,by = c("GENE.SYMBOL" = "GENE.SYMBOL", "GSE" = "GSE")) %>%
   filter(adjP < adj_pvalue) %>% 
-  select(-adjP) %>%
+  select(-adjP) %>% 
   spread(GSE,logFC) %>% 
   replace(is.na(.), 0)
 
 ap
+
+# Experiments with no DE genes 
+unique(logFC$GSE)[which(!unique(logFC$GSE)  %in% colnames(ap))]
+
+ap$GSE42057 <- 0
+
 
 # selecting up regulated genes
 up <- ap %>%
@@ -194,7 +295,7 @@ decorate_annotation("intersection_size", {
 
 #dev.off()
 comb_size(m)
-sample(up$GENE.SYMBOL[extract_comb(m,"11111")],5)
+sample(up$GENE.SYMBOL[extract_comb(m,"11111")],)
 
 
 
@@ -220,7 +321,7 @@ decorate_annotation("intersection_size", {
 })
 comb_size(m)
 
-sample(up$GENE.SYMBOL[extract_comb(m,"11111")],5)
+sample(up$GENE.SYMBOL[extract_comb(m,"11111")],)
 
 ```
 

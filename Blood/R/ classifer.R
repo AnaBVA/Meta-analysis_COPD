@@ -290,8 +290,8 @@ library(MLeval)
 pred <- predict(Model, newdata=TestingSet, type="prob")
 evalm(data.frame(pred, TestingSet$DISEASE))
 
-svn <- rownames(Importance$importance)[which(Importance$importance$COPD > 80)]
-svn <- fData(sub_gse5)$GENE.SYMBOL
+#svn <- rownames(Importance$importance)[which(Importance$importance$COPD > 80)]
+#svn <- fData(sub_gse5)$GENE.SYMBOL
 svn <- gsub("`","",rf_rfe$optVariables)
 
 ###################### Select important features

@@ -127,8 +127,8 @@ split_df <- function(i){
   #as.data.frame(df)[-c(8359,18704),]
   }
 
-diffexplist <- lapply(unique(df$GSE)[-1], split_df)
-names(diffexplist) <- unique(df$GSE)[-1]
+diffexplist <- lapply(sort(unique(df$GSE)[-1]), split_df)
+names(diffexplist) <- sort(unique(df$GSE)[-1])
 
 ```
 
@@ -149,12 +149,12 @@ meta_degs_rem <- rem_mv(diffexp=diffexplist,
             cvar=TRUE,
             metathr=0.01,
             jobname="MetaVolcano",
-            outputfolder=".", 
+            outputfolder=here::here("Tissue/output_data"), 
             draw='HTML',
             ncores=1)
 
 head(meta_degs_rem@metaresult, 3)
-meta_degs_rem@MetaVolcano + theme_void()
+meta_degs_rem@MetaVolcano
 
 meta_df <- meta_degs_rem@metaresult %>% 
   filter(randomP < 0.05 )
@@ -169,11 +169,12 @@ meta_degs_vote <- votecount_mv(diffexp=diffexplist,
                    metathr=0.01,
                    collaps=FALSE,
                    jobname="MetaVolcano", 
-                   outputfolder=".",
+                   outputfolder=here::here("Tissue/output_data"),
                    draw='HTML')
 head(meta_degs_vote@metaresult, 3)
 meta_degs_vote@degfreq
 meta_degs_vote@MetaVolcano
+
 
 ```
 
@@ -239,7 +240,6 @@ logFC %>%
 # recovering logFC values from genes with p value less than 0.01 
 adj_pvalue <- 0.05
 
-
 ap <- left_join(adjp,logFC,by = c("GENE.SYMBOL" = "GENE.SYMBOL", "GSE" = "GSE")) %>%
   filter(adjP < adj_pvalue) %>% 
   select(-adjP) %>% 
@@ -247,6 +247,13 @@ ap <- left_join(adjp,logFC,by = c("GENE.SYMBOL" = "GENE.SYMBOL", "GSE" = "GSE"))
   replace(is.na(.), 0)
 
 ap
+
+# Experiments with no DE genes 
+unique(logFC$GSE)[which(!unique(logFC$GSE)  %in% colnames(ap))]
+
+ap$GSE37768 <- 0
+ap$GSE8581 <- 0
+ap$GSE103174 <- 0
 
 # selecting up regulated genes
 up <- ap %>%
@@ -277,8 +284,8 @@ decorate_annotation("intersection_size", {
 
 #dev.off()
 comb_size(m)
-up[extract_comb(m,"11001101"),]
-up[extract_comb(m,"10001111"),]
+up[extract_comb(m,"11001101000"),]
+up[extract_comb(m,"10001111000"),]
 
 
 ### DOWN
