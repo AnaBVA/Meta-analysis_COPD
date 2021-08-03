@@ -13,15 +13,12 @@ source(here::here("Blood/R/setup.R"))
 
 ###################### Microarray data
 # All data normalized
-geo <- readRDS(OUTPUT("2020-11-25_Step3_LungTissue-CURATED.RDS"))
-names(geo)
-
-# Select "GSE47460"
-gse5 <- geo[[5]]
+gse <- readRDS(OUTPUT("2021-08-02_norm_GSE100153.RDS"))
 
 ###################### Meta-analysis data
 # Import meta-analysis results
 meta <- read_csv(OUTPUT("2021-03-01_Step6_meta-analysis.csv"))
+meta$X1 <- meta[,1][[1]]
 
 # Filter genes
 qval_cutoff <- 0.05
@@ -34,19 +31,19 @@ genesqval <- meta %>%
 ###################### Select genes
 # Select genes in the microarray using meta-analysis results
 
-anno_summarized <- fData(gse5)  %>% 
+anno_summarized <- fData(gse)  %>% 
   group_by(GENE.SYMBOL) %>% 
   dplyr::summarize(ID_first = dplyr::first(ID)) %>% 
   filter(GENE.SYMBOL %in% genesqval$X1)
 
-feature_selection <- which(fData(gse5)$ID %in% anno_summarized$ID_first)
-samples_selection <- which(pData(gse5)$DISEASE %in% c("CONTROL", "COPD"))
+feature_selection <- which(fData(gse)$ID %in% anno_summarized$ID_first)
+samples_selection <- which(pData(gse)$DISEASE %in% c("CONTROL", "COPD"))
 
-sub_gse5 <- gse5[feature_selection,samples_selection]
+sub_gse <- gse[feature_selection,samples_selection]
 
 
 ###################### Subcluster COPD data
-copd <- gse5[feature_selection,which(pData(gse5)$DISEASE =="COPD")]
+copd <- gse[feature_selection,which(pData(gse)$DISEASE =="COPD")]
 copddf <- exprs(copd)
 rownames(copddf) <- fData(copd)$GENE.SYMBOL
 
@@ -78,47 +75,49 @@ ggplot(d_tsne_1, aes(x=V1, y=V2, color = cluster)) +
 
 
 ###################### Prepare data for classification
-df <- exprs(sub_gse5)
-rownames(df) <- fData(sub_gse5)$GENE.SYMBOL
+df <- exprs(sub_gse)
+rownames(df) <- fData(sub_gse)$GENE.SYMBOL
 
-info <- pData(sub_gse5)
+info <- pData(sub_gse)
 
 anno <- data.frame(DISEASE = info$DISEASE)
 rownames(anno) <- rownames(info)
 
-### Cluster info
-annoCluster <- merge(anno,d_tsne_1, by = 0, all.x = T)
-rownames(annoCluster) <- rownames(anno)
-
-annoCluster$CLUSTER <- NA
-
-annoCluster[is.na(annoCluster$cluster),"CLUSTER"] <- 'Control'
-annoCluster[which(annoCluster$cluster=="1"),"CLUSTER"] <- 'Group1'
-annoCluster[which(annoCluster$cluster=="2"),"CLUSTER"] <- 'Group2'
-annoCluster[which(annoCluster$cluster=="3"),"CLUSTER"] <- 'Group3'
-annoCluster[which(annoCluster$cluster=="4"),"CLUSTER"] <- 'Group4'
-
-annoCluster$DISEASE <- as.factor(annoCluster$DISEASE)
-annoCluster$CLUSTER <- as.factor(annoCluster$CLUSTER)
-
-annoCluster <- annoCluster[,c("DISEASE","CLUSTER")]
-
-# anno <- data.frame(DISEASE = annoCluster$CLUSTER)
-# rownames(anno) <- rownames(annoCluster)
-
-# Merge in one dataframe genes and disease info
-datos <- merge(t(df),anno, by = 0)
-rownames(datos) <- datos$Row.names
-datos <- datos[,-which(colnames(datos) == "Row.names")]
+# ### Cluster info
+# annoCluster <- merge(anno,d_tsne_1, by = 0, all.x = T)
+# rownames(annoCluster) <- rownames(anno)
+# 
+# annoCluster$CLUSTER <- NA
+# 
+# annoCluster[is.na(annoCluster$cluster),"CLUSTER"] <- 'Control'
+# annoCluster[which(annoCluster$cluster=="1"),"CLUSTER"] <- 'Group1'
+# annoCluster[which(annoCluster$cluster=="2"),"CLUSTER"] <- 'Group2'
+# annoCluster[which(annoCluster$cluster=="3"),"CLUSTER"] <- 'Group3'
+# annoCluster[which(annoCluster$cluster=="4"),"CLUSTER"] <- 'Group4'
+# 
+# annoCluster$DISEASE <- as.factor(annoCluster$DISEASE)
+# annoCluster$CLUSTER <- as.factor(annoCluster$CLUSTER)
+# 
+# annoCluster <- annoCluster[,c("DISEASE","CLUSTER")]
+# 
+# # anno <- data.frame(DISEASE = annoCluster$CLUSTER)
+# # rownames(anno) <- rownames(annoCluster)
+# 
+# # Merge in one dataframe genes and disease info
+# datos <- merge(t(df),anno, by = 0)
+# rownames(datos) <- datos$Row.names
+# datos <- datos[,-which(colnames(datos) == "Row.names")]
 
 
 ###################### Pre-heatmap  
 color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
-annotation_colors = list(DISEASE = c(CONTROL = "#66CC99",COPD = "#9999CC"),
-                         CLUSTER = c(Control = "#ffffff", Group1 = "#b6dbff", Group2 = "#006ddb", Group3 = "#490092", Group4 = "#009292"))
+annotation_colors = list(DISEASE = c(CONTROL = "#66CC99",COPD = "#9999CC")
+                         #CLUSTER = c(Control = "#ffffff", Group1 = "#b6dbff", Group2 = "#006ddb", Group3 = "#490092", Group4 = "#009292")
+                         )
+
 
 pheatmap(df, 
-         annotation = annoCluster,
+         annotation = anno,
          color = color,
          cutree_cols = 5,
          show_colnames = F,
@@ -164,11 +163,11 @@ pairsplot(p,
 
 ###################### tSNE
 set.seed(123)
-tsne_model <- Rtsne(t(df), metadata = annoCluster, pca=T, perplexity=10,  dims=3)
+tsne_model <- Rtsne(t(df), metadata = anno, pca=T, perplexity=10,  dims=3)
 d_tsne = as.data.frame(tsne_model$Y)
 
 d_tsne$DISEASE <- as.factor(annoCluster$DISEASE)
-d_tsne$CLUSTER <- as.factor(annoCluster$CLUSTER)
+#d_tsne$CLUSTER <- as.factor(annoCluster$CLUSTER)
 rownames(d_tsne) <- rownames(t(df))
 #d_tsne_1$DISEASE <- as.factor(copdanno$DISEASE)
 
@@ -270,7 +269,7 @@ Model
 
 # Feature importance
 Importance <- varImp(Model)
-Importance$importance <- Importance$importance[which(Importance$importance$COPD > 80),]
+Importance$importance <- Importance$importance[which(Importance$importance$COPD > 70),]
 plot(Importance, csi = 1)
 
 Importance <- varImp(Model)
@@ -290,20 +289,21 @@ library(MLeval)
 pred <- predict(Model, newdata=TestingSet, type="prob")
 evalm(data.frame(pred, TestingSet$DISEASE))
 
-#svn <- rownames(Importance$importance)[which(Importance$importance$COPD > 80)]
-#svn <- fData(sub_gse5)$GENE.SYMBOL
-svn <- gsub("`","",rf_rfe$optVariables)
+#svn <- rownames(Importance$importance)[which(Importance$importance$COPD > 70)]
+svn <- fData(sub_gse)$GENE.SYMBOL
+#svn <- gsub("`","",rf_rfe$optVariables)
 
 ###################### Select important features
 svn_df <- df[which(rownames(df) %in% svn),]
 
-info <- pData(sub_gse5)
-svn_anno <- data.frame(DISEASE = info$DISEASE,
-                   CLUSTER = annoCluster$CLUSTER,
-                   AGE = as.numeric(info$AGE),
-                   SEX = as.numeric(info$SEX),
-                   FEV1 = as.numeric(info$`fev1:ch1`),
-                   FEV1FVC = as.numeric(info$`fev1fvc:ch1`))
+info <- pData(sub_gse)
+svn_anno <- data.frame(DISEASE = info$DISEASE
+                   #CLUSTER = annoCluster$CLUSTER,
+                   #AGE = as.numeric(info$AGE),
+                   #SEX = as.numeric(info$SEX),
+                   #FEV1 = as.numeric(info$`fev1:ch1`),
+                   #FEV1FVC = as.numeric(info$`fev1fvc:ch1`)
+                   )
 rownames(svn_anno) <- rownames(info)
 
 # Merge in one dataframe genes and disease info
@@ -384,8 +384,9 @@ pairsplot(p,
 
 
 
-################################ External validation
+################################ Check with meta-analysis datasets
 
+geo <- readRDS(OUTPUT("2020-11-25_Step3_LungTissue-CURATED.RDS"))
 
 feature_heatmap <- function(i,svn, eval_model = F){
   gse1 <- geo[[i]]
