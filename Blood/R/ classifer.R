@@ -5,7 +5,8 @@ library(pheatmap)
 library(caret)
 library(RColorBrewer)
 library(SummarizedExperiment)
-
+library(Rtsne)
+library(PCAtools)
 
 
 # Add path/location functions
@@ -14,7 +15,7 @@ source(here::here("Blood/R/setup.R"))
 ###################### Microarray data
 # All data normalized
 gse <- readRDS(OUTPUT("2021-08-02_norm_GSE100153.RDS"))
-
+ID <- "GSE100153"
 ###################### Meta-analysis data
 # Import meta-analysis results
 meta <- read_csv(OUTPUT("2021-03-01_Step6_meta-analysis.csv"))
@@ -42,38 +43,6 @@ samples_selection <- which(pData(gse)$DISEASE %in% c("CONTROL", "COPD"))
 sub_gse <- gse[feature_selection,samples_selection]
 
 
-###################### Subcluster COPD data
-copd <- gse[feature_selection,which(pData(gse)$DISEASE =="COPD")]
-copddf <- exprs(copd)
-rownames(copddf) <- fData(copd)$GENE.SYMBOL
-
-copdinfo <- pData(copd)
-copdanno <- data.frame(DISEASE = copdinfo$DISEASE)
-rownames(copdanno) <- rownames(copdinfo)
-
-#### Dim Reduction
-library(Rtsne)
-
-set.seed(123)
-tsne_model_1 <- Rtsne(t(copddf), metadata = copdanno, pca=T, perplexity=5,  dims=3)
-d_tsne_1 = as.data.frame(tsne_model_1$Y)
-
-km_clusters <- kmeans(x = d_tsne_1[, c("V1", "V2")], centers = 4, nstart = 50)
-d_tsne_1$cluster <- as.factor(km_clusters$cluster)
-rownames(d_tsne_1) <- rownames(t(copddf))
-#d_tsne_1$DISEASE <- as.factor(copdanno$DISEASE)
-
-ggplot(d_tsne_1, aes(x=V1, y=V2, color = cluster)) +
-  geom_point(size=3, alpha = 0.9) +
-  guides(colour=guide_legend(override.aes=list(size=6))) +
-  xlab("DIM1") + ylab("DIM2") +
-  ggtitle("t-SNE") +
-  theme_test(base_size=20) +
-  theme(axis.text.x=element_blank(),
-        axis.text.y=element_blank()) +
-  scale_colour_manual(values = c("#b6dbff", "#006ddb", "#490092", "#009292"))
-
-
 ###################### Prepare data for classification
 df <- exprs(sub_gse)
 rownames(df) <- fData(sub_gse)$GENE.SYMBOL
@@ -83,41 +52,26 @@ info <- pData(sub_gse)
 anno <- data.frame(DISEASE = info$DISEASE)
 rownames(anno) <- rownames(info)
 
-# ### Cluster info
-# annoCluster <- merge(anno,d_tsne_1, by = 0, all.x = T)
-# rownames(annoCluster) <- rownames(anno)
-# 
-# annoCluster$CLUSTER <- NA
-# 
-# annoCluster[is.na(annoCluster$cluster),"CLUSTER"] <- 'Control'
-# annoCluster[which(annoCluster$cluster=="1"),"CLUSTER"] <- 'Group1'
-# annoCluster[which(annoCluster$cluster=="2"),"CLUSTER"] <- 'Group2'
-# annoCluster[which(annoCluster$cluster=="3"),"CLUSTER"] <- 'Group3'
-# annoCluster[which(annoCluster$cluster=="4"),"CLUSTER"] <- 'Group4'
-# 
-# annoCluster$DISEASE <- as.factor(annoCluster$DISEASE)
-# annoCluster$CLUSTER <- as.factor(annoCluster$CLUSTER)
-# 
-# annoCluster <- annoCluster[,c("DISEASE","CLUSTER")]
-# 
-# # anno <- data.frame(DISEASE = annoCluster$CLUSTER)
-# # rownames(anno) <- rownames(annoCluster)
-# 
-# # Merge in one dataframe genes and disease info
-# datos <- merge(t(df),anno, by = 0)
-# rownames(datos) <- datos$Row.names
-# datos <- datos[,-which(colnames(datos) == "Row.names")]
-
+# Merge in one dataframe genes and disease info
+datos <- merge(t(df),anno, by = 0)
+rownames(datos) <- datos$Row.names
+datos <- datos[,-which(colnames(datos) == "Row.names")]
 
 ###################### Pre-heatmap  
-color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
 annotation_colors = list(DISEASE = c(CONTROL = "#66CC99",COPD = "#9999CC")
                          #CLUSTER = c(Control = "#ffffff", Group1 = "#b6dbff", Group2 = "#006ddb", Group3 = "#490092", Group4 = "#009292")
                          )
 
+paletteLength <-  30
+color <- rev(colorRampPalette(c("#a30014", "white", "#004b96"))(paletteLength))
+mybreaks <- myBreaks(df)
+
+pdf(FIG(c(TODAY, "_Heatmap_", dim(df)[1], "x", dim(df)[2],"_", ID, ".pdf")),
+    width = 6, height = 6)
 
 pheatmap(df, 
          annotation = anno,
+         breaks = mybreaks,
          color = color,
          cutree_cols = 5,
          show_colnames = F,
@@ -126,12 +80,12 @@ pheatmap(df,
          clustering_method = "ward.D",
          annotation_colors = annotation_colors,
          scale = "row",
-         main = str_c("Genes: n = ",dim(df)[1], ", samples = ",dim(df)[2])
+         main = str_c("Selected genes: n = ",dim(df)[1], ", samples = ",dim(df)[2])
 )
+dev.off()
 
 
 ###################### PCA
-library(PCAtools)
 p <- pca(df, metadata = anno)
 screeplot(p)
 # biplot(p,
@@ -144,9 +98,9 @@ screeplot(p)
 
 d_pca = as.data.frame(p$rotated[,1:3])
 d_pca$DISEASE <- as.factor(p$metadata$DISEASE)
-d_pca$CLUSTER <- as.factor(annoCluster$CLUSTER)
+#d_pca$CLUSTER <- as.factor(annoCluster$CLUSTER)
 
-ggplot(d_pca, aes(x=PC1, y=PC2, color = DISEASE)) +
+pca <- ggplot(d_pca, aes(x=PC1, y=PC2, color = DISEASE)) +
   geom_point(size=3, alpha = 0.9) +
   guides(colour=guide_legend(override.aes=list(size=6))) +
   xlab("PC1") + ylab("PC2") +
@@ -157,7 +111,7 @@ ggplot(d_pca, aes(x=PC1, y=PC2, color = DISEASE)) +
   scale_colour_manual(values = c("#66CC99","#9999CC")) #c("#eeeeec","#b6dbff", "#006ddb", "#490092", "#009292")
 
 
-pairsplot(p,
+pcas <- pairsplot(p,
           colby = 'DISEASE',
           colkey = c(CONTROL = "#66CC99",COPD = "#9999CC"))
 
@@ -166,12 +120,10 @@ set.seed(123)
 tsne_model <- Rtsne(t(df), metadata = anno, pca=T, perplexity=10,  dims=3)
 d_tsne = as.data.frame(tsne_model$Y)
 
-d_tsne$DISEASE <- as.factor(annoCluster$DISEASE)
-#d_tsne$CLUSTER <- as.factor(annoCluster$CLUSTER)
+d_tsne$DISEASE <- as.factor(anno$DISEASE)
 rownames(d_tsne) <- rownames(t(df))
-#d_tsne_1$DISEASE <- as.factor(copdanno$DISEASE)
 
-ggplot(d_tsne, aes(x=V1, y=V2, color = DISEASE)) +
+tsne <- ggplot(d_tsne, aes(x=V1, y=V2, color = DISEASE)) +
   geom_point(size=3, alpha = 0.9) +
   guides(colour=guide_legend(override.aes=list(size=6))) +
   xlab("DIM1") + ylab("DIM2") +
@@ -181,66 +133,77 @@ ggplot(d_tsne, aes(x=V1, y=V2, color = DISEASE)) +
         axis.text.y=element_blank()) +
   scale_colour_manual(values = c("#66CC99","#9999CC")) #c("#eeeeec","#b6dbff", "#006ddb", "#490092", "#009292")
 
+dim1 <- ggpubr::ggarrange(tsne, pca, 
+                          ncol = 2, 
+                          labels = c("A", "B"),
+                          common.legend = TRUE)
 
+### save plots
+pdf(FIG(c(TODAY, "_DimRed_", dim(df)[1], "x", dim(df)[2],"_", ID, ".pdf")),
+    width = 7, height = 10)
+
+ggpubr::ggarrange(dim1, 
+                  pcas, 
+                  labels = c("","C"),
+                  heights = c(1,2),
+                  nrow = 2)
+
+
+dev.off()
 
 ###################### Data
 set.seed(234) #111
 # Se crean los índices de las observaciones de entrenamiento
-train <- createDataPartition(y = datos$DISEASE, p = 0.8, list = FALSE, times = 1)
+train <- createDataPartition(y = datos$DISEASE, p = 0.7, list = FALSE, times = 1)
 TrainingSet <- datos[train, ]
 TestingSet  <- datos[-train, ]
 
 TrainingSet$DISEASE <- as.factor(TrainingSet$DISEASE)
-TestingSet$DISEASE <- as.factor(TestingSet$DISEASE)
+table(TrainingSet$DISEASE)
 
-library(skimr)
+TestingSet$DISEASE <- as.factor(TestingSet$DISEASE)
+table(TestingSet$DISEASE)
+
+#library(skimr)
 #skimmed <- skim_to_wide(TrainingSet)
 
 ###################### Feature Selection
-
-library(doMC)
-registerDoMC(cores = 4)
-
-# Tamaño de los conjuntos de predictores analizados
-subsets <- seq(1,ncol(TrainingSet),by = 10)
-
-# Número de resamples para el proceso de bootstrapping
-repeticiones <- 30
-
-set.seed(111)
-
-ctrl_rfe <- rfeControl(functions = rfFuncs, method = "boot", number = repeticiones,
-                       returnResamp = "all", allowParallel = TRUE, verbose = FALSE)
-
-set.seed(234)
-rf_rfe <- rfe(DISEASE ~ ., data = TrainingSet,
-              sizes = subsets,
-              metric = "ROC",
-              rfeControl = ctrl_rfe,
-              ntree = 500)
-
-rf_rfe
-
-#saveRDS(rf_rfe, "Blood/output_data/rf_rfe_701g.RDS")
-#rf_rfe <- readRDS("Blood/output_data/rf_rfe_701g.RDS")
-
-rf_rfe$fit
-
-plot(rf_rfe, type = c("g", "o"))
-
-ggplot(data = rf_rfe$results, aes(x = Variables, y = Accuracy)) +
-  geom_line() +
-  scale_x_continuous(breaks  = unique(rf_rfe$results$Variables)) +
-  geom_point() +
-  geom_errorbar(aes(ymin = Accuracy - AccuracySD, ymax = Accuracy + AccuracySD),
-                width = 0.2) +
-  geom_point(data = rf_rfe$results %>% slice(which.max(Accuracy)),
-             color = "red") +
-  theme_bw()
+# 
+# library(doMC)
+# registerDoMC(cores = 4)
+# 
+# # Tamaño de los conjuntos de predictores analizados
+# subsets <- seq(1,ncol(TrainingSet),by = 10)
+# # Número de resamples para el proceso de bootstrapping
+# repeticiones <- 30
+# 
+# ctrl_rfe <- rfeControl(functions = rfFuncs, method = "boot", number = repeticiones,
+#                        returnResamp = "all", allowParallel = TRUE, verbose = FALSE)
+# 
+# rf_rfe <- rfe(DISEASE ~ ., data = TrainingSet,
+#               sizes = subsets,
+#               metric = "ROC",
+#               rfeControl = ctrl_rfe,
+#               ntree = 500)
+# rf_rfe
+# #saveRDS(rf_rfe, "Blood/output_data/rf_rfe_701g.RDS")
+# #rf_rfe <- readRDS("Blood/output_data/rf_rfe_701g.RDS")
+# rf_rfe$fit
+# plot(rf_rfe, type = c("g", "o"))
+# 
+# ggplot(data = rf_rfe$results, aes(x = Variables, y = Accuracy)) +
+#   geom_line() +
+#   scale_x_continuous(breaks  = unique(rf_rfe$results$Variables)) +
+#   geom_point() +
+#   geom_errorbar(aes(ymin = Accuracy - AccuracySD, ymax = Accuracy + AccuracySD),
+#                 width = 0.2) +
+#   geom_point(data = rf_rfe$results %>% slice(which.max(Accuracy)),
+#              color = "red") +
+#   theme_bw()
 
 ###################### Select important features
-TrainingSet <- TrainingSet[,which(colnames(TrainingSet) %in% c("DISEASE",gsub("`","",rf_rfe$optVariables)))]
-TestingSet  <- TestingSet[ ,which(colnames(TestingSet) %in% c("DISEASE",gsub("`","",rf_rfe$optVariables)))]
+# TrainingSet <- TrainingSet[,which(colnames(TrainingSet) %in% c("DISEASE",gsub("`","",rf_rfe$optVariables)))]
+# TestingSet  <- TestingSet[ ,which(colnames(TestingSet) %in% c("DISEASE",gsub("`","",rf_rfe$optVariables)))]
 
 ###################### Classifier
 # SVM model (polynomial kernel)
@@ -261,16 +224,21 @@ Model <- train(DISEASE ~ ., data = TrainingSet,
                tuneGrid = data.frame(degree= 1,scale=0.5,C=seq(0,2, length = 10))
 )
 
+pdf(FIG(c(TODAY, "_Cost_", ID, ".pdf")), width = 6, height = 4)
 plot(Model)
+dev.off()
 Model
 
-#saveRDS(Model, "Blood/output_data/Model_701g.RDS")
-#Model <- readRDS("Blood/output_data/Model_701g.RDS")
+# saveRDS(Model, "Blood/output_data/Model_827g.RDS")
+# Model <- readRDS("Blood/output_data/Model_827g.RDS")
 
 # Feature importance
 Importance <- varImp(Model)
 Importance$importance <- Importance$importance[which(Importance$importance$COPD > 70),]
+
+pdf(FIG(c(TODAY, "_ImportanceGenes_", ID, ".pdf")), width = 4, height = 6)
 plot(Importance, csi = 1)
+dev.off()
 
 Importance <- varImp(Model)
 
@@ -289,8 +257,8 @@ library(MLeval)
 pred <- predict(Model, newdata=TestingSet, type="prob")
 evalm(data.frame(pred, TestingSet$DISEASE))
 
-#svn <- rownames(Importance$importance)[which(Importance$importance$COPD > 70)]
-svn <- fData(sub_gse)$GENE.SYMBOL
+svn <- rownames(Importance$importance)[which(Importance$importance$COPD > 70)]
+#svn <- fData(sub_gse)$GENE.SYMBOL
 #svn <- gsub("`","",rf_rfe$optVariables)
 
 ###################### Select important features
@@ -311,9 +279,16 @@ svn_datos <- merge(svn_df,svn_anno)
 
 
 ###################### heatmap
-color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
+paletteLength <-  30
+color <- rev(colorRampPalette(c("#a30014", "white", "#004b96"))(paletteLength))
+mybreaks <- myBreaks(svn_df)
+
+pdf(FIG(c(TODAY, "_Heatmap_", dim(svn_df)[1], "x", dim(svn_df)[2],"_", ID, ".pdf")), 
+    width = 6, height = 6)
 pheatmap(svn_df, 
          annotation = svn_anno,
+         breaks=mybreaks,
+         border_color = NA,
          color = color,
          cutree_cols = 5,
          show_colnames = F,
@@ -322,10 +297,13 @@ pheatmap(svn_df,
          clustering_method = "ward.D",
          annotation_colors = annotation_colors,
          scale = "row",
-         main = str_c("Selected SVN model genes: n = ",dim(svn_df)[1], ", samples = ",dim(svn_df)[2])
+         main = str_c("Top SVM genes: n = ",dim(svn_df)[1], ", samples = ",dim(svn_df)[2])
 )
+dev.off()
 
 
+pdf(FIG(c(TODAY, "_BoxplotImportance_", dim(svn_df)[1],"_", ID, ".pdf")), 
+    width = 15, height = 8)
 featurePlot(x = TrainingSet[, svn], 
             y = TrainingSet$DISEASE, 
             plot = "box",
@@ -333,59 +311,61 @@ featurePlot(x = TrainingSet[, svn],
             scales = list(x = list(relation="free"), 
                           y = list(relation="free")))
 
-###################### tSNE
-set.seed(123)
-tsne_model <- Rtsne(t(svn_df), metadata = svn_anno, pca=T, perplexity=10,  dims=3)
-d_tsne = as.data.frame(tsne_model$Y)
+dev.off()
 
-d_tsne$DISEASE <- as.factor(annoCluster$DISEASE)
-d_tsne$CLUSTER <- as.factor(annoCluster$CLUSTER)
-rownames(d_tsne) <- rownames(t(df))
-#d_tsne_1$DISEASE <- as.factor(copdanno$DISEASE)
-
-ggplot(d_tsne, aes(x=V1, y=V2, color = DISEASE)) +
-  geom_point(size=3, alpha = 0.9) +
-  guides(colour=guide_legend(override.aes=list(size=6))) +
-  xlab("Dim 1") + ylab("Dim 2") +
-  ggtitle("t-SNE") +
-  theme_test(base_size=20) +
-  theme(axis.text.x=element_blank(),
-        axis.text.y=element_blank()) +
-  scale_colour_manual(values = c("#66CC99","#9999CC")) #c("#eeeeec","#b6dbff", "#006ddb", "#490092", "#009292")
-
-p <- pca(svn_df, metadata = svn_anno)
-screeplot(p)
-# biplot(p,
-#        colby = 'DISEASE',
-#        #colkey = c(CONTROL = "#66CC99",COPD = "#9999CC"),
-#        hline = 0, vline = 0,
-#        title = "PCA",
-#        legendPosition = 'right',
-#        lab =NULL)
-
-d_pca = as.data.frame(p$rotated[,1:4])
-d_pca$DISEASE <- as.factor(p$metadata$DISEASE)
-d_pca$CLUSTER <- as.factor(annoCluster$CLUSTER)
-
-ggplot(d_pca, aes(x=PC1, y=PC3, color = DISEASE)) +
-  geom_point(size=3, alpha = 0.9) +
-  guides(colour=guide_legend(override.aes=list(size=6))) +
-  xlab("PC1") + ylab("PC3") +
-  ggtitle("PCA") +
-  theme_test(base_size=20) +
-  theme(axis.text.x=element_blank(),
-        axis.text.y=element_blank()) +
-  scale_colour_manual(values = c("#66CC99","#9999CC")) #c("#eeeeec","#b6dbff", "#006ddb", "#490092", "#009292")
-
-
-pairsplot(p,
-          colby = 'DISEASE',
-          colkey = c(CONTROL = "#66CC99",COPD = "#9999CC"))
-
-
+# ###################### tSNE
+# set.seed(123)
+# tsne_model <- Rtsne(t(svn_df), metadata = svn_anno, pca=T, perplexity=10,  dims=3)
+# d_tsne = as.data.frame(tsne_model$Y)
+# 
+# d_tsne$DISEASE <- as.factor(annoCluster$DISEASE)
+# d_tsne$CLUSTER <- as.factor(annoCluster$CLUSTER)
+# rownames(d_tsne) <- rownames(t(df))
+# #d_tsne_1$DISEASE <- as.factor(copdanno$DISEASE)
+# 
+# ggplot(d_tsne, aes(x=V1, y=V2, color = DISEASE)) +
+#   geom_point(size=3, alpha = 0.9) +
+#   guides(colour=guide_legend(override.aes=list(size=6))) +
+#   xlab("Dim 1") + ylab("Dim 2") +
+#   ggtitle("t-SNE") +
+#   theme_test(base_size=20) +
+#   theme(axis.text.x=element_blank(),
+#         axis.text.y=element_blank()) +
+#   scale_colour_manual(values = c("#66CC99","#9999CC")) #c("#eeeeec","#b6dbff", "#006ddb", "#490092", "#009292")
+# 
+# p <- pca(svn_df, metadata = svn_anno)
+# screeplot(p)
+# # biplot(p,
+# #        colby = 'DISEASE',
+# #        #colkey = c(CONTROL = "#66CC99",COPD = "#9999CC"),
+# #        hline = 0, vline = 0,
+# #        title = "PCA",
+# #        legendPosition = 'right',
+# #        lab =NULL)
+# 
+# d_pca = as.data.frame(p$rotated[,1:4])
+# d_pca$DISEASE <- as.factor(p$metadata$DISEASE)
+# d_pca$CLUSTER <- as.factor(annoCluster$CLUSTER)
+# 
+# ggplot(d_pca, aes(x=PC1, y=PC3, color = DISEASE)) +
+#   geom_point(size=3, alpha = 0.9) +
+#   guides(colour=guide_legend(override.aes=list(size=6))) +
+#   xlab("PC1") + ylab("PC3") +
+#   ggtitle("PCA") +
+#   theme_test(base_size=20) +
+#   theme(axis.text.x=element_blank(),
+#         axis.text.y=element_blank()) +
+#   scale_colour_manual(values = c("#66CC99","#9999CC")) #c("#eeeeec","#b6dbff", "#006ddb", "#490092", "#009292")
+# 
+# 
+# pairsplot(p,
+#           colby = 'DISEASE',
+#           colkey = c(CONTROL = "#66CC99",COPD = "#9999CC"))
+# 
+# 
 
 ################################ Check with meta-analysis datasets
-
+svn <- fData(sub_gse)$GENE.SYMBOL
 geo <- readRDS(OUTPUT("2020-11-25_Step3_LungTissue-CURATED.RDS"))
 
 feature_heatmap <- function(i,svn, eval_model = F){
@@ -428,9 +408,13 @@ info1 <- as.data.frame(pData(sub_gse1))
 anno1 <- data.frame(DISEASE = info1$DISEASE)
 rownames(anno1) <- rownames(info1)
 
-color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
+paletteLength <-  30
+color <- rev(colorRampPalette(c("#a30014", "white", "#004b96"))(paletteLength))
+mybreaks <- myBreaks(df1)
+
 f <- pheatmap(na.omit(df1), 
          annotation = anno1,
+         breaks = mybreaks,
          annotation_colors = list(DISEASE = c(CONTROL = "#66CC99",COPD = "#9999CC")),
          color = color,
          clustering_distance_rows = "euclidean",
@@ -459,8 +443,11 @@ return(ggplotify::as.ggplot(f))
 
 
 f <- lapply(1:5, feature_heatmap, svn= svn)
-g <- gridExtra::marrangeGrob(f, nrow = 2, ncol = 3)
-g
+
+pdf(FIG(c(TODAY, "_allHeatmap_", length(svn), ".pdf")), 
+    width = 20, height = 15)
+gridExtra::marrangeGrob(f, nrow = 2, ncol = 3)
+dev.off()
 
 ######
 feature_heatmap_rnaseq <- function(i, svn) {
@@ -491,9 +478,13 @@ feature_heatmap_rnaseq <- function(i, svn) {
   datos4 <- datos[,unique(colnames(datos4))]
   
   
-  color <- rev(colorRampPalette(brewer.pal(n = 11, name = "RdBu"))(15))
+  paletteLength <-  30
+  color <- rev(colorRampPalette(c("#a30014", "white", "#004b96"))(paletteLength))
+  mybreaks <- myBreaks(log(df4+2))
+  
   f <- pheatmap(log(df4+2), 
                 annotation = anno4,
+                breaks = mybreaks,
                 color = color,
                 cluster_rows = F,
                 annotation_colors = list(DISEASE = c(CONTROL = "#66CC99",COPD = "#9999CC")),
