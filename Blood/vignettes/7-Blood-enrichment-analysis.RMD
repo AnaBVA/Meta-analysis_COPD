@@ -92,6 +92,9 @@ We will import DE results from all experiments.
 ```{r}
 meta <- read_csv(OUTPUT("2021-03-01_Step6_meta-analysis.csv"))
 meta
+
+meta <-  meta %>% 
+  filter(num_exp > 1)
 ```
 
 

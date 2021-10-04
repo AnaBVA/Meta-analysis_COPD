@@ -7,13 +7,29 @@ library(RColorBrewer)
 
 #############
 ## meta analysis resulrs
-blood <- read_csv(here::here("Blood/output_data/Blood_2021-03-01_Step6_meta-analysis.csv"))
-lung <- read_csv(here::here("Tissue/output_data/2021-03-01_Step6_meta-analysis.csv"))
+blood_meta <- read_csv(here::here("Blood/output_data/Blood_2021-03-01_Step6_meta-analysis.csv"))
+lung_meta <- read_csv(here::here("Tissue/output_data/2021-03-01_Step6_meta-analysis.csv"))
 
 # filter genes with a qvalue
 qval_cutoff <- 0.05
-blood <- filter(blood,qval.random <= qval_cutoff & I2 < 0.40 & num_exp > 3) %>% rename(genes = X1)
-lung <- filter(lung,qval.random <= qval_cutoff & I2 < 0.40 & num_exp >= 9) %>% rename(genes = X1)
+blood <- filter(blood_meta,qval.random <= qval_cutoff & I2 < 0.40 & num_exp > 3) %>% rename(genes = X1)
+lung <- filter(lung_meta,qval.random <= qval_cutoff & I2 < 0.40 & num_exp >= 9) %>% rename(genes = X1)
+
+#############
+# Scatter plot
+
+lfc <- left_join(lung_meta, blood_meta, by = "X1") %>% 
+  #filter(I2.x < 0.4 & I2.y < 0.4) %>% 
+  #filter(qval.random.x <= qval_cutoff & qval.random.y <= qval_cutoff) %>% 
+  select(X1,TE.random.x, TE.random.y)
+
+pdf(here::here("Lung-Blood/fig/scatter_lungvsblood.pdf"))
+ggplot(lfc, aes(x = TE.random.x, y = TE.random.y)) +
+  geom_point() +
+  xlab("Lung tissue")+
+  ylab("Blood") + 
+  theme_classic(16)
+dev.off()
 
 
 #############
