@@ -254,6 +254,22 @@ gridExtra::grid.arrange(#gob$gg, #goc$gg,  gom$gg,
  
 ```
 
+```{r}
+
+gob$table %>% 
+  #slice_max(abs(NES), n = 20) %>% 
+  arrange(NES) %>%
+  mutate(pathway = factor(pathway, pathway)) %>% 
+  ggplot() +
+  aes(x = pathway, fill = NES, weight = NES) +
+  geom_bar() +
+  scale_fill_gradient(low = "#0B61AE", high = "#EC0000") +
+  ylab("NES") +
+  coord_flip() +
+  theme_minimal(14) +
+  theme(legend.position = "None")
+```
+
 
 ## Output
 
