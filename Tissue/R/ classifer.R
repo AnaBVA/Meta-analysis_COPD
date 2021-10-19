@@ -87,26 +87,29 @@ pheatmap(df,
 )
 dev.off()
 
-
 ###################### PCA
 p <- pca(df, metadata = anno)
 screeplot(p)
-# biplot(p,
-#        colby = 'DISEASE',
-#        #colkey = c(CONTROL = "#66CC99",COPD = "#9999CC"),
-#        hline = 0, vline = 0,
-#        title = "PCA",
-#        legendPosition = 'right',
-#        lab =NULL)
+biplot(p,
+       colby = 'DISEASE',
+       colkey = c(CONTROL = "#66CC99",COPD = "#9999CC"),
+       hline = 0, vline = 0,
+       title = "PCA",
+       legendPosition = 'right',
+       lab =NULL)
 
 d_pca = as.data.frame(p$rotated[,1:3])
 d_pca$DISEASE <- as.factor(p$metadata$DISEASE)
 #d_pca$CLUSTER <- as.factor(annoCluster$CLUSTER)
 
-pca <- ggplot(d_pca, aes(x=PC1, y=PC2, color = DISEASE)) +
-  geom_point(size=3, alpha = 0.9) +
+# d_pca$km <- kmeans(t(df),2)$cluster
+d_pca$km <- kmeans(p$rotated[,1:5],2)$cluster
+d_pca$km <- as.character(d_pca$km)
+
+pca <- ggplot(d_pca, aes(x=PC1, y=PC3, color = DISEASE)) +
+  geom_point(size=4, alpha = 0.9) +
   guides(colour=guide_legend(override.aes=list(size=6))) +
-  xlab("PC1") + ylab("PC2") +
+  xlab("PC1") + ylab("PC3") +
   ggtitle("PCA") +
   theme_test(base_size=20) +
   theme(axis.text.x=element_blank(),
@@ -114,9 +117,41 @@ pca <- ggplot(d_pca, aes(x=PC1, y=PC2, color = DISEASE)) +
   scale_colour_manual(values = c("#66CC99","#9999CC")) #c("#eeeeec","#b6dbff", "#006ddb", "#490092", "#009292")
 
 
+
 pcas <- pairsplot(p,
           colby = 'DISEASE',
           colkey = c(CONTROL = "#66CC99",COPD = "#9999CC"))
+
+pheatmap(cor(t(p$rotated[,1:15])), annotation_col = anno, clustering_method = "ward.D2") # clustering_method = "ward.D2"
+pheatmap(cor(df), annotation_col = anno)
+
+plotloadings(p, labSize = 4.0 )
+pcgen <- p$loadings[order(p$loadings$PC1)[c(1:30,(nn-30):nn)],1:3]
+
+nn <- dim(p$loadings)[1]
+pca1genes <- rownames(pcgen)
+df.selected <- df[pca1genes,]
+
+pdf(FIG(c(TODAY, "_Heatmap_", dim(df.selected)[1], "x", dim(df.selected)[2],"_", ID, ".pdf")),
+    width = 7, height = 10)
+
+pheatmap(df.selected, 
+         annotation_col = anno,
+         border_color = NA,
+         breaks = mybreaks,
+         color = color,
+         cutree_cols = 2,
+         show_colnames = F,
+         show_rownames = T,
+         clustering_distance_rows = "euclidean",
+         clustering_method = "ward.D",
+         annotation_colors = annotation_colors,
+         annotation_row = abs(pcgen),
+         scale = "row",
+         main = str_c("Selected genes: n = ",dim(df.selected)[1], ", samples = ",dim(df)[2])
+)
+
+dev.off()
 
 ###################### tSNE
 set.seed(123)
