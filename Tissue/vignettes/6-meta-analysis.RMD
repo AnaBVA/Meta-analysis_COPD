@@ -79,9 +79,11 @@ library(tidyverse)
 library(knitr)
 library(ComplexHeatmap)
 library(metafor)
-library(meta)
 library(pheatmap)
 library(RColorBrewer)
+library(meta)
+library(MetaVolcanoR)
+library(ggrepel)
 ```
 
 
@@ -101,84 +103,6 @@ full_tables <- read_csv(OUTPUT("2020-10-08_Step5_Full_Tables.csv"))
 colnames(full_tables)
 
 ```
-
-### MetaVolcano
-
-Using [Metavolcano](https://www.bioconductor.org/packages/release/bioc/vignettes/MetaVolcanoR/inst/doc/MetaVolcano.html) funcions to create a volcano plot with DE genes 
-
-We first need to create a list with tables. Each table contains information about gene `Symbol`, `Log2FC`, `pvalue`, `CI.L`, `CI.R` per experiment. 
-
-```{r}
-# colnames 
-df <- tibble(x=colnames(full_tables)) %>% 
-  separate(x, c("type", "GSE"), "_") %>% 
-  add_column(pos = 1:nrow(.))
-
-df$GSE[1] <- "Gene"
-
-# list
-split_df <- function(i){
-  df <- data.frame(GENE.SYMBOL = full_tables$GENE.SYMBOL,
-                   full_tables[,which(df$GSE == i)]
-                   )
-  colnames(df) <- c( "Symbol", "Log2FC",  "pvalue", "CI.L", "CI.R")
-  #colnames(df) <- gsub("_GSE.*", "", colnames(df) )
-  as.data.frame(df)
-  #as.data.frame(df)[-c(8359,18704),]
-  }
-
-diffexplist <- lapply(sort(unique(df$GSE)[-1]), split_df)
-names(diffexplist) <- sort(unique(df$GSE)[-1])
-
-```
-
-Now, we implement the `MetaVolcano` funtions. 
-
-```{r}
-library(MetaVolcanoR)
-
-meta_degs_rem <- rem_mv(diffexp=diffexplist,
-            pcriteria="pvalue",
-            foldchangecol='Log2FC', 
-            genenamecol='Symbol',
-            geneidcol=NULL,
-            collaps=FALSE,
-            llcol='CI.L',
-            rlcol='CI.R',
-            vcol=NULL, 
-            cvar=TRUE,
-            metathr=0.01,
-            jobname="MetaVolcano",
-            outputfolder=here::here("Tissue/output_data"), 
-            draw='HTML',
-            ncores=1)
-
-head(meta_degs_rem@metaresult, 3)
-meta_degs_rem@MetaVolcano
-
-meta_df <- meta_degs_rem@metaresult %>% 
-  filter(randomP < 0.05 )
-
-meta_degs_vote <- votecount_mv(diffexp=diffexplist,
-                   pcriteria='pvalue',
-                   foldchangecol='Log2FC',
-                   genenamecol='Symbol',
-                   geneidcol=NULL,
-                   pvalue=0.05,
-                   foldchange=0, 
-                   metathr=0.01,
-                   collaps=FALSE,
-                   jobname="MetaVolcano", 
-                   outputfolder=here::here("Tissue/output_data"),
-                   draw='HTML')
-head(meta_degs_vote@metaresult, 3)
-meta_degs_vote@degfreq
-meta_degs_vote@MetaVolcano
-
-
-```
-
-
 
 
 ### p-Values
@@ -309,8 +233,8 @@ decorate_annotation("intersection_size", {
         default.units = "native", just = "bottom", gp = gpar(fontsize = 12))
 })
 comb_size(m)
-down[extract_comb(m,"10001111"),]
-down[extract_comb(m,"01001111"),]
+down[extract_comb(m,"01001111000"),]
+down[extract_comb(m,"10001111000"),]
 
 
 ```
@@ -330,6 +254,7 @@ for(i in 1:length(CI.R)) {
 }
 
 #write_csv(full_tables,OUTPUT("2020-10-08_Step5_Full_Tables_SE.csv"))
+full_tables <- read_csv(OUTPUT("2020-10-08_Step5_Full_Tables_SE.csv"))
 ```
 
 Meta-analysis for a single gene
@@ -340,8 +265,6 @@ Meta-analysis for a single gene
 FC <- str_subset(colnames(full_tables),"logFC")
 SE <- str_subset(colnames(full_tables),"SE_")
 GSE <- gsub(".*_","",FC)
-
-gs <- "CXCL12"
 
 ## Funtion to perform a meta-analysis per gene
 meta.plot <- function(gs){
@@ -396,7 +319,17 @@ forest(m1,
 
 }
 
-meta.plot(gs)
+pdf(FIG("forestplot_CYP4B1.pdf"), width = 10, height = 4.5)
+meta.plot("CYP4B1")
+dev.off()
+
+pdf(FIG("forestplot_CXCL1.pdf"), width = 10, height = 4.5)
+meta.plot("CXCL1")
+dev.off()
+
+pdf(FIG("forestplot_CCL2.pdf"), width = 10, height = 4.5)
+meta.plot("CCL2")
+dev.off()
 
 
 ```
@@ -610,6 +543,137 @@ pheatmap(topgenes,
          border_color = NA)
 
 ```
+
+### MetaVolcano
+
+Using [Metavolcano](https://www.bioconductor.org/packages/release/bioc/vignettes/MetaVolcanoR/inst/doc/MetaVolcano.html) funcions to create a volcano plot with DE genes 
+
+We first need to create a list with tables. Each table contains information about gene `Symbol`, `Log2FC`, `pvalue`, `CI.L`, `CI.R` per experiment. 
+
+```{r}
+# colnames 
+df <- tibble(x=colnames(full_tables)) %>% 
+  separate(x, c("type", "GSE"), "_") %>% 
+  add_column(pos = 1:nrow(.))
+
+df$GSE[1] <- "Gene"
+
+# list
+split_df <- function(i){
+  df <- data.frame(GENE.SYMBOL = full_tables$GENE.SYMBOL,
+                   full_tables[,which(df$GSE == i)]
+                   )
+  colnames(df) <- c( "Symbol", "Log2FC",  "pvalue", "CI.L", "CI.R")
+  #colnames(df) <- gsub("_GSE.*", "", colnames(df) )
+  as.data.frame(df)
+  #as.data.frame(df)[-c(8359,18704),]
+  }
+
+diffexplist <- lapply(sort(unique(df$GSE)[-1]), split_df)
+names(diffexplist) <- sort(unique(df$GSE)[-1])
+
+```
+
+
+We changed `plot_rem()`
+
+```{r}
+plot_rem <- function(meta_diffexp, jobname, outputfolder, genecol, metathr) {
+    meta_diffexp$randomPadj <- p.adjust(meta_diffexp$randomP, "BH")
+    irandomp <- 0.05
+    meta_diffexp %>%
+        dplyr::mutate(signcon2 = ifelse(`randomP` <= irandomp, signcon, NA)) %>%
+	dplyr::mutate(Ci.ub = ifelse(`randomP` <= irandomp, randomCi.ub, NA)) %>%
+	dplyr::mutate(Ci.lb = ifelse(`randomP` <= irandomp, randomCi.lb, NA)) %>%
+	dplyr::filter(`randomP` <  quantile(meta_diffexp[['randomP']], 0.6)) -> meta_res 
+
+    ggplot(dplyr::arrange(meta_res, abs(randomSummary)),
+        aes(x = randomSummary, y = -log10(randomPadj), color = signcon2, 
+	    text = !!rlang::sym(genecol))) +
+        geom_point(size = 0.6) +
+	scale_color_gradient2(midpoint=0, low="#195696", mid="white", 
+			      high="red", na.value = "grey80") +
+	labs(x = "Summary Fold-change",
+	     y = "-log10(Summary padj-value)",
+	     color = "Sign consistency") +
+        geom_errorbarh(aes(xmax = Ci.ub, xmin = Ci.lb, 
+			   color = signcon2)) +
+        theme_classic(14) +
+	theme(panel.border= element_blank()) +
+	theme(axis.text.x = element_text(angle = 0, vjust = 0.5)) +
+	theme(axis.line.x = element_line(color = "black", size = 0.6, 
+					 lineend = "square"),
+	      axis.line.y = element_line(color = "black", size = 0.6, 
+					 lineend = "square"))
+}
+
+```
+
+
+
+Now, we implement the `MetaVolcano` funtions. 
+
+```{r}
+
+meta_degs_rem <- rem_mv(diffexp=diffexplist,
+            pcriteria="pvalue",
+            foldchangecol='Log2FC', 
+            genenamecol='Symbol',
+            geneidcol=NULL,
+            collaps=FALSE,
+            llcol='CI.L',
+            rlcol='CI.R',
+            vcol=NULL, 
+            cvar=TRUE,
+            metathr=0.05,
+            jobname="MetaVolcano",
+            outputfolder=here::here("Tissue/output_data"), 
+            draw='HTML',
+            ncores=1)
+
+head(meta_degs_rem@metaresult, 3)
+meta_res <- meta_degs_rem@metaresult
+
+meta_degs_rem@MetaVolcano <- plot_rem(meta_res, 
+               jobname="MetaVolcano",
+               outputfolder=here::here("Tissue/output_data"),
+               genecol = 'Symbol', 
+               metathr=0.05) +
+  #geom_label_repel(aes(label = ifelse(Symbol %in% top$Symbol, Symbol, "")),
+  geom_label_repel(aes(label = ifelse(Symbol %in% rownames(topgenes), Symbol, "")),
+                  max.overlaps = Inf,
+                  box.padding = 0.5,
+                  size = 4)
+
+pdf(FIG("metavolcano.pdf"), width = 7.5, height = 4.5)
+meta_degs_rem@MetaVolcano
+dev.off()
+
+
+meta_df <- meta_degs_rem@metaresult %>% 
+  filter(randomP < 0.05 )
+
+meta_degs_vote <- votecount_mv(diffexp=diffexplist,
+                   pcriteria='pvalue',
+                   foldchangecol='Log2FC',
+                   genenamecol='Symbol',
+                   geneidcol=NULL,
+                   pvalue=0.05,
+                   foldchange=0, 
+                   metathr=0.05,
+                   collaps=FALSE,
+                   jobname="MetaVolcano", 
+                   outputfolder=here::here("Tissue/output_data"),
+                   draw='HTML')
+head(meta_degs_vote@metaresult, 3)
+meta_degs_vote@degfreq
+meta_degs_vote@MetaVolcano
+
+
+```
+
+
+
 
 
 ### TFs
