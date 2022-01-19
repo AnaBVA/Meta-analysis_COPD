@@ -30,7 +30,7 @@ plot(1:(x*4),
      col="violet", 
      main="Hypergeometric P-value for under represented num of genes", 
      xlab="Genes", 
-     ylab="P-value = P[X > x]", 
+     ylab="P-value = P[X ≤ x]", 
      ylim=c(0, 1), 
      panel.first=grid()
      )
